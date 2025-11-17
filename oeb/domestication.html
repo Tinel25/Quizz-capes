@@ -410,699 +410,1027 @@
 
     <script>
         const questions = [
-            {
-                question: "Qu'est-ce que l'immunogénicité ?",
-                options: [
-                    "La capacité d'un anticorps à se lier à un antigène",
-                    "La capacité de l'antigène à induire une réaction immunitaire",
-                    "La capacité du système immunitaire à reconnaître le soi",
-                    "La capacité d'une cellule à produire des anticorps"
-                ],
-                correct: 1,
-                explanation: "L'immunogénicité est la capacité de l'antigène à induire une réaction immunitaire."
-            },
-            {
-                question: "Qu'est-ce qu'un épitope ?",
-                options: [
-                    "Une molécule qui déclenche une réponse immunitaire",
-                    "Un type de lymphocyte",
-                    "La partie de l'antigène qui se lie à l'anticorps",
-                    "Une protéine du CMH"
-                ],
-                correct: 2,
-                explanation: "L'épitope (ou déterminant antigénique) est la partie de l'antigène qui se lie à l'anticorps."
-            },
-            {
-                question: "Quelle est la caractéristique de la réponse humorale ?",
-                options: [
-                    "Elle implique les lymphocytes T uniquement",
-                    "Elle conduit à la production d'anticorps par les lymphocytes B",
-                    "Elle nécessite toujours la présentation par le CMH",
-                    "Elle ne reconnaît que les antigènes dénaturés"
-                ],
-                correct: 1,
-                explanation: "La réponse humorale conduit à la production d'anticorps. La reconnaissance se fait par des anticorps fixés aux lymphocytes B."
-            },
-            {
-                question: "Comment les antigènes sont-ils reconnus dans la réponse humorale ?",
-                options: [
-                    "Sous forme dénaturée uniquement",
-                    "Par l'intermédiaire du CMH obligatoirement",
-                    "Sous forme native en solution",
-                    "Uniquement après phagocytose"
-                ],
-                correct: 2,
-                explanation: "Dans la réponse humorale, les antigènes sont reconnus sous une forme native en solution par les BCR (B Cell Receptor)."
-            },
-            {
-                question: "Qu'est-ce qu'un épitope B ?",
-                options: [
-                    "Un épitope dépendant des lymphocytes T",
-                    "Un épitope thymodépendant nécessitant le CMH",
-                    "Un épitope thymoindépendant libre dans la circulation sanguine",
-                    "Un épitope uniquement présent sur les bactéries"
-                ],
-                correct: 2,
-                explanation: "L'épitope B est thymoindépendant, libre dans la circulation sanguine, et reconnu directement par les BCR portés par les lymphocytes B."
-            },
-            {
-                question: "Quelle est la caractéristique de la réponse cellulaire ?",
-                options: [
-                    "Elle produit des anticorps directement",
-                    "Elle conduit à la prolifération des lymphocytes T",
-                    "Elle ne nécessite pas de présentation antigénique",
-                    "Elle reconnaît uniquement les lipides"
-                ],
-                correct: 1,
-                explanation: "La réponse cellulaire conduit à la prolifération des lymphocytes T en réponse aux épitopes T."
-            },
-            {
-                question: "Comment l'antigène est-il présenté dans la réponse cellulaire ?",
-                options: [
-                    "Directement par les anticorps",
-                    "Par une molécule du CMH (complexe majeur d'histocompatibilité)",
-                    "Par les lymphocytes B uniquement",
-                    "Sans besoin de présentation"
-                ],
-                correct: 1,
-                explanation: "Dans la réponse cellulaire, la présentation de l'antigène se fait par une molécule du CMH, notamment le CMH de classe II porté par les cellules présentatrices d'antigène (CPA)."
-            },
-            {
-                question: "Quel récepteur reconnaît l'épitope T ?",
-                options: [
-                    "Le BCR (B Cell Receptor)",
-                    "Le TCR (T Cell Receptor)",
-                    "Les anticorps libres",
-                    "Le récepteur Fc"
-                ],
-                correct: 1,
-                explanation: "L'épitope T est reconnu par le TCR (T Cell Receptor) après présentation par le CMH."
-            },
-            {
-                question: "Quel principe régit la reconnaissance d'une molécule comme étrangère ?",
-                options: [
-                    "La taille de la molécule uniquement",
-                    "La notion de distance zoologique entre donneur et receveur",
-                    "La présence de sucres uniquement",
-                    "Le moment de l'injection"
-                ],
-                correct: 1,
-                explanation: "Plus on est loin du donneur sur le plan zoologique, plus la molécule est considérée comme étrangère et susceptible de déclencher une réponse immunitaire."
-            },
-            {
-                question: "Que se passe-t-il avec des maladies auto-immunes ?",
-                options: [
-                    "L'animal ne réagit à aucun antigène",
-                    "L'animal réagit uniquement aux antigènes bactériens",
-                    "L'animal réagit à ses propres molécules",
-                    "L'animal produit trop d'anticorps contre les virus"
-                ],
-                correct: 2,
-                explanation: "Dans les maladies auto-immunes (auto-réactives), l'animal réagit à ses propres molécules, ce qui constitue une pathologie."
-            },
-            {
-                question: "Quels compartiments corporels sont exclus du circuit lymphatique par des barrières ?",
-                options: [
-                    "Le foie, les reins, le cœur",
-                    "La chambre de l'œil, le cerveau, les testicules",
-                    "Les poumons, l'estomac, l'intestin",
-                    "La peau, les muscles, les os"
-                ],
-                correct: 1,
-                explanation: "La chambre de l'œil, le cerveau et les testicules sont exclus du circuit lymphatique par des barrières et ne sont donc pas visibles pour le système immunitaire."
-            },
-            {
-                question: "Pourquoi les spermatozoïdes nécessitent-ils une protection immunologique ?",
-                options: [
-                    "Car ils sont trop petits",
-                    "Car ils sont élaborés très longtemps après l'apprentissage immunologique de l'individu",
-                    "Car ils proviennent de l'extérieur",
-                    "Car ils sont composés uniquement de lipides"
-                ],
-                correct: 1,
-                explanation: "Les spermatozoïdes ont la particularité d'être élaborés très longtemps après l'apprentissage immunologique de l'individu, d'où la nécessité d'une barrière protectrice."
-            },
-            {
-                question: "Quelle est la limite inférieure de poids moléculaire pour qu'une protéine soit immunogène ?",
-                options: [
-                    "1 kDa",
-                    "5 kDa",
-                    "10 kDa",
-                    "20 kDa"
-                ],
-                correct: 2,
-                explanation: "Une molécule est d'autant plus immunogène que son poids moléculaire est élevé, avec une limite inférieure de 10 kDa, bien que certaines protéines plus petites puissent être immunogènes."
-            },
-            {
-                question: "Quel type d'acide aminé augmente l'immunogénicité des protéines ?",
-                options: [
-                    "Les acides aminés aliphatiques",
-                    "Les acides aminés soufrés uniquement",
-                    "Les acides aminés aromatiques comme la tyrosine",
-                    "Les acides aminés basiques uniquement"
-                ],
-                correct: 2,
-                explanation: "Certains acides aminés comme la tyrosine et les acides aminés aromatiques augmentent l'immunogénicité des protéines."
-            },
-            {
-                question: "Les lipides sont-ils naturellement immunogènes ?",
-                options: [
-                    "Oui, tous les lipides sont immunogènes",
-                    "Non, ils sont non immunogènes sauf s'ils sont associés à des lécithines ou des protéines",
-                    "Seulement les lipides végétaux",
-                    "Seulement les acides gras saturés"
-                ],
-                correct: 1,
-                explanation: "Les lipides sont non immunogènes, mais deviennent immunogènes s'ils sont associés à des lécithines ou à des protéines."
-            },
-            {
-                question: "Qu'est-ce que le cardiolipide ?",
-                options: [
-                    "Un lipide non immunogène simple",
-                    "Une protéine cardiaque",
-                    "L'antigène de Wasserman, un complexe immunogène comportant 3 molécules de glycérol et 4 molécules d'acides gras insaturés",
-                    "Un sucre présent dans le cœur"
-                ],
-                correct: 2,
-                explanation: "Le cardiolipide est l'antigène de Wasserman, un complexe immunogène comportant 3 molécules de glycérol et 4 molécules d'acides gras insaturés, abondant dans le tissu cardiaque."
-            },
-            {
-                question: "Les acides nucléiques sont-ils immunogènes ?",
-                options: [
-                    "Oui, toujours",
-                    "Non, jamais",
-                    "Non, sauf s'ils sont couplés à des protéines",
-                    "Seulement l'ARN"
-                ],
-                correct: 2,
-                explanation: "Les acides nucléiques sont non immunogènes, sauf s'ils sont couplés à des protéines. Exception : le lupus érythémateux où l'organisme produit des auto-anticorps contre les acides nucléiques."
-            },
-            {
-                question: "Dans quel cas pathologique observe-t-on une production d'auto-anticorps contre les acides nucléiques ?",
-                options: [
-                    "Le diabète",
-                    "Le lupus érythémateux",
-                    "L'asthme",
-                    "L'arthrite"
-                ],
-                correct: 1,
-                explanation: "Dans le lupus érythémateux, on observe une réaction de l'organisme avec production d'auto-anticorps contre les acides nucléiques, notamment contre le cDNA."
-            },
-            {
-                question: "Les glycanes (polymères de glucose) sont-ils immunogènes ?",
-                options: [
-                    "Oui, toujours",
-                    "Non, car constitués d'un seul type d'ose",
-                    "Seulement s'ils sont d'origine bactérienne",
-                    "Seulement s'ils sont végétaux"
-                ],
-                correct: 1,
-                explanation: "Les glycanes (polymères de glucose comme l'amidon et le glycogène) sont non immunogènes car ils sont constitués d'un seul type d'ose."
-            },
-            {
-                question: "Qu'est-ce qui rend les dextranes immunogènes ?",
-                options: [
-                    "Leur origine végétale",
-                    "Leur petite taille",
-                    "Leur structure branchée même s'ils sont constitués d'un seul type d'ose",
-                    "Leur association avec des protéines"
-                ],
-                correct: 2,
-                explanation: "Les dextranes (polyosides bactériens extracellulaires) sont immunogènes grâce à leur structure branchée, même s'ils sont constitués d'un seul type d'ose."
-            },
-            {
-                question: "Quelle est l'immunogénicité des hétéroglycanes d'origine animale ?",
-                options: [
-                    "Non immunogène",
-                    "Faiblement immunogène",
-                    "Immunogène",
-                    "Fortement immunogène"
-                ],
-                correct: 2,
-                explanation: "Les hétéroglycanes (oses différents) d'origine animale sont immunogènes."
-            },
-            {
-                question: "Quelle est l'immunogénicité des hétéroglycanes d'origine végétale ?",
-                options: [
-                    "Non immunogène",
-                    "Immunogène",
-                    "Fortement immunogène",
-                    "Variable selon le type de plante"
-                ],
-                correct: 0,
-                explanation: "Les hétéroglycanes d'origine végétale sont non immunogènes."
-            },
-            {
-                question: "Quelle est l'immunogénicité des hétéroglycanes d'origine bactérienne ?",
-                options: [
-                    "Non immunogène",
-                    "Faiblement immunogène",
-                    "Immunogène",
-                    "Fortement immunogène"
-                ],
-                correct: 3,
-                explanation: "Les hétéroglycanes d'origine bactérienne sont fortement immunogènes."
-            },
-            {
-                question: "Les homopolymères (un seul acide aminé) sont-ils immunogènes ?",
-                options: [
-                    "Oui, toujours",
-                    "Non, seuls les hétéropolymères sont immunogènes",
-                    "Seulement s'ils sont branchés",
-                    "Seulement s'ils sont linéaires"
-                ],
-                correct: 1,
-                explanation: "Les homopolymères (un seul acide aminé, linéaire ou branché) sont non immunogènes. Seuls les hétéropolymères sont immunogènes."
-            },
-            {
-                question: "De quoi dépend l'importance de la réaction antigénique dans les antigènes synthétiques ?",
-                options: [
-                    "Uniquement de la longueur de la chaîne",
-                    "De l'ordre des acides aminés, de la distance les séparant, et de leur configuration optique (L ou D)",
-                    "Uniquement de la configuration optique",
-                    "Uniquement du type d'acides aminés"
-                ],
-                correct: 1,
-                explanation: "L'importance de la réaction dépend de l'ordre des acides aminés, de la distance les séparant, et de leur configuration optique (L ou D)."
-            },
-            {
-                question: "Le génotype de l'animal receveur influence-t-il la réponse immunitaire ?",
-                options: [
-                    "Non, la réponse est identique pour tous",
-                    "Oui, différentes souches répondent différemment à un même immunogène",
-                    "Seulement pour les virus",
-                    "Seulement pour les bactéries"
-                ],
-                correct: 1,
-                explanation: "Le génotype de l'animal receveur influe sur le type de réponse immunitaire. L'expérience de Hugh McDevitt a montré que différentes souches de souris produisaient des quantités différentes d'anticorps en réponse au même immunogène."
-            },
-            {
-                question: "Où est localisé le gène contrôlant la capacité de réponse immunitaire ?",
-                options: [
-                    "Sur le chromosome X",
-                    "Dans la sous-région du CMH",
-                    "Dans les lymphocytes B uniquement",
-                    "Dans le thymus"
-                ],
-                correct: 1,
-                explanation: "Le gène contrôlant la capacité de réponse est localisé dans la sous-région du CMH (complexe majeur d'histocompatibilité)."
-            },
-            {
-                question: "Qu'est-ce que la tolérance de basse zone ?",
-                options: [
-                    "Une réponse immunitaire trop forte",
-                    "Une activation insuffisante des lymphocytes",
-                    "Une production excessive d'anticorps",
-                    "Un état de porteur sain"
-                ],
-                correct: 1,
-                explanation: "La tolérance de basse zone correspond à une activation insuffisante des lymphocytes lorsque la dose d'immunogène est trop faible."
-            },
-            {
-                question: "Qu'est-ce que la tolérance de haute zone ?",
-                options: [
-                    "Une activation maximale des lymphocytes",
-                    "Une production massive d'anticorps",
-                    "Une zone où la dose trop forte oblige les lymphocytes à entrer dans un état de non-réponse (porteur sain)",
-                    "Une réponse modérée"
-                ],
-                correct: 2,
-                explanation: "La tolérance de haute zone se produit quand la dose est trop forte, obligeant les lymphocytes à entrer dans un état de non-réponse, créant un état de porteur sain."
-            },
-            {
-                question: "Quel type d'anticorps est produit lors de la première rencontre avec un antigène ?",
-                options: [
-                    "IgG",
-                    "IgM",
-                    "IgA",
-                    "IgE"
-                ],
-                correct: 1,
-                explanation: "Les IgM sont produits lors de la première rencontre avec l'antigène."
-            },
-            {
-                question: "Quel type d'anticorps est produit lors de la deuxième rencontre avec un antigène ?",
-                options: [
-                    "IgM",
-                    "IgG",
-                    "IgE",
-                    "IgD"
-                ],
-                correct: 1,
-                explanation: "Les IgG sont produits lors de la deuxième rencontre avec l'antigène, après la réponse mémoire."
-            },
-            {
-                question: "Qu'est-ce que la tolérance embryonnaire ?",
-                options: [
-                    "Le rejet systématique de toute greffe",
-                    "La capacité de maintenir une allogreffe ou xénogreffe réalisée entre embryons, conservée à l'âge adulte",
-                    "L'impossibilité de greffer des embryons",
-                    "La production d'anticorps chez le fœtus"
-                ],
-                correct: 1,
-                explanation: "La tolérance embryonnaire permet de maintenir une allogreffe ou xénogreffe entre embryons à l'âge adulte. L'apprentissage des caractères tissulaires du soi se fait au stade embryonnaire."
-            },
-            {
-                question: "Qu'est-ce qu'un adjuvant ?",
-                options: [
-                    "Un antigène très puissant",
-                    "Une molécule qui, mélangée à un antigène, augmente son immunogénicité",
-                    "Un type de lymphocyte",
-                    "Une protéine du CMH"
-                ],
-                correct: 1,
-                explanation: "Un adjuvant est une molécule qui, lorsqu'elle est mélangée à un antigène puis injectée, augmente son immunogénicité (concept de Ramon, 1925)."
-            },
-            {
-                question: "Quels sont les effets des adjuvants ?",
-                options: [
-                    "Uniquement l'augmentation de la taille de l'antigène",
-                    "Prolongation de la présence de l'antigène, augmentation des signaux de co-stimulation, induction de granulés, stimulation non spécifique des lymphocytes",
-                    "Destruction de l'antigène",
-                    "Production directe d'anticorps"
-                ],
-                correct: 1,
-                explanation: "Les adjuvants ont plusieurs effets : prolongation de la présence de l'antigène, augmentation des signaux de co-stimulation (CD80, CD86, CD28), induction de granulés, et stimulation non spécifique de la prolifération des lymphocytes."
-            },
-            {
-                question: "Quel composé est utilisé comme adjuvant pour prolonger le temps d'exposition de l'antigène ?",
-                options: [
-                    "Le chlorure de sodium",
-                    "Le sulfate de potassium et d'aluminium",
-                    "Le glucose",
-                    "Le bicarbonate de soude"
-                ],
-                correct: 1,
-                explanation: "Le sulfate de potassium et d'aluminium provoque la précipitation de l'antigène, ce qui prolonge le temps d'exposition et augmente la taille, favorisant la phagocytose."
-            },
-            {
-                question: "Qu'est-ce qu'une VLP (Virus Like Particle) ?",
-                options: [
-                    "Un virus vivant atténué",
-                    "Une structure qui mime un virus sans matériel génétique viral",
-                    "Un anticorps antiviral",
-                    "Une protéine virale isolée"
-                ],
-                correct: 1,
-                explanation: "Une VLP (Virus Like Particle) est une structure qui mime un virus. Elle est utilisée dans certains vaccins, comme le vaccin anti-addiction Cyt006-AngQb où la nicotine est intégrée dans une VLP."
-            },
-            {
-                question: "Qu'est-ce qu'un antigène thymodépendant ?",
-                options: [
-                    "Un antigène qui stimule directement les lymphocytes B",
-                    "Un antigène dont la production d'anticorps nécessite la collaboration entre lymphocytes B et T",
-                    "Un antigène produit par le thymus",
-                    "Un antigène qui ne produit jamais d'anticorps"
-                ],
-                correct: 1,
-                explanation: "Les antigènes thymodépendants nécessitent l'intervention et la collaboration des lymphocytes B et T pour la production d'anticorps. Exemples : protéines solubles, hématies hétérologues."
-            },
-            {
-                question: "Qu'est-ce qu'un antigène thymoindépendant ?",
-                options: [
-                    "Un antigène qui nécessite les lymphocytes T",
-                    "Un antigène qui stimule directement les lymphocytes B sans intervention des lymphocytes T",
-                    "Un antigène non immunogène",
-                    "Un antigène produit uniquement par les virus"
-                ],
-                correct: 1,
-                explanation: "Les antigènes thymoindépendants stimulent directement les lymphocytes B sans besoin de l'intervention des lymphocytes T. Ce sont souvent de grosses molécules avec un aspect répétitif de leurs déterminants antigéniques. Exemple : polysaccharides de la paroi des pneumocoques."
-            },
-            {
-                question: "Qu'est-ce que le paratope ?",
-                options: [
-                    "La partie de l'antigène reconnue par l'anticorps",
-                    "La partie variable de l'anticorps qui se lie à l'épitope",
-                    "La partie constante de l'anticorps",
-                    "Un type de lymphocyte"
-                ],
-                correct: 1,
-                explanation: "Le paratope est la partie variable de la chaîne lourde de l'anticorps qui reconnaît et se lie à l'épitope de l'antigène."
-            },
-            {
-                question: "Qu'est-ce que la région Fc d'un anticorps ?",
-                options: [
-                    "La région variable qui reconnaît l'antigène",
-                    "La fraction cristallisable, partie constante qui porte l'activité biologique",
-                    "La région hypervariable",
-                    "Le site de liaison à l'épitope"
-                ],
-                correct: 1,
-                explanation: "La région Fc (fraction cristallisable) est la partie constante de l'anticorps qui porte l'activité biologique."
-            },
-            {
-                question: "Que sont les régions CDR d'un anticorps ?",
-                options: [
-                    "Les régions constantes",
-                    "Les régions hypervariables de la partie variable (CDR1, CDR2, CDR3)",
-                    "Les régions de liaison au CMH",
-                    "Les régions de fixation aux cellules"
-                ],
-                correct: 1,
-                explanation: "Les CDR (Complementarity Determining Regions) sont les trois régions hypervariables dans la partie variable de l'anticorps : CDR1, CDR2 et CDR3, séparées par des régions framework (FR)."
-            },
-            {
-                question: "Combien d'acides aminés composent généralement un épitope séquentiel de cellules B ?",
-                options: [
-                    "2 à 5 acides aminés",
-                    "5 à 10 acides aminés",
-                    "15 à 20 acides aminés",
-                    "Plus de 30 acides aminés"
-                ],
-                correct: 2,
-                explanation: "Les épitopes séquentiels de cellules B contiennent généralement 15 à 20 acides aminés consécutifs."
-            },
-            {
-                question: "Combien d'acides aminés composent généralement un épitope conformationnel ?",
-                options: [
-                    "1 à 3 acides aminés",
-                    "4 à 7 acides aminés",
-                    "15 à 20 acides aminés",
-                    "Plus de 25 acides aminés"
-                ],
-                correct: 1,
-                explanation: "Les épitopes conformationnels (non séquentiels) sont constitués de 4 à 7 acides aminés qui ne sont pas consécutifs dans la séquence primaire mais rapprochés par la structure 3D."
-            },
-            {
-                question: "Quelle est la caractéristique des épitopes de surface des protéines natives ?",
-                options: [
-                    "Ils sont composés d'acides aminés hydrophobes",
-                    "Ils sont composés d'acides aminés hydrophiles et accessibles",
-                    "Ils sont toujours cachés à l'intérieur de la protéine",
-                    "Ils sont uniquement glycosylés"
-                ],
-                correct: 1,
-                explanation: "Les épitopes de cellules B à la surface des protéines natives sont généralement composés d'acides aminés hydrophiles de surface, donc accessibles aux anticorps."
-            },
-            {
-                question: "Que se passe-t-il avec les épitopes conformationnels lors de la dénaturation d'une protéine ?",
-                options: [
-                    "Ils restent identiques",
-                    "Ils sont détruits car dépendants de la structure 3D",
-                    "Ils deviennent plus immunogènes",
-                    "Ils se transforment en épitopes séquentiels"
-                ],
-                correct: 1,
-                explanation: "Les épitopes conformationnels sont détruits lors de la dénaturation, fragmentation ou réduction de la protéine car ils dépendent de la structure tridimensionnelle."
-            },
-            {
-                question: "Combien d'anticorps polyclonaux sont dirigés contre la sérum albumine ?",
-                options: [
-                    "10 anticorps",
-                    "33 anticorps",
-                    "60 anticorps",
-                    "100 anticorps"
-                ],
-                correct: 2,
-                explanation: "Il existe 60 anticorps polyclonaux dirigés contre la sérum albumine, reconnaissant 33 épitopes calculés, avec des épitopes chevauchants."
-            },
-            {
-                question: "Qu'est-ce qu'un anticorps monoclonal ?",
-                options: [
-                    "Un anticorps reconnaissant plusieurs épitopes",
-                    "Un anticorps ne reconnaissant qu'un seul type d'épitope, produit par un seul clone de plasmocyte",
-                    "Un anticorps présent naturellement dans le sang",
-                    "Un anticorps reconnaissant tous les antigènes"
-                ],
-                correct: 1,
-                explanation: "Les anticorps monoclonaux ne reconnaissent qu'un seul type d'épitope sur un antigène donné. Ils sont tous identiques et produits par un seul clone de plasmocyte."
-            },
-            {
-                question: "Comment produit-on des anticorps monoclonaux ?",
-                options: [
-                    "Par injection simple d'un antigène",
-                    "Par hybridation d'un lymphocyte B avec une cellule cancéreuse",
-                    "Par purification du sang",
-                    "Par culture de bactéries"
-                ],
-                correct: 1,
-                explanation: "Les anticorps monoclonaux sont produits en hybridant le clone d'un lymphocyte B spécifique avec une cellule cancéreuse, créant un hybridome immortel produisant un anticorps unique."
-            },
-            {
-                question: "Qu'ont découvert PGH Gell et B. Benacerraf en 1959 ?",
-                options: [
-                    "L'existence des anticorps",
-                    "L'existence d'une différence qualitative dans la réponse des cellules T et B aux antigènes protéiques",
-                    "La structure de l'ADN",
-                    "Le fonctionnement du CMH"
-                ],
-                correct: 1,
-                explanation: "En 1959, PGH Gell et B. Benacerraf ont suggéré l'existence d'une différence qualitative dans la réponse des cellules T et des cellules B aux antigènes protéiques."
-            },
-            {
-                question: "Les cellules T reconnaissent-elles l'antigène natif soluble ?",
-                options: [
-                    "Oui, directement comme les cellules B",
-                    "Non, elles reconnaissent l'antigène apprêté en peptides antigéniques",
-                    "Seulement si l'antigène est très concentré",
-                    "Seulement après dénaturation thermique"
-                ],
-                correct: 1,
-                explanation: "Les cellules T ne reconnaissent pas l'antigène natif soluble, mais un antigène apprêté en peptides antigéniques présentés par le CMH."
-            },
-            {
-                question: "Qu'est-ce qu'un haptène ?",
-                options: [
-                    "Un antigène très immunogène",
-                    "Une molécule incapable d'induire seule la synthèse d'anticorps, mais qui le peut quand elle est fixée à une molécule porteuse (carrier)",
-                    "Un type de lymphocyte",
-                    "Une protéine du complément"
-                ],
-                correct: 1,
-                explanation: "Un haptène est une molécule incapable d'induire seule la synthèse d'anticorps, mais qui peut le faire quand elle est fixée à une molécule porteuse de grande taille appelée carrier."
-            },
-            {
-                question: "Comment la pénicilline peut-elle déclencher une allergie médicamenteuse ?",
-                options: [
-                    "Par destruction directe des cellules",
-                    "En se liant aux résidus lysines des protéines pour former un complexe protéine-haptène immunogène",
-                    "En activant directement les lymphocytes T",
-                    "En détruisant les anticorps"
-                ],
-                correct: 1,
-                explanation: "La pénicilline peut réagir avec les groupes amines libres des résidus lysines de certaines protéines pour former un complexe protéine-haptène qui devient immunogène, déclenchant une allergie médicamenteuse."
-            },
-            {
-                question: "Qu'est-ce qu'une réaction croisée ?",
-                options: [
-                    "Une réaction entre deux anticorps",
-                    "La reconnaissance d'un antigène par un anticorps dirigé contre une molécule apparentée",
-                    "Une réaction uniquement bactérienne",
-                    "L'interaction entre deux antigènes"
-                ],
-                correct: 1,
-                explanation: "Une réaction croisée se produit quand un anticorps reconnaît une molécule apparentée à l'antigène initial. C'est une des causes potentielles de déclenchement de maladies auto-immunes."
-            },
-            {
-                question: "Quelle protéine du jaune d'œuf peut cliver les bactéries Gram+ ?",
-                options: [
-                    "L'albumine",
-                    "Le lysozyme",
-                    "La caséine",
-                    "L'ovalbumine"
-                ],
-                correct: 1,
-                explanation: "Le lysozyme, présent dans le jaune d'œuf et dans la bouche, permet de cliver les bactéries Gram+."
-            },
-            {
-                question: "Pourquoi cherche-t-on à créer des anticorps dirigés contre des épitopes spécifiques plutôt que contre la protéine entière ?",
-                options: [
-                    "C'est moins cher",
-                    "Pour réduire les réactions croisées et les effets secondaires",
-                    "C'est plus rapide",
-                    "Pour augmenter la réponse immunitaire"
-                ],
-                correct: 1,
-                explanation: "On cherche à créer des anticorps spécifiques pour un épitope précis afin de réduire les possibilités de réactions croisées et donc les effets secondaires. Plus on fait de réponses croisées, plus on a d'effets secondaires."
-            },
-            {
-                question: "Pourquoi la vaccination est-elle difficile à développer ?",
-                options: [
-                    "Car les antigènes sont trop petits",
-                    "Car le CMH est différent d'une personne à l'autre, il faut trouver une séquence efficace pour la majorité",
-                    "Car les anticorps sont trop gros",
-                    "Car les virus mutent trop lentement"
-                ],
-                correct: 1,
-                explanation: "La difficulté de la vaccination réside dans le fait que le CMH est différent d'une personne à l'autre. Il faut donc trouver une séquence antigénique qui permette à la majorité des individus de bien réagir et d'être efficacement protégés."
-            },
-            {
-                question: "Combien de clones différents trouve-t-on généralement dans les cancers selon le cours ?",
-                options: [
-                    "1 clone",
-                    "5 clones",
-                    "15 clones",
-                    "50 clones"
-                ],
-                correct: 2,
-                explanation: "Tous les cancers ont environ 15 clones différents. Ils évoluent de la même façon selon l'assemblage de ces clones, qui est défini dans l'environnement durant la création de la tumeur."
-            },
-            {
-                question: "Que forme le TCR avec le peptide et le CMH ?",
-                options: [
-                    "Un complexe dimoléculaire",
-                    "Un complexe trimoléculaire TCR-peptide-CMH",
-                    "Un complexe avec quatre molécules",
-                    "Aucun complexe stable"
-                ],
-                correct: 1,
-                explanation: "Les peptides antigéniques reconnus par les cellules T forment un complexe trimoléculaire : TCR-peptide-CMH."
-            },
-            {
-                question: "Que se passe-t-il lors d'une seconde immunisation avec une protéine dénaturée ?",
-                options: [
-                    "La réponse humorale et cellulaire sont toutes deux induites",
-                    "La réponse cellulaire peut être induite mais pas la réponse humorale",
-                    "Aucune réponse n'est induite",
-                    "Seule la réponse humorale est induite"
-                ],
-                correct: 1,
-                explanation: "Lors d'une seconde immunisation par une protéine dénaturée, la réponse cellulaire peut être induite alors que la réponse humorale ne l'est pas, car les cellules T reconnaissent l'antigène apprêté en peptides."
-            },
-            {
-                question: "Quelles sont les régions des protéines globulaires reconnues comme épitopes ?",
-                options: [
-                    "Les régions cachées au centre",
-                    "Les régions qui font protrusion à la surface (15 à 22 acides aminés)",
-                    "Uniquement les régions hydrophobes",
-                    "Les régions de la structure primaire uniquement"
-                ],
-                correct: 1,
-                explanation: "Pour les protéines globulaires, les régions qui font protrusion à la surface (15 à 22 acides aminés) sont reconnues comme épitopes. Ce sont souvent des acides aminés hydrophiles."
-            },
-            {
-                question: "Comment certains pathogènes échappent-ils à la reconnaissance immunitaire ?",
-                options: [
-                    "En devenant plus petits",
-                    "En changeant la conformation de l'épitope ou en changeant leur 'cape' moléculaire",
-                    "En arrêtant de se reproduire",
-                    "En détruisant tous les anticorps"
-                ],
-                correct: 1,
-                explanation: "Les bactéries et les parasites peuvent changer la conformation de l'épitope pour ne plus être reconnus (masquage) ou peuvent changer de cape moléculaire, comme dans le cas du paludisme/malaria."
-            },
-            {
-                question: "Qu'est-ce qu'un anticorps polyclonal monospécifique ?",
-                options: [
-                    "Un anticorps reconnaissant un seul épitope",
-                    "Un anticorps reconnaissant différents épitopes du même antigène",
-                    "Un anticorps reconnaissant plusieurs antigènes différents",
-                    "Un anticorps produit par un seul clone"
-                ],
-                correct: 1,
-                explanation: "Un anticorps polyclonal monospécifique reconnaît différents épitopes du même antigène, contrairement à un anticorps polyclonal qui reconnaît les épitopes de différents antigènes."
-            },
-            {
-                question: "Dans quelles régions fait-on généralement les injections de vaccins ?",
-                options: [
-                    "Uniquement intraveineuse (iv)",
-                    "Intraveineuse (iv), intradermique (id), sous-cutanée (sc), intramusculaire (im), ou intrapéritonéale (ip)",
-                    "Uniquement intramusculaire",
-                    "Uniquement sous-cutanée"
-                ],
-                correct: 1,
-                explanation: "Les modes d'injection d'un vaccin incluent : intraveineuse (iv), intradermique (id), sous-cutanée (sc), intramusculaire (im), et intrapéritonéale (ip)."
-            }
+           {
+    question: "Qu'est-ce que la domestication ?",
+    options: [
+        "Le processus de capture d'animaux sauvages",
+        "L'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme",
+        "La modification génétique des espèces en laboratoire",
+        "L'introduction d'espèces dans de nouveaux territoires"
+    ],
+    correct: 1,
+    explanation: "La domestication est l'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme (sélection artificielle) selon ses aptitudes biologiques."
+},
+{
+    question: "À quelle époque trouve-t-on les premières preuves de domestication (à l'exception du chien) ?",
+    options: [
+        "Au Paléolithique, il y a 50 000 ans",
+        "Au début du Néolithique, il y a 11 000 ans",
+        "À l'époque romaine, il y a 2 000 ans",
+        "Au Moyen Âge, il y a 1 000 ans"
+    ],
+    correct: 1,
+    explanation: "Les premières preuves de domestication datent du début du Néolithique (11 000 ans), dans le 'croissant fertile' (Mésopotamie), lorsque les humains ont commencé à se sédentariser."
+},
+{
+    question: "Quel animal a été le premier à être domestiqué par l'Homme ?",
+    options: [
+        "Le mouton",
+        "La vache",
+        "Le chien",
+        "Le cheval"
+    ],
+    correct: 2,
+    explanation: "Le chien (Canis familiaris) a été domestiqué il y a environ 15 000 ans, bien avant n'importe quel autre animal, à partir du loup gris."
+},
+{
+    question: "Quels sont les deux prérequis essentiels pour la domestication des animaux ?",
+    options: [
+        "Être carnivore et avoir une grande taille",
+        "Vivre en densités élevées et se reproduire en présence de l'Homme",
+        "Être herbivore et avoir un pelage épais",
+        "Vivre en solitaire et être agressif"
+    ],
+    correct: 1,
+    explanation: "Les prérequis pour la domestication sont : vivre à des densités de population importantes (en groupe) et se reproduire en présence de l'Homme (en captivité)."
+},
+{
+    question: "Pourquoi le loup et l'Homme ont-ils pu former un partenariat naturel ?",
+    options: [
+        "Car ils avaient peur des mêmes prédateurs",
+        "Car ils occupaient la même guilde et avaient des organisations sociales similaires",
+        "Car le loup était naturellement docile",
+        "Car l'Homme pouvait nourrir facilement le loup"
+    ],
+    correct: 1,
+    explanation: "Homme et loup occupaient la même guilde (groupe fonctionnel) avec des sociabilités complexes et des organisations proches, ce qui a permis un mutualisme dans la chasse."
+},
+{
+    question: "Quel impact majeur la domestication du chien a-t-elle eu sur l'histoire humaine ?",
+    options: [
+        "Uniquement la compagnie et le divertissement",
+        "Meilleurs succès de chasse, augmentation de protéines et conséquences sur l'hominisation",
+        "Seulement la protection des campements",
+        "Aucun impact significatif"
+    ],
+    correct: 1,
+    explanation: "La domestication du chien a permis de meilleurs succès de chasse, un apport accru de protéines, une augmentation du volume cérébral et aurait été un élément-Coublie pas que tu dois faire autant de questions pour que je sache répondre à tout le courjavascript{
+    question: "Qu'est-ce que la domestication ?",
+    options: [
+        "Le processus de capture d'animaux sauvages",
+        "L'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme",
+        "La modification génétique des espèces en laboratoire",
+        "L'introduction d'espèces dans de nouveaux territoires"
+    ],
+    correct: 1,
+    explanation: "La domestication est l'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme (sélection artificielle) selon ses aptitudes biologiques."
+},
+{
+    question: "À quelle époque trouve-t-on les premières preuves de domestication (à l'exception du chien) ?",
+    options: [
+        "Au Paléolithique, il y a 50 000 ans",
+        "Au début du Néolithique, il y a 11 000 ans",
+        "À l'époque romaine, il y a 2 000 ans",
+        "Au Moyen Âge, il y a 1 000 ans"
+    ],
+    correct: 1,
+    explanation: "Les premières preuves de domestication datent du début du Néolithique (11 000 ans), dans le 'croissant fertile' (Mésopotamie), lorsque les humains ont commencé à se sédentariser."
+},
+{
+    question: "Quel animal a été le premier à être domestiqué par l'Homme ?",
+    options: [
+        "Le mouton",
+        "La vache",
+        "Le chien",
+        "Le cheval"
+    ],
+    correct: 2,
+    explanation: "Le chien (Canis familiaris) a été domestiqué il y a environ 15 000 ans, bien avant n'importe quel autre animal, à partir du loup gris."
+},
+{
+    question: "Quels sont les deux prérequis essentiels pour la domestication des animaux ?",
+    options: [
+        "Être carnivore et avoir une grande taille",
+        "Vivre en densités élevées et se reproduire en présence de l'Homme",
+        "Être herbivore et avoir un pelage épais",
+        "Vivre en solitaire et être agressif"
+    ],
+    correct: 1,
+    explanation: "Les prérequis pour la domestication sont : vivre à des densités de population importantes (en groupe) et se reproduire en présence de l'Homme (en captivité)."
+},
+{
+    question: "Pourquoi le loup et l'Homme ont-ils pu former un partenariat naturel ?",
+    options: [
+        "Car ils avaient peur des mêmes prédateurs",
+        "Car ils occupaient la même guilde et avaient des organisations sociales similaires",
+        "Car le loup était naturellement docile",
+        "Car l'Homme pouvait nourrir facilement le loup"
+    ],
+    correct: 1,
+    explanation: "Homme et loup occupaient la même guilde (groupe fonctionnel) avec des sociabilités complexes et des organisations proches, ce qui a permis un mutualisme dans la chasse."
+},
+{
+    question: "Quel impact majeur la domestication du chien a-t-elle eu sur l'histoire humaine ?",
+    options: [
+        "Uniquement la compagnie et le divertissement",
+        "Meilleurs succès de chasse, augmentation de protéines et conséquences sur l'hominisation",
+        "Seulement la protection des campements",
+        "Aucun impact significatif"
+    ],
+    correct: 1,
+    explanation: "La domestication du chien a permis de meilleurs succès de chasse (3 fois plus de gibier), un apport accru de protéines, une augmentation du volume cérébral et aurait été un élément-clé dans l'origine de plusieurs civilisations."
+},
+{
+    question: "Quelle modification morphologique distingue particulièrement le chien du loup ?",
+    options: [
+        "La taille des pattes",
+        "Les muscles faciaux autour de l'œil permettant de lever les sourcils",
+        "La forme des oreilles",
+        "La longueur de la queue"
+    ],
+    correct: 1,
+    explanation: "Les chiens ont des muscles faciaux qui leur permettent de lever leurs sourcils intérieurs, ce qui fait paraître leurs yeux grands et tristes. Cette caractéristique a été façonnée par les préjugés humains inconscients."
+},
+{
+    question: "Quel a été le premier animal d'élevage domestiqué il y a 11 000 ans ?",
+    options: [
+        "La chèvre",
+        "Le mouton",
+        "Le cochon",
+        "La vache"
+    ],
+    correct: 1,
+    explanation: "Les moutons ont été les premiers animaux domestiqués comme source de nourriture il y a 11 000 ans, comme en témoignent les os d'agneaux retrouvés dans un campement au Nord de l'Irak."
+},
+{
+    question: "Quelle est l'espèce sauvage ancêtre de la vache domestique ?",
+    options: [
+        "Le bison",
+        "Le buffle",
+        "L'aurochs (Bos primigenius)",
+        "Le zébu sauvage"
+    ],
+    correct: 2,
+    explanation: "L'aurochs (Bos primigenius) est l'espèce sauvage ancêtre de toutes les vaches domestiques actuelles. Il est apparu en Inde il y a 2 millions d'années et a disparu au 17ème siècle (1627 en Pologne)."
+},
+{
+    question: "Combien d'individus auraient été à l'origine de tous les bovins domestiques actuels ?",
+    options: [
+        "Environ 10 individus",
+        "Environ 80 individus",
+        "Environ 500 individus",
+        "Environ 2000 individus"
+    ],
+    correct: 1,
+    explanation: "Tous les bovins domestiques actuels descendraient d'un très faible nombre d'individus (environ 80) domestiqués au Proche-Orient il y a 10 500 ans."
+},
+{
+    question: "Quel impact évolutif la domestication de la vache a-t-elle eu sur l'Homme ?",
+    options: [
+        "Développement de la résistance au paludisme",
+        "Persistance de la tolérance au lactose à l'âge adulte",
+        "Augmentation de la taille corporelle",
+        "Modification de la couleur de peau"
+    ],
+    correct: 1,
+    explanation: "La domestication de la vache a entraîné la persistance de la tolérance au lactose à l'âge adulte dans les populations liées historiquement à l'élevage bovin, car elles consommaient du lait non humain après le sevrage."
+},
+{
+    question: "Pourquoi le chat a-t-il été domestiqué il y a 10 000 ans ?",
+    options: [
+        "Pour la compagnie uniquement",
+        "Pour chasser les souris dans les champs et protéger les récoltes",
+        "Pour sa fourrure",
+        "Pour la protection contre les prédateurs"
+    ],
+    correct: 1,
+    explanation: "Le chat a été domestiqué il y a 10 000 ans pour chasser les souris dans les champs, contemporaine à la domestication végétale et aux premières cultures, protégeant ainsi les silos à grains des pullulations de rongeurs."
+},
+{
+    question: "Quelle différence majeure existe-t-il entre le chat et le chien domestiques ?",
+    options: [
+        "Le chat a été plus transformé par l'Homme",
+        "Le chat conserve une autonomie qui l'apparente à un animal 'presque' sauvage",
+        "Le chat ne peut pas survivre sans l'Homme",
+        "Le chat a perdu tous ses instincts de prédateur"
+    ],
+    correct: 1,
+    explanation: "Contrairement au chien qui a été transformé par l'Homme et dépend de lui, le chat conserve une autonomie qui l'apparente à un animal 'presque' sauvage et est génétiquement très similaire à ses ancêtres."
+},
+{
+    question: "Quel impact révolutionnaire le cheval a-t-il eu sur l'histoire humaine ?",
+    options: [
+        "Uniquement dans l'agriculture",
+        "Révolution du transport, du commerce, de la guerre et de la communication",
+        "Seulement dans les loisirs",
+        "Aucun impact significatif"
+    ],
+    correct: 1,
+    explanation: "Le cheval a révolutionné la façon de voyager et faire du commerce, de faire la guerre, de communiquer, et a considérablement accéléré les flux de gènes et culturels entre populations humaines, permettant les premières connexions territoriales à grande échelle."
+},
+{
+    question: "Qu'est-ce que le syndrome de domestication végétale ?",
+    options: [
+        "Une maladie qui affecte les plantes cultivées",
+        "Des caractères modifiés par l'Homme qui facilitent culture et récolte mais rendent les plantes incapables de survivre seules",
+        "Un processus naturel d'adaptation",
+        "Une technique de modification génétique"
+    ],
+    correct: 1,
+    explanation: "Le syndrome de domestication végétale désigne des caractères d'intérêt modifiés par l'Homme qui facilitent culture, récolte et stockage, mais qui peuvent rendre les plantes incapables de survivre seules dans un milieu sauvage."
+},
+{
+    question: "Quelles sont les caractéristiques principales du syndrome de domestication chez les plantes ?",
+    options: [
+        "Croissance lente et petite taille",
+        "Augmentation de la taille des fruits, réduction de la dispersion des graines, disparition de la dormance",
+        "Augmentation de la toxicité",
+        "Réduction de la taille des fruits"
+    ],
+    correct: 1,
+    explanation: "Le syndrome de domestication inclut : croissance rapide, taille plus compacte, augmentation de la taille des fruits/graines, réduction ou absence de dispersion des graines, et disparition de la dormance des graines."
+},
+{
+    question: "Qu'est-ce que la non-déhiscence des grains et pourquoi était-elle recherchée ?",
+    options: [
+        "Les grains tombent facilement, facilitant la dispersion naturelle",
+        "Les grains restent attachés à l'épi, permettant une récolte plus efficace",
+        "Les grains sont plus gros",
+        "Les grains germent plus rapidement"
+    ],
+    correct: 1,
+    explanation: "La non-déhiscence signifie que les grains matures restent solidement attachés à l'épi. Ce caractère a été sélectionné inconsciemment car il permettait une récolte beaucoup plus rapide et efficace avec les faucilles."
+},
+{
+    question: "Quelle est l'espèce sauvage ancêtre du maïs ?",
+    options: [
+        "Le blé sauvage",
+        "La téosinte",
+        "Le millet sauvage",
+        "L'orge sauvage"
+    ],
+    correct: 1,
+    explanation: "La téosinte (Zea mays parviglumis) est l'ancêtre sauvage du maïs. La domestication a commencé il y a 7000 ans au Mexique, dans la moyenne vallée du Rio Balsas."
+},
+{
+    question: "Quels changements majeurs le maïs a-t-il subi lors de sa domestication ?",
+    options: [
+        "Diminution de la taille de la plante",
+        "Augmentation de la taille de l'épi, des grains, non-déhiscence, monocaulie",
+        "Multiplication des racines",
+        "Réduction du nombre de grains"
+    ],
+    correct: 1,
+    explanation: "Le maïs a subi plusieurs changements : augmentation de la taille de la plante et de l'épi, augmentation de la taille et du nombre de grains, non-déhiscence des grains, monocaulie (une seule tige), et suppression de la cupule."
+},
+{
+    question: "Qu'est-ce qu'un 'genet' et un 'ramet' en multiplication végétative ?",
+    options: [
+        "Deux types de graines différentes",
+        "Genet = individu génétique (clone), Ramet = individu physique",
+        "Deux types de racines",
+        "Deux types de fleurs"
+    ],
+    correct: 1,
+    explanation: "En multiplication végétative, le genet désigne l'individu génétique (tous les clones génétiquement identiques), tandis que le ramet désigne chaque individu physique produit par ce clone."
+},
+{
+    question: "Quels sont les principaux organes de multiplication végétative souterraine ?",
+    options: [
+        "Graines et fruits",
+        "Tubercule (pomme de terre), bulbe (oignon), rhizome (gingembre)",
+        "Feuilles et tiges aériennes",
+        "Fleurs et pétales"
+    ],
+    correct: 1,
+    explanation: "Les principaux organes de multiplication végétative souterraine sont : le tubercule (tige souterraine modifiée comme la pomme de terre), le bulbe (feuilles souterraines modifiées comme l'oignon), et le rhizome (racine modifiée comme le gingembre)."
+},
+{
+    question: "Qu'est-ce que l'agamospermie ?",
+    options: [
+        "Production de graines stériles",
+        "Production de graines par reproduction clonale sans fécondation",
+        "Production de graines très petites",
+        "Production de graines toxiques"
+    ],
+    correct: 1,
+    explanation: "L'agamospermie est un mode de reproduction où les plantes produisent des graines (bénéfice de la reproduction sexuée) mais sans fécondation, créant ainsi des clones du pied-mère tout en bénéficiant de la dispersion par graines."
+},
+{
+    question: "Qu'est-ce que la polyembryonie et quel est son intérêt agronomique ?",
+    options: [
+        "Présence d'un seul embryon très gros",
+        "Présence de plusieurs embryons dans une graine, permettant propagation rapide et élimination des maladies",
+        "Absence d'embryon",
+        "Embryons toxiques"
+    ],
+    correct: 1,
+    explanation: "La polyembryonie est la présence de plusieurs embryons dans une graine. Elle permet l'élimination des maladies systémiques du pied-mère infecté et la propagation rapide de nombreux semis depuis un individu présentant des caractères intéressants."
+},
+{
+    question: "Qu'est-ce que l'autopolyploïdie ?",
+    options: [
+        "Diminution du nombre de chromosomes",
+        "Augmentation intraspécifique du nombre de jeux de chromosomes homologues",
+        "Fusion de deux espèces différentes",
+        "Perte de chromosomes lors de la reproduction"
+    ],
+    correct: 1,
+    explanation: "L'autopolyploïdie est l'augmentation intraspécifique du nombre de jeux de chromosomes homologues de base, par exemple par des gamètes non réduits (exemples : pomme de terre, poireau)."
+},
+{
+    question: "Qu'est-ce que l'allopolyploïdie ?",
+    options: [
+        "Réduction du nombre de chromosomes",
+        "Augmentation interspécifique du nombre de chromosomes par hybridation",
+        "Modification de la forme des chromosomes",
+        "Perte de matériel génétique"
+    ],
+    correct: 1,
+    explanation: "L'allopolyploïdie est l'augmentation interspécifique du nombre de jeux de chromosomes homologues de base par hybridation(s) entre espèces différentes (exemples : blé, pommier)."
+},
+{
+    question: "Qu'est-ce que la mutagenèse en agriculture ?",
+    options: [
+        "Sélection naturelle des plantes",
+        "Modification de l'ADN par mutations aléatoires (produits chimiques ou irradiation)",
+        "Croisement simple entre deux variétés",
+        "Culture de plantes sans pesticides"
+    ],
+    correct: 1,
+    explanation: "La mutagenèse, apparue dans les années 1920 et utilisée en routine dans les années 1950, consiste à modifier l'ADN des plantes par mutations aléatoires via exposition à des produits chimiques ou à une irradiation pour créer de nouveaux caractères."
+},
+{
+    question: "Combien de variétés de plantes ont été obtenues par mutagenèse ?",
+    options: [
+        "Environ 100 variétés",
+        "Environ 500 variétés",
+        "Plus de 3200 variétés",
+        "Environ 1000 variétés"
+    ],
+    correct: 2,
+    explanation: "Plus de 3200 variétés de plantes ont été obtenues par mutagenèse, incluant le pamplemousse rouge, la banane, l'arachide, la menthe poivrée, le riz, et de nombreuses autres espèces."
+},
+{
+    question: "Quelle était la population humaine mondiale au Néolithique (-8000 avant J.C.) ?",
+    options: [
+        "50 millions",
+        "1 million",
+        "5 millions",
+        "100 millions"
+    ],
+    correct: 2,
+    explanation: "Au Néolithique (début de l'agriculture, -8000 avant J.C.), la population humaine mondiale était d'environ 5 millions d'êtres humains."
+},
+{
+    question: "Quelle est la population humaine mondiale actuelle (d'après le cours) ?",
+    options: [
+        "6 milliards",
+        "7 milliards",
+        "8,25 milliards",
+        "10 milliards"
+    ],
+    correct: 2,
+    explanation: "La population mondiale actuelle est de 8 250 000 000 (8,25 milliards) avec un taux de croissance actuel de 73 millions par an, soit environ 2,3 individus par seconde."
+},
+{
+    question: "Qu'est-ce que la 'Révolution verte' de la 2ème moitié du 20ème siècle ?",
+    options: [
+        "Un mouvement écologique",
+        "Une augmentation des rendements par sélection génétique, biotechnologie, irrigation et intrants",
+        "L'abandon de l'agriculture intensive",
+        "La création de parcs naturels"
+    ],
+    correct: 1,
+    explanation: "La 'Révolution verte' désigne l'augmentation des rendements agricoles grâce à l'utilisation de semences sélectionnées, d'apports biotechnologiques, d'une meilleure gestion de l'irrigation, et d'une augmentation massive d'engrais (+7450%) et de produits phytosanitaires (+7420%)."
+},
+{
+    question: "Quel est le défi majeur de l'agriculture au 21ème siècle ?",
+    options: [
+        "Augmenter les surfaces cultivées indéfiniment",
+        "Maintenir des rendements élevés sans détruire les habitats",
+        "Réduire la production agricole",
+        "Abandonner l'élevage complètement"
+    ],
+    correct: 1,
+    explanation: "Le défi majeur du 21ème siècle est de maintenir des rendements agricoles et halieutiques élevés pour subvenir aux besoins de la population croissante, sans détruire les habitats concernés dans un espace délimité."
+},
+{
+    question: "Qu'est-ce que l'ingénierie génétique (OGM) ?",
+    options: [
+        "Sélection traditionnelle par croisements",
+        "Introduction d'un ou plusieurs gènes spécifiques responsables d'un caractère d'intérêt",
+        "Irradiation des plantes",
+        "Culture in vitro simple"
+    ],
+    correct: 1,
+    explanation: "L'ingénierie génétique (fin du 20ème siècle) permet l'introduction dans un organisme d'un ou plusieurs gènes spécifiques responsables d'un caractère d'intérêt, limitant l'introduction aux seuls gènes identifiés sans gènes non désirés."
+},
+{
+    question: "Comment fonctionne la bactérie Agrobacterium tumefaciens dans la transgénèse ?",
+    options: [
+        "Elle détruit les cellules végétales",
+        "Elle transfère naturellement un plasmide avec ADN-T dans le génome de l'hôte",
+        "Elle produit des pesticides",
+        "Elle fixe l'azote atmosphérique"
+    ],
+    correct: 1,
+    explanation: "Agrobacterium tumefaciens possède la capacité pathogène naturelle de transférer dans les cellules de son hôte un plasmide avec une région transposable (ADN-T) qui s'insère dans le génome de l'hôte. Cette propriété est utilisée pour transférer des constructions génétiques artificielles."
+},
+{
+    question: "Qu'est-ce que le 'maïs Bt' ?",
+    options: [
+        "Un maïs résistant à la sécheresse",
+        "Un maïs qui produit une endotoxine contre la pyrale grâce à un gène de Bacillus thuringiensis",
+        "Un maïs à croissance très rapide",
+        "Un maïs sans gluten"
+    ],
+    correct: 1,
+    explanation: "Le maïs Bt (1996) contient un gène de Bacillus thuringiensis qui produit une endotoxine (Cry) non toxique pour l'Homme mais qui tue les larves de la pyrale (Ostrinia nubilalis), permettant au maïs de se défendre naturellement contre cet herbivore."
+},
+{
+    question: "Quels sont les 5 pays qui représentent 90,5% de la superficie mondiale cultivée en OGM ?",
+    options: [
+        "France, Allemagne, Italie, Espagne, Royaume-Uni",
+        "USA (39%), Brésil (26%), Argentine (12,5%), Canada (7%), Inde (6%)",
+        "Chine, Japon, Corée, Thaïlande, Vietnam",
+        "Russie, Ukraine, Pologne, Roumanie, Bulgarie"
+    ],
+    correct: 1,
+    explanation: "En 2018, 5 pays représentaient 90,5% de la superficie mondiale cultivée en OGM (191,7 millions d'hectares sur 211,8) : USA (39%), Brésil (26%), Argentine (12,5%), Canada (7%), et Inde (6%)."
+},
+{
+    question: "Quelle est la différence entre cisgénèse et transgénèse ?",
+    options: [
+        "Il n'y a aucune différence",
+        "Cisgénèse : gène de la même espèce ; Transgénèse : gène d'une autre espèce",
+        "Cisgénèse : sans OGM ; Transgénèse : avec OGM",
+        "Cisgénèse : plantes ; Transgénèse : animaux"
+    ],
+    correct: 1,
+    explanation: "Dans la cisgénèse, le gène inséré provient de la même espèce (ou d'une espèce proche), tandis que dans la transgénèse conventionnelle, le gène peut provenir de n'importe quelle espèce. Les techniques utilisées sont identiques."
+},
+{
+    question: "Qu'est-ce que l'interférence à ARN (ARNi) ?",
+    options: [
+        "Une technique de multiplication cellulaire",
+        "Un processus qui bloque l'expression des gènes sans modification structurelle du génome",
+        "Une méthode de séquençage génétique",
+        "Un type de mutation génétique"
+    ],
+    correct: 1,
+    explanation: "L'interférence à ARN est un processus naturel de défense des plantes qui peut être détourné pour bloquer l'expression des gènes sans modification structurelle du génome, en formant un complexe ARN double-brin qui ne peut plus être traduit."
+},
+{
+    question: "Qu'est-ce que le système CRISPR-Cas9 ?",
+    options: [
+        "Un type de pesticide",
+        "Un outil d'édition génomique révolutionnaire, simple et peu coûteux",
+        "Une méthode de culture hydroponique",
+        "Un système d'irrigation automatique"
+    ],
+    correct: 1,
+    explanation: "CRISPR-Cas9 (2012) est une révolution technologique en édition génomique : très simple et peu coûteux, il permet de modifier/éditer génétiquement tous les organismes avec une grande précision, comme des 'ciseaux moléculaires' ciblés."
+},
+{
+    question: "Quel est le rôle biologique naturel du complexe CRISPR/Cas chez les procaryotes ?",
+    options: [
+        "Photosynthèse",
+        "Immunité adaptative contre les virus et phages",
+        "Respiration cellulaire",
+        "Division cellulaire"
+    ],
+    correct: 1,
+    explanation: "Le complexe CRISPR/Cas a pour rôle biologique naturel l'immunité adaptative des procaryotes : la bactérie conserve un 'enregistrement' de fragments d'ADN d'organismes invasifs dans son génome (CRISPR) pour les reconnaître et les détruire lors d'une réinfection."
+},
+{
+    question: "Quels sont les deux types de méthodes de modification de l'ADN avec les outils d'édition génomique ?",
+    options: [
+        "Chaleur et froid",
+        "NHEJ (jointure non homologue) pour knock-out et HDR (réparation homologue) pour knock-in",
+        "Croissance et division",
+        "Fusion et fission"
+    ],
+    correct: 1,
+    explanation: "Les outils d'édition génomique utilisent deux méthodes : NHEJ (jointure d'extrémités non homologues) qui crée des indels pour inactiver des gènes (knock-out), et HDR (réparation dirigée par homologie) pour réparer ou ajouter une fonction (knock-in)."
+},
+{
+    question: "Qu'est-ce que la 'viande cultivée' ou 'cellulaire' ?",
+    options: [
+        "De la viande provenant d'animaux nourris biologiquement",
+        "Des amas de cellules musculaires cultivées en laboratoire",
+        "De la viande congelée",
+        "Des substituts végétaux à la viande"
+    ],
+    correct: 1,
+    explanation: "La viande cultivée est constituée d'amas de cellules musculaires cultivées en milieu de culture dans des boîtes de Pétri, mais elle ne reproduit pas complètement les qualités nutritionnelles et sensorielles de la viande (pauvre en fer, nécessite assaisonnement)."
+},
+{
+    question: "Quel est le taux de conversion alimentaire des insectes comparé au bétail ?",
+    options: [
+        "8 kg d'aliments pour 1 kg d'insectes",
+        "2 kg d'aliments pour 1 kg d'insectes (vs 8 kg pour les bovins)",
+        "15 kg d'aliments pour 1 kg d'insectes",
+        "Identique au bétail"
+    ],
+    correct: 1,
+    explanation: "Le taux de conversion alimentaire des insectes est très favorable : 2 kg d'aliments nécessaires pour produire 1 kg d'insectes, contre 8 kg d'aliments pour 1 kg de masse corporelle bovine. Les insectes produisent aussi 10 à 100 fois moins de gaz à effet de serre."
+},
+{
+    question: "Combien d'espèces d'insectes sont comestibles dans le monde selon la FAO ?",
+    options: [
+        "Environ 200 espèces",
+        "Environ 500 espèces",
+        "1 900 espèces",
+        "Plus de 5 000 espèces"
+    ],
+    correct: 2,
+    explanation: "Selon la FAO (Food and Agriculture Organisation), 1 900 espèces d'insectes sont comestibles dans le monde, représentant une excellente alternative à la raréfaction des ressources naturelles."
+},
+{
+    question: "Quelles sont les caractéristiques nutritionnelles des algues ?",
+    options: [
+        "Très pauvres en nutriments",
+        "30% de protéines, <5% de lipides, 36% de fibres, riches en antioxydants",
+        "100% de lipides",
+        "Uniquement des glucides"
+    ],
+    correct: 1,
+    explanation: "Les algues ont des caractéristiques nutritionnelles très avantageuses : 30% de protéines, moins de 5% de lipides, 36% de fibres en moyenne, et riches en antioxydants (caroténoïdes, flavonoïdes, acides phénoliques, vitamines C et E)."
+},
+{
+    question: "Combien d'espèces d'algues sont autorisées à la consommation en France ?",
+    options: [
+        "5 espèces",
+        "Une dizaine d'espèces",
+        "Une vingtaine d'espèces",
+        "Plus de 100 espèces"
+    ],
+    correct: 2,
+    explanation: "Une vingtaine d'espèces d'algues sont autorisées à la consommation en France. Les algues sont considérées comme un 'aliment nouveau' en Europe, bien qu'elles fassent partie des habitudes alimentaires en Asie."
+},
+{
+    question: "Quel problème majeur menace la banane Cavendish ?",
+    options: [
+        "Le réchauffement climatique uniquement",
+        "Une maladie fongique (Fusarium oxysporum) qui pourrait la faire disparaître",
+        "Un manque d'eau",
+        "Des insectes ravageurs"
+    ],
+    correct: 1,
+    explanation: "La banane Cavendish, unique variété vendue dans la plupart des commerces et cultivée en monoculture mondiale, est menacée de disparition par une maladie fongique causée par Fusarium oxysporum. CRISPR pourrait permettre de muter le récepteur utilisé par le champignon."
+},
+    {
+    question: "Quels bénéfices les biotechnologies modernes peuvent-elles apporter à l'agriculture ?",
+    options: [
+        "Uniquement augmenter la taille des fruits",
+        "Diminution des ressources énergétiques, résistance aux parasites, tolérance aux stress, optimisation des minéraux",
+        "Seulement améliorer le goût",
+        "Uniquement réduire les coûts"
+    ],
+    correct: 1,
+    explanation: "Les biotechnologies modernes apportent de nombreux bénéfices : diminution de l'utilisation des ressources énergétiques, optimisation de l'assimilation des éléments minéraux, résistance aux parasites et ravageurs, tolérance aux herbicides et aux stress environnementaux, et stérilité génétique."
+},
+{
+    question: "Qu'est-ce qu'une 'lignée domestiquée' ?",
+    options: [
+        "Un groupe d'animaux sauvages",
+        "Un groupe d'individus ayant acquis des performances, apparence et histoire sélective uniformes selon les sélections de l'Homme",
+        "Une espèce récemment découverte",
+        "Un hybride naturel"
+    ],
+    correct: 1,
+    explanation: "Une lignée domestiquée est un groupe d'individus d'une espèce (animale ou végétale) qui a acquis au fil des générations des performances, une apparence et une histoire sélective uniformes selon les sélections effectuées par l'Homme."
+},
+{
+    question: "Quelle est la différence entre zone de domestication et zone de diversification ?",
+    options: [
+        "Il n'y a pas de différence",
+        "Zone de domestication : mise sous dépendance de l'Homme ; Zone de diversification : sélection de plusieurs formes/lignées",
+        "Les deux termes sont synonymes",
+        "Zone de domestication est toujours plus grande"
+    ],
+    correct: 1,
+    explanation: "La zone de domestication est l'aire où s'est effectuée la mise 'sous dépendance totale' de l'Homme. La zone de diversification est celle où plusieurs formes ont été sélectionnées à partir du premier type domestiqué pour donner plusieurs lignées domestiquées."
+},
+{
+    question: "Qu'est-ce qu'une zone d'acclimatation ?",
+    options: [
+        "La zone d'origine d'une espèce",
+        "Installation d'un organisme dans une région différente de son aire d'origine, capable d'y survivre",
+        "Une zone sans climat",
+        "Une zone protégée"
+    ],
+    correct: 1,
+    explanation: "Une zone d'acclimatation est une région où un organisme a été installé hors de son aire d'origine et où il est capable de survivre et de se maintenir dans ces nouvelles conditions environnementales."
+},
+{
+    question: "Pourquoi les premiers humains ont-ils commencé à pratiquer l'élevage ?",
+    options: [
+        "Pour le sport et les loisirs",
+        "Assurer un approvisionnement régulier en viande fraîche (garde-manger disponible)",
+        "Pour décorer leurs campements",
+        "Par hasard sans raison précise"
+    ],
+    correct: 1,
+    explanation: "L'élevage permettait d'assurer un approvisionnement régulier en viande fraîche, créant un 'garde-manger disponible', contrairement à la chasse qui dépendait du hasard des rencontres et où le surplus de viande se dégradait avec le temps."
+},
+{
+    question: "Quand et où les bovins ont-ils été domestiqués en Inde ?",
+    options: [
+        "Il y a 5 000 ans dans l'Himalaya",
+        "Il y a 10 000 ans dans la vallée de l'Indus",
+        "Il y a 20 000 ans au sud de l'Inde",
+        "Il y a 2 000 ans au Pakistan"
+    ],
+    correct: 1,
+    explanation: "En Inde, les bovins ont été domestiqués il y a 10 000 ans dans la vallée de l'Indus. La domestication s'est produite indépendamment à plusieurs endroits de manière quasi synchrone."
+},
+{
+    question: "Quand la sous-espèce européenne d'aurochs (Bos primigenius primigenius) a-t-elle disparu ?",
+    options: [
+        "Au Moyen Âge",
+        "Au 17ème siècle (1627 en Pologne)",
+        "Au 19ème siècle",
+        "Elle existe encore aujourd'hui"
+    ],
+    correct: 1,
+    explanation: "L'aurochs européen (Bos primigenius primigenius), représenté sur les peintures pariétales de Lascaux et Chauvet, a disparu au 17ème siècle, le dernier spécimen étant mort en 1627 en Pologne."
+},
+{
+    question: "Quelle découverte majeure Edward Jenner a-t-il faite vers 1790 grâce à l'élevage bovin ?",
+    options: [
+        "L'antibiotique",
+        "La vaccination (les personnes travaillant avec les vaches n'attrapaient pas la variole)",
+        "L'insuline",
+        "Les vitamines"
+    ],
+    correct: 1,
+    explanation: "Edward Jenner a découvert la vaccination vers 1790 en observant que les personnes travaillant avec les vaches n'attrapaient jamais la variole car elles étaient porteuses de la vaccine, une maladie similaire mais inoffensive pour les humains."
+},
+{
+    question: "Quelle espèce de chat sauvage est à l'origine du chat domestique actuel ?",
+    options: [
+        "Le chat sauvage européen",
+        "Felis silvestris lybica (Asie du Sud-Ouest et Afrique du Nord)",
+        "Le lynx",
+        "Le tigre"
+    ],
+    correct: 1,
+    explanation: "Le chat domestique actuel descend principalement de Felis silvestris lybica d'Asie du Sud-Ouest et d'Afrique du Nord (Égypte). Prionailurus bengalensis a été utilisé en Chine mais n'a pas contribué aux races actuelles (sauf le chat du Bengale)."
+},
+{
+    question: "Quelle différence comportementale majeure distingue le chat sauvage du chat domestique ?",
+    options: [
+        "Le chat domestique est carnivore, le sauvage herbivore",
+        "Les chats sauvages sont grandement solitaires, les domestiques tolèrent humains et autres chats",
+        "Le chat domestique ne chasse pas",
+        "Il n'y a aucune différence"
+    ],
+    correct: 1,
+    explanation: "Les différences comportementales les plus marquées concernent la sociabilité : les chats sauvages sont grandement solitaires tandis que les chats domestiques 'tolèrent' les humains et les autres chats à proximité."
+},
+{
+    question: "Quel est l'état actuel des populations de chevaux sauvages ?",
+    options: [
+        "Très nombreuses dans le monde entier",
+        "Plus aucune population réellement sauvage n'existe (sauf cheval de Przewalski)",
+        "Seulement en Amérique",
+        "En augmentation constante"
+    ],
+    correct: 1,
+    explanation: "Plus aucune population de cheval réellement 'sauvage' n'existe actuellement. Le cheval de Przewalski (Mongolie) représente l'héritage 'vivant' de la forme sauvage originelle d'il y a 5000 ans, avant l'élevage."
+},
+{
+    question: "Quelles sont les principales différences entre compartiments cultivé et sauvage d'une espèce végétale ?",
+    options: [
+        "Aucune différence",
+        "Cultivé : faible variabilité, sélection artificielle ; Sauvage : grande variabilité, sélection naturelle",
+        "Cultivé : grande variabilité ; Sauvage : faible variabilité",
+        "Les deux ont la même variabilité"
+    ],
+    correct: 1,
+    explanation: "Le compartiment cultivé présente une faible variabilité génétique (sélection artificielle, cultivars élites), tandis que le compartiment sauvage montre une grande variabilité phénotypique (sélection naturelle, adaptations locales, résistance aux maladies)."
+},
+{
+    question: "Pourquoi est-il important de conserver la diversité génétique du compartiment sauvage ?",
+    options: [
+        "Pour des raisons esthétiques uniquement",
+        "Pour l'amélioration des espèces cultivées et l'adaptation aux changements environnementaux",
+        "Ce n'est pas important",
+        "Uniquement pour les musées"
+    ],
+    correct: 1,
+    explanation: "Il est crucial de conserver la diversité génétique (au moins dans le compartiment sauvage) pour l'amélioration des espèces cultivées et pour permettre une adaptation rapide aux changements environnementaux actuels. Pas d'évolution possible sans variabilité."
+},
+{
+    question: "Qu'est-ce que la 'taille efficace de population' (Ne) ?",
+    options: [
+        "Le nombre total d'individus dans une population",
+        "Le nombre de reproducteurs qui ont produit la génération suivante",
+        "La taille physique moyenne des individus",
+        "Le nombre de prédateurs"
+    ],
+    correct: 1,
+    explanation: "La taille efficace de population (Ne) est le nombre de reproducteurs au sein d'une population qui ont produit la génération suivante. L'utilisation intensive de cultivars 'élites' diminue cette taille efficace, créant des populations génétiquement uniformes."
+},
+{
+    question: "Qu'est-ce que le bouturage et quel est son avantage ?",
+    options: [
+        "Une technique de greffe complexe",
+        "Reproduction par partition de parties supérieures, permet maturité sexuelle rapide",
+        "Un type de fertilisation",
+        "Une méthode d'irrigation"
+    ],
+    correct: 1,
+    explanation: "Le bouturage ('cutting') est une technique où des parties supérieures de la plante sont prélevées et développent des racines. Les plantes bouturées atteignent leur maturité sexuelle (floraison) rapidement, ce qui est très utile en horticulture."
+},
+{
+    question: "Qu'est-ce que le marcottage ?",
+    options: [
+        "Production de racines à partir d'une tige touchant le sol",
+        "Division des racines uniquement",
+        "Un type de semis",
+        "Une maladie des plantes"
+    ],
+    correct: 0,
+    explanation: "Le marcottage ('layering') est la production de méristèmes racinaires à partir de tissus apicaux lorsqu'une tige tombe et touche le sol. Au contact du sol (humidité, micro-plaies), il y a dédifférenciation puis redifférenciation en tissu racinaire."
+},
+{
+    question: "Qu'est-ce que le drageonnage ?",
+    options: [
+        "Production de tiges à partir de racines",
+        "Production de fleurs multiples",
+        "Un type de taille des arbres",
+        "Une maladie fongique"
+    ],
+    correct: 0,
+    explanation: "Le drageonnage ('suckering') est la production de méristèmes apicaux (tiges) à partir de tissus racinaires, permettant la création de nouveaux individus physiques (ramets) à partir des racines."
+},
+{
+    question: "Qu'est-ce que la greffe et quel est son principal avantage ?",
+    options: [
+        "Un mode de reproduction naturel",
+        "Association de la vigueur/résistance du porte-greffe et de la productivité du greffon",
+        "Une maladie des arbres",
+        "Un type de fertilisation"
+    ],
+    correct: 1,
+    explanation: "La greffe ('transplant') est plus un mode de propagation qu'un mode de reproduction. Très utilisée chez les arbres fruitiers, elle combine la vigueur/résistance du pied-receveur (porte-greffe) avec la productivité du transplant (greffon)."
+},
+{
+    question: "Comment la téosinte en France s'est-elle adaptée au climat tempéré ?",
+    options: [
+        "Par mutation spontanée uniquement",
+        "Par échanges génétiques avec le maïs tempéré européen (gènes ZCN8 et ACC1)",
+        "Elle ne s'est pas adaptée",
+        "Par sélection naturelle simple"
+    ],
+    correct: 1,
+    explanation: "La téosinte s'est adaptée au climat tempéré français par échanges génétiques avec le maïs tempéré européen, acquérant notamment le gène ZCN8 (précocité de floraison) et la forme mutante du gène ACC1 (résistance aux herbicides)."
+},
+{
+    question: "Quelles sont les 3 catégories principales de techniques de sélection végétale ?",
+    options: [
+        "Arrosage, fertilisation, taille",
+        "Cultures sélectives, mutagenèse, ingénierie génétique",
+        "Semis, plantation, récolte",
+        "Biologique, conventionnel, intensif"
+    ],
+    correct: 1,
+    explanation: "Les trois catégories principales de techniques de sélection pour développer les cultures sont : les cultures sélectives (croisements), la mutagenèse (induction de mutations), et l'ingénierie génétique (modification ciblée)."
+},
+{
+    question: "Quelles sont les limites des cultures sélectives par hybridation ?",
+    options: [
+        "Aucune limite",
+        "Stérilité des variétés, incompatibilité sexuelle, absence du caractère recherché dans l'espèce",
+        "Trop rapide",
+        "Trop efficace"
+    ],
+    correct: 1,
+    explanation: "Les cultures sélectives sont limitées quand : il y a stérilité de la variété donneuse ou receveuse, incompatibilité sexuelle entre lignées parentales, ou absence du caractère recherché chez les plantes de la même espèce (compartiments sauvage et cultivé)."
+},
+{
+    question: "Comment la non-déhiscence des grains a-t-elle été sélectionnée chez les céréales ?",
+    options: [
+        "Par modification génétique moderne",
+        "Sélection inconsciente par utilisation de faucilles (plantes avec grains encore attachés lors de la récolte)",
+        "Par irradiation",
+        "Par croisements complexes"
+    ],
+    correct: 1,
+    explanation: "La non-déhiscence a été sélectionnée inconsciemment : l'utilisation de faucilles pour la récolte favorisait empiriquement les plantes qui avaient un maximum de grains encore attachés sur le pied lors de la récolte, propagés dans les cultures suivantes."
+},
+{
+    question: "Pourquoi les grains plus gros ont-ils été sélectionnés inconsciemment ?",
+    options: [
+        "Pour des raisons esthétiques",
+        "Parce qu'ils germent plus efficacement et produisent des semis plus vigoureux",
+        "Pour faciliter le transport",
+        "Parce qu'ils ont meilleur goût"
+    ],
+    correct: 1,
+    explanation: "Les grains plus gros ont été sélectionnés inconsciemment car ils contiennent plus de quantité alimentaire et de réserves nutritives pour l'embryon, ce qui leur permet de germer plus efficacement et de produire des semis plus vigoureux."
+},
+{
+    question: "Quelles grandes civilisations sud-américaines dépendaient du maïs comme nourriture principale ?",
+    options: [
+        "Égyptiens, Grecs, Romains",
+        "Mayas, Aztèques, Incas",
+        "Vikings, Celtes, Germains",
+        "Sumériens, Babyloniens, Assyriens"
+    ],
+    correct: 1,
+    explanation: "Le maïs est devenu la nourriture principale de toutes les grandes civilisations sud-américaines : les Mayas, les Aztèques et les Incas, après sa domestication il y a 7000 ans au Mexique."
+},
+{
+    question: "Combien de pays cultivaient des OGM en 2018 ?",
+    options: [
+        "10 pays",
+        "26 pays (21 en développement + 5 industrialisés)",
+        "50 pays",
+        "Tous les pays du monde"
+    ],
+    correct: 1,
+    explanation: "En 2018, 26 pays cultivaient des OGM : 21 pays 'en voie de développement' et 5 pays industrialisés, représentant une superficie mondiale de 211,8 millions d'hectares."
+},
+{
+    question: "Quelle est la superficie mondiale cultivée en OGM en 2018 ?",
+    options: [
+        "50 millions d'hectares",
+        "100 millions d'hectares",
+        "211,8 millions d'hectares",
+        "500 millions d'hectares"
+    ],
+    correct: 2,
+    explanation: "En 2018, la superficie mondiale cultivée en OGM était de 211,8 millions d'hectares, dont 191,7 millions (90,5%) concentrés dans 5 pays : USA, Brésil, Argentine, Canada et Inde."
+},
+{
+    question: "Quels sont les quatre principaux outils d'édition génomique mentionnés dans le cours ?",
+    options: [
+        "Microscope, centrifugeuse, PCR, séquenceur",
+        "Méganucléase, nucléases à doigts de zinc, TALEN, CRISPR/Cas9",
+        "Pipette, éprouvette, microscope, incubateur",
+        "PCR, électrophorèse, Western blot, ELISA"
+    ],
+    correct: 1,
+    explanation: "Les quatre principaux outils d'édition génomique sont : les méganucléases, les nucléases à doigts de zinc, les TALEN, et CRISPR/Cas9 (le plus récent et révolutionnaire depuis 2012)."
+},
+{
+    question: "Pourquoi CRISPR/Cas9 a-t-il révolutionné l'édition génomique ?",
+    options: [
+        "Car il est très coûteux",
+        "Car il est très simple, peu coûteux et rapide (jours vs semaines/mois)",
+        "Car il ne fonctionne que sur les bactéries",
+        "Car il est complexe et réservé aux experts"
+    ],
+    correct: 1,
+    explanation: "CRISPR/Cas9 a révolutionné l'édition génomique en 2012 grâce à sa très grande simplicité et son faible coût : le travail qui nécessitait des semaines, mois ou années peut maintenant être effectué en quelques jours."
+},
+{
+    question: "Quelle est la principale limite nutritionnelle de la viande cultivée in vitro ?",
+    options: [
+        "Elle contient trop de protéines",
+        "Elle est pauvre en fer et doit être assaisonnée pour se rapprocher du goût de la viande",
+        "Elle est trop salée",
+        "Elle contient trop de vitamines"
+    ],
+    correct: 1,
+    explanation: "La viande cultivée in vitro ne reproduit pas les qualités nutritionnelles et sensorielles de la viande naturelle : elle est notamment pauvre en fer et doit être assaisonnée avec de nombreux ingrédients pour se rapprocher du goût de la viande."
+},
+{
+    question: "Quel est l'impact énergétique de la production de viande in vitro ?",
+    options: [
+        "Consomme beaucoup moins d'énergie que tous les élevages",
+        "Consomme plus d'énergie que la production de volailles ou de porcs (milieux de culture, incubateurs)",
+        "Ne consomme aucune énergie",
+        "Consomme la même énergie que tous les élevages"
+    ],
+    correct: 1,
+    explanation: "La production de viande in vitro consomme plus d'énergie que la production de volailles ou de porcs en raison de la fabrication des milieux de culture et du chauffage des incubateurs. Son impact futur dépendra de l'utilisation d'énergies vertes."
+},
+{
+    question: "Quelle est la composition typique de la 'viande' d'origine végétale ?",
+    options: [
+        "100% de légumes naturels",
+        "Protéines (16%), gras (12-20%), sel (1,1%), additifs dont méthylcellulose",
+        "Uniquement des protéines",
+        "Aucun additif"
+    ],
+    correct: 1,
+    explanation: "La 'viande' végétale contient environ 16% de protéines (soja, gluten, légumineuses ultra-transformées), 12-20% de gras, 1,1% de sel, et des additifs comme la méthylcellulose (E461) qui peut causer des problèmes intestinaux."
+},
+{
+    question: "Quel est le principal avantage des insectes en termes de production de gaz à effet de serre ?",
+    options: [
+        "Ils en produisent autant que le bétail",
+        "Production 10 à 100 fois plus faible que l'élevage porcin",
+        "Ils n'en produisent aucun",
+        "Production 2 fois plus élevée"
+    ],
+    correct: 1,
+    explanation: "Les insectes produisent 10 à 100 fois moins de gaz à effet de serre que l'élevage porcin, en plus de consommer beaucoup moins d'eau et d'espace qu'un élevage de bétail conventionnel."
+},
+{
+    question: "Quel est le risque de transmission de maladies zoonotiques des insectes ?",
+    options: [
+        "Très élevé",
+        "Faible (contrairement aux élevages conventionnels)",
+        "Identique au bétail",
+        "Inexistant complètement"
+    ],
+    correct: 1,
+    explanation: "Les insectes présentent un faible risque de transmission de maladies zoonotiques (comme la grippe aviaire), contrairement aux élevages de bétail conventionnels, ce qui en fait une alternative plus sûre d'un point de vue sanitaire."
+},
+{
+    question: "Quelle est la population humaine mondiale prévue pour 2050 selon le scénario 'moyen' réaliste ?",
+    options: [
+        "8 milliards",
+        "9,7 milliards",
+        "12 milliards",
+        "15 milliards"
+    ],
+    correct: 1,
+    explanation: "Selon le scénario 'moyen' réaliste, la population humaine sera de 9,7 milliards en 2050, dont 62% (7,6 milliards) vivront en Afrique, Asie du Sud et Asie de l'Est."
+},
+{
+    question: "Dans combien de temps la population mondiale doublera-t-elle à nouveau selon les projections actuelles ?",
+    options: [
+        "Dans 50 ans",
+        "Dans 100 ans",
+        "Dans 200 ans",
+        "Dans 500 ans"
+    ],
+    correct: 2,
+    explanation: "Actuellement, le taux de croissance diminue. La population doublera de nouveau dans 200 ans, alors que précédemment elle doublait en 50 ans (de 1976 à aujourd'hui)."
+},
+{
+    question: "Qu'est-ce que la 'sécurité alimentaire' selon la FAO ?",
+    options: [
+        "Avoir suffisamment de nourriture pour soi-même",
+        "Assurer à toute personne un accès physique et économique aux denrées alimentaires dont elle a besoin",
+        "Produire uniquement des aliments biologiques",
+        "Stocker de la nourriture pour l'avenir"
+    ],
+    correct: 1,
+    explanation: "Selon la FAO (Food and Agriculture Organisation), la sécurité alimentaire signifie 'assurer à toute personne un accès physique et économique aux denrées alimentaires dont elle a besoin'."
+},
+{
+    question: "De combien ont augmenté les apports d'engrais et de produits phytosanitaires pendant la Révolution verte ?",
+    options: [
+        "50% pour les deux",
+        "7 450% pour les engrais et 7 420% pour les phytosanitaires",
+        "100% pour les deux",
+        "Pas d'augmentation"
+    ],
+    correct: 1,
+    explanation: "Durant la Révolution verte (2ème moitié du 20ème siècle), les apports d'engrais ont augmenté de 7 450% et ceux de produits phytosanitaires de 7 420%, contribuant à l'augmentation massive des rendements."
+},
+{
+    question: "Quel pourcentage des forêts terrestres a été perdu avec l'expansion agricole ?",
+    options: [
+        "10%",
+        "25%",
+        "50%",
+        "75%"
+    ],
+    correct: 2,
+    explanation: "L'expansion des terres agricoles s'est faite au détriment des forêts, qui ont diminué de 50%, ainsi que d'autres habitats terrestres, créant un des défis majeurs du 21ème siècle."
+},
+{
+    question: "De combien a augmenté le CO2 atmosphérique dans le contexte agricole du 21ème siècle ?",
+    options: [
+        "+10%",
+        "+30%",
+        "+50%",
+        "+100%"
+    ],
+    correct: 1,
+    explanation: "Dans le contexte de l'agriculture au 21ème siècle, le CO2 atmosphérique et autres gaz à effet de serre ont augmenté de 30%, contribuant aux changements climatiques globaux."
+},
+{
+    question: "Qu'est-ce qu'un 'knock-out' en édition génomique ?",
+    options: [
+        "Ajout d'un nouveau gène",
+        "Inactivation d'un gène par la méthode NHEJ créant des indels",
+        "Réparation d'un gène",
+        "Duplication d'un gène"
+    ],
+    correct: 1,
+    explanation: "Un 'knock-out' est l'inactivation d'un gène obtenue par la méthode NHEJ (jointure d'extrémités non homologues) qui crée des indels (insertions/délétions), rendant le gène non fonctionnel."
+},
+{
+    question: "Qu'est-ce qu'un 'knock-in' en édition génomique ?",
+    options: [
+        "Suppression d'un gène",
+        "Réparation d'un gène ou ajout d'une nouvelle fonction par la méthode HDR",
+        "Inactivation d'un gène",
+        "Mutation aléatoire"
+    ],
+    correct: 1,
+    explanation: "Un 'knock-in' est la réparation d'un gène ou l'ajout d'une nouvelle fonction, obtenu par la méthode HDR (réparation dirigée par homologie) qui utilise la recombinaison homologue pour intégrer précisément une séquence."
+},
         ];
 
         let currentQuestion = 0;
