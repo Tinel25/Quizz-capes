@@ -2,31 +2,100 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz Central</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L3 SVT</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    .content {
+      padding: 30px;
+    }
+    ul {
+      list-style: none;
+      margin-top: 20px;
+    }
+    li {
+      margin-bottom: 20px;
+    }
+    li > ul {
+      margin-top: 10px;
+      margin-left: 20px;
+    }
+    a {
+      display: inline-block;
+      text-decoration: none;
+      color: #333;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+    a:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+      transform: translateX(5px);
+    }
+  </style>
 </head>
 <body>
-  <h1>Choisis ta matière 📚</h1>
-  <ul>
-    <li>
-      Immunologie
+  <div class="container">
+    <div class="header">
+      <h1>L3 SVT</h1>
+      <p>Choisis ta matière</p>
+    </div>
+    <div class="content">
       <ul>
-        <li><a href="Immunologie/Notion_d_Antigene.html">Quiz 1 : Notion d'Antigène</a></li>
-        <li><a href="biologie/quiz2.html">Quiz 2 : x</a></li>
+        <li>
+          <strong>Immunologie</strong>
+          <ul>
+            <li><a href="Immunologie/Notion_d_Antigene.html">Quiz 1 : Notion d'Antigène</a></li>
+            <li><a href="biologie/quiz2.html">Quiz 2 : x</a></li>
+          </ul>
+        </li>
+        <li>
+          <strong>NMH</strong>
+          <ul>
+            <li><a href="informatique/quiz1.html">Quiz 1 : x</a></li>
+            <li><a href="informatique/quiz2.html">Quiz 2 : x</a></li>
+          </ul>
+        </li>
+        <li>
+          <strong>Dynamique</strong>
+          <ul>
+            <li><a href="culture-generale/quiz1.html">Quiz 1 : x</a></li>
+          </ul>
+        </li>
       </ul>
-    </li>
-    <li>
-      NMH
-      <ul>
-        <li><a href="informatique/quiz1.html">Quiz 1 : x</a></li>
-        <li><a href="informatique/quiz2.html">Quiz 2 : x</a></li>
-      </ul>
-    </li>
-    <li>
-      Dynamique
-      <ul>
-        <li><a href="culture-generale/quiz1.html">Quiz 1 : x</a></li>
-      </ul>
-    </li>
-  </ul>
+    </div>
+  </div>
 </body>
 </html>
