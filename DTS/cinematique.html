@@ -1361,6 +1361,7 @@
         let userAnswers = [];
         let shuffledQuestions = [];
 
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
         function shuffleArray(array) {
             const shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -1370,6 +1371,7 @@
             return shuffled;
         }
 
+        // Initialiser le quiz avec les questions mélangées
         function initQuiz() {
             shuffledQuestions = shuffleArray(questions);
             currentQuestion = 0;
@@ -1383,13 +1385,10 @@
             const question = shuffledQuestions[currentQuestion];
             const quizContent = document.getElementById('quizContent');
             
-            const imageHtml = question.image ? `<img src="${question.image}" alt="Question image" class="question-image">` : '';
-            
             quizContent.innerHTML = `
                 <div class="question-block active">
                     <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
                     <div class="question-text">${question.question}</div>
-                    ${imageHtml}
                     <div class="options" id="options">
                         ${question.options.map((option, index) => `
                             <div class="option" onclick="selectOption(${index})">
@@ -1447,4 +1446,64 @@
                 incorrectAnswers++;
             }
             
-            const
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
