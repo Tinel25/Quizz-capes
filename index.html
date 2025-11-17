@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L3 SVT</title>
+  <title>Quiz Central</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -37,29 +37,41 @@
     .content {
       padding: 30px;
     }
-    ul {
-      list-style: none;
-      margin-top: 20px;
-    }
-    li {
+    .dropdown {
       margin-bottom: 20px;
     }
-    li > ul {
+    .dropdown button {
+      width: 100%;
+      text-align: left;
+      background: #f8f9fa;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .dropdown button:hover {
+      border-color: #667eea;
+      background: #f0f4ff;
+    }
+    .dropdown-content {
+      display: none;
       margin-top: 10px;
       margin-left: 20px;
     }
-    a {
-      display: inline-block;
+    .dropdown-content a {
+      display: block;
       text-decoration: none;
       color: #333;
       background: #f8f9fa;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
-      padding: 12px 18px;
+      padding: 10px 14px;
       transition: all 0.3s ease;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
-    a:hover {
+    .dropdown-content a:hover {
       border-color: #667eea;
       background: #f0f4ff;
       transform: translateX(5px);
@@ -69,33 +81,42 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>L3 SVT</h1>
+      <h1>📚 Quiz Central</h1>
       <p>Choisis ta matière</p>
     </div>
     <div class="content">
-      <ul>
-        <li>
-          <strong>Immunologie</strong>
-          <ul>
-            <li><a href="Immunologie/Notion_d_Antigene.html">Quiz 1 : Notion d'Antigène</a></li>
-            <li><a href="biologie/quiz2.html">Quiz 2 : x</a></li>
-          </ul>
-        </li>
-        <li>
-          <strong>NMH</strong>
-          <ul>
-            <li><a href="informatique/quiz1.html">Quiz 1 : x</a></li>
-            <li><a href="informatique/quiz2.html">Quiz 2 : x</a></li>
-          </ul>
-        </li>
-        <li>
-          <strong>Dynamique</strong>
-          <ul>
-            <li><a href="culture-generale/quiz1.html">Quiz 1 : x</a></li>
-          </ul>
-        </li>
-      </ul>
+      
+      <div class="dropdown">
+        <button onclick="toggleDropdown('immuno')">Immunologie ▼</button>
+        <div id="immuno" class="dropdown-content">
+          <a href="Immunologie/Notion_d_Antigene.html">Quiz 1 : Notion d'Antigène</a>
+          <a href="biologie/quiz2.html">Quiz 2 : x</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button onclick="toggleDropdown('nmh')">NMH ▼</button>
+        <div id="nmh" class="dropdown-content">
+          <a href="informatique/quiz1.html">Quiz 1 : x</a>
+          <a href="informatique/quiz2.html">Quiz 2 : x</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button onclick="toggleDropdown('dyn')">Dynamique ▼</button>
+        <div id="dyn" class="dropdown-content">
+          <a href="culture-generale/quiz1.html">Quiz 1 : x</a>
+        </div>
+      </div>
+
     </div>
   </div>
+
+  <script>
+    function toggleDropdown(id) {
+      const content = document.getElementById(id);
+      content.style.display = (content.style.display === "block") ? "none" : "block";
+    }
+  </script>
 </body>
 </html>
