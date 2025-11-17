@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Domestication</title>
+    <title>Quiz DTS - Tectonique des Plaques</title>
     <style>
         * {
             margin: 0;
@@ -132,6 +132,14 @@
             color: #333;
             margin-bottom: 25px;
             line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .options {
@@ -378,15 +386,15 @@
     <div class="container">
         <div class="header">
             <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
-            <h1>🧬 Quiz Immunologie</h1>
-            <p>Domestication</p>
+            <h1>🌍 Quiz Dynamique Terre Solide</h1>
+            <p>Chapitre I : Tectonique globale et cinématique des plaques</p>
         </div>
         
         <div class="progress-container">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div class="progress-text" id="progressText">Question 1 sur 63</div>
+            <div class="progress-text" id="progressText">Question 1 sur 80</div>
         </div>
         
         <div class="quiz-content" id="quizContent"></div>
@@ -410,1027 +418,942 @@
 
     <script>
         const questions = [
-           {
-    question: "Qu'est-ce que la domestication ?",
-    options: [
-        "Le processus de capture d'animaux sauvages",
-        "L'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme",
-        "La modification génétique des espèces en laboratoire",
-        "L'introduction d'espèces dans de nouveaux territoires"
-    ],
-    correct: 1,
-    explanation: "La domestication est l'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme (sélection artificielle) selon ses aptitudes biologiques."
-},
-{
-    question: "À quelle époque trouve-t-on les premières preuves de domestication (à l'exception du chien) ?",
-    options: [
-        "Au Paléolithique, il y a 50 000 ans",
-        "Au début du Néolithique, il y a 11 000 ans",
-        "À l'époque romaine, il y a 2 000 ans",
-        "Au Moyen Âge, il y a 1 000 ans"
-    ],
-    correct: 1,
-    explanation: "Les premières preuves de domestication datent du début du Néolithique (11 000 ans), dans le 'croissant fertile' (Mésopotamie), lorsque les humains ont commencé à se sédentariser."
-},
-{
-    question: "Quel animal a été le premier à être domestiqué par l'Homme ?",
-    options: [
-        "Le mouton",
-        "La vache",
-        "Le chien",
-        "Le cheval"
-    ],
-    correct: 2,
-    explanation: "Le chien (Canis familiaris) a été domestiqué il y a environ 15 000 ans, bien avant n'importe quel autre animal, à partir du loup gris."
-},
-{
-    question: "Quels sont les deux prérequis essentiels pour la domestication des animaux ?",
-    options: [
-        "Être carnivore et avoir une grande taille",
-        "Vivre en densités élevées et se reproduire en présence de l'Homme",
-        "Être herbivore et avoir un pelage épais",
-        "Vivre en solitaire et être agressif"
-    ],
-    correct: 1,
-    explanation: "Les prérequis pour la domestication sont : vivre à des densités de population importantes (en groupe) et se reproduire en présence de l'Homme (en captivité)."
-},
-{
-    question: "Pourquoi le loup et l'Homme ont-ils pu former un partenariat naturel ?",
-    options: [
-        "Car ils avaient peur des mêmes prédateurs",
-        "Car ils occupaient la même guilde et avaient des organisations sociales similaires",
-        "Car le loup était naturellement docile",
-        "Car l'Homme pouvait nourrir facilement le loup"
-    ],
-    correct: 1,
-    explanation: "Homme et loup occupaient la même guilde (groupe fonctionnel) avec des sociabilités complexes et des organisations proches, ce qui a permis un mutualisme dans la chasse."
-},
-{
-    question: "Quel impact majeur la domestication du chien a-t-elle eu sur l'histoire humaine ?",
-    options: [
-        "Uniquement la compagnie et le divertissement",
-        "Meilleurs succès de chasse, augmentation de protéines et conséquences sur l'hominisation",
-        "Seulement la protection des campements",
-        "Aucun impact significatif"
-    ],
-    correct: 1,
-    explanation: "La domestication du chien a permis de meilleurs succès de chasse, un apport accru de protéines, une augmentation du volume cérébral et aurait été un élément-Coublie pas que tu dois faire autant de questions pour que je sache répondre à tout le courjavascript{
-    question: "Qu'est-ce que la domestication ?",
-    options: [
-        "Le processus de capture d'animaux sauvages",
-        "L'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme",
-        "La modification génétique des espèces en laboratoire",
-        "L'introduction d'espèces dans de nouveaux territoires"
-    ],
-    correct: 1,
-    explanation: "La domestication est l'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme (sélection artificielle) selon ses aptitudes biologiques."
-},
-{
-    question: "À quelle époque trouve-t-on les premières preuves de domestication (à l'exception du chien) ?",
-    options: [
-        "Au Paléolithique, il y a 50 000 ans",
-        "Au début du Néolithique, il y a 11 000 ans",
-        "À l'époque romaine, il y a 2 000 ans",
-        "Au Moyen Âge, il y a 1 000 ans"
-    ],
-    correct: 1,
-    explanation: "Les premières preuves de domestication datent du début du Néolithique (11 000 ans), dans le 'croissant fertile' (Mésopotamie), lorsque les humains ont commencé à se sédentariser."
-},
-{
-    question: "Quel animal a été le premier à être domestiqué par l'Homme ?",
-    options: [
-        "Le mouton",
-        "La vache",
-        "Le chien",
-        "Le cheval"
-    ],
-    correct: 2,
-    explanation: "Le chien (Canis familiaris) a été domestiqué il y a environ 15 000 ans, bien avant n'importe quel autre animal, à partir du loup gris."
-},
-{
-    question: "Quels sont les deux prérequis essentiels pour la domestication des animaux ?",
-    options: [
-        "Être carnivore et avoir une grande taille",
-        "Vivre en densités élevées et se reproduire en présence de l'Homme",
-        "Être herbivore et avoir un pelage épais",
-        "Vivre en solitaire et être agressif"
-    ],
-    correct: 1,
-    explanation: "Les prérequis pour la domestication sont : vivre à des densités de population importantes (en groupe) et se reproduire en présence de l'Homme (en captivité)."
-},
-{
-    question: "Pourquoi le loup et l'Homme ont-ils pu former un partenariat naturel ?",
-    options: [
-        "Car ils avaient peur des mêmes prédateurs",
-        "Car ils occupaient la même guilde et avaient des organisations sociales similaires",
-        "Car le loup était naturellement docile",
-        "Car l'Homme pouvait nourrir facilement le loup"
-    ],
-    correct: 1,
-    explanation: "Homme et loup occupaient la même guilde (groupe fonctionnel) avec des sociabilités complexes et des organisations proches, ce qui a permis un mutualisme dans la chasse."
-},
-{
-    question: "Quel impact majeur la domestication du chien a-t-elle eu sur l'histoire humaine ?",
-    options: [
-        "Uniquement la compagnie et le divertissement",
-        "Meilleurs succès de chasse, augmentation de protéines et conséquences sur l'hominisation",
-        "Seulement la protection des campements",
-        "Aucun impact significatif"
-    ],
-    correct: 1,
-    explanation: "La domestication du chien a permis de meilleurs succès de chasse (3 fois plus de gibier), un apport accru de protéines, une augmentation du volume cérébral et aurait été un élément-clé dans l'origine de plusieurs civilisations."
-},
-{
-    question: "Quelle modification morphologique distingue particulièrement le chien du loup ?",
-    options: [
-        "La taille des pattes",
-        "Les muscles faciaux autour de l'œil permettant de lever les sourcils",
-        "La forme des oreilles",
-        "La longueur de la queue"
-    ],
-    correct: 1,
-    explanation: "Les chiens ont des muscles faciaux qui leur permettent de lever leurs sourcils intérieurs, ce qui fait paraître leurs yeux grands et tristes. Cette caractéristique a été façonnée par les préjugés humains inconscients."
-},
-{
-    question: "Quel a été le premier animal d'élevage domestiqué il y a 11 000 ans ?",
-    options: [
-        "La chèvre",
-        "Le mouton",
-        "Le cochon",
-        "La vache"
-    ],
-    correct: 1,
-    explanation: "Les moutons ont été les premiers animaux domestiqués comme source de nourriture il y a 11 000 ans, comme en témoignent les os d'agneaux retrouvés dans un campement au Nord de l'Irak."
-},
-{
-    question: "Quelle est l'espèce sauvage ancêtre de la vache domestique ?",
-    options: [
-        "Le bison",
-        "Le buffle",
-        "L'aurochs (Bos primigenius)",
-        "Le zébu sauvage"
-    ],
-    correct: 2,
-    explanation: "L'aurochs (Bos primigenius) est l'espèce sauvage ancêtre de toutes les vaches domestiques actuelles. Il est apparu en Inde il y a 2 millions d'années et a disparu au 17ème siècle (1627 en Pologne)."
-},
-{
-    question: "Combien d'individus auraient été à l'origine de tous les bovins domestiques actuels ?",
-    options: [
-        "Environ 10 individus",
-        "Environ 80 individus",
-        "Environ 500 individus",
-        "Environ 2000 individus"
-    ],
-    correct: 1,
-    explanation: "Tous les bovins domestiques actuels descendraient d'un très faible nombre d'individus (environ 80) domestiqués au Proche-Orient il y a 10 500 ans."
-},
-{
-    question: "Quel impact évolutif la domestication de la vache a-t-elle eu sur l'Homme ?",
-    options: [
-        "Développement de la résistance au paludisme",
-        "Persistance de la tolérance au lactose à l'âge adulte",
-        "Augmentation de la taille corporelle",
-        "Modification de la couleur de peau"
-    ],
-    correct: 1,
-    explanation: "La domestication de la vache a entraîné la persistance de la tolérance au lactose à l'âge adulte dans les populations liées historiquement à l'élevage bovin, car elles consommaient du lait non humain après le sevrage."
-},
-{
-    question: "Pourquoi le chat a-t-il été domestiqué il y a 10 000 ans ?",
-    options: [
-        "Pour la compagnie uniquement",
-        "Pour chasser les souris dans les champs et protéger les récoltes",
-        "Pour sa fourrure",
-        "Pour la protection contre les prédateurs"
-    ],
-    correct: 1,
-    explanation: "Le chat a été domestiqué il y a 10 000 ans pour chasser les souris dans les champs, contemporaine à la domestication végétale et aux premières cultures, protégeant ainsi les silos à grains des pullulations de rongeurs."
-},
-{
-    question: "Quelle différence majeure existe-t-il entre le chat et le chien domestiques ?",
-    options: [
-        "Le chat a été plus transformé par l'Homme",
-        "Le chat conserve une autonomie qui l'apparente à un animal 'presque' sauvage",
-        "Le chat ne peut pas survivre sans l'Homme",
-        "Le chat a perdu tous ses instincts de prédateur"
-    ],
-    correct: 1,
-    explanation: "Contrairement au chien qui a été transformé par l'Homme et dépend de lui, le chat conserve une autonomie qui l'apparente à un animal 'presque' sauvage et est génétiquement très similaire à ses ancêtres."
-},
-{
-    question: "Quel impact révolutionnaire le cheval a-t-il eu sur l'histoire humaine ?",
-    options: [
-        "Uniquement dans l'agriculture",
-        "Révolution du transport, du commerce, de la guerre et de la communication",
-        "Seulement dans les loisirs",
-        "Aucun impact significatif"
-    ],
-    correct: 1,
-    explanation: "Le cheval a révolutionné la façon de voyager et faire du commerce, de faire la guerre, de communiquer, et a considérablement accéléré les flux de gènes et culturels entre populations humaines, permettant les premières connexions territoriales à grande échelle."
-},
-{
-    question: "Qu'est-ce que le syndrome de domestication végétale ?",
-    options: [
-        "Une maladie qui affecte les plantes cultivées",
-        "Des caractères modifiés par l'Homme qui facilitent culture et récolte mais rendent les plantes incapables de survivre seules",
-        "Un processus naturel d'adaptation",
-        "Une technique de modification génétique"
-    ],
-    correct: 1,
-    explanation: "Le syndrome de domestication végétale désigne des caractères d'intérêt modifiés par l'Homme qui facilitent culture, récolte et stockage, mais qui peuvent rendre les plantes incapables de survivre seules dans un milieu sauvage."
-},
-{
-    question: "Quelles sont les caractéristiques principales du syndrome de domestication chez les plantes ?",
-    options: [
-        "Croissance lente et petite taille",
-        "Augmentation de la taille des fruits, réduction de la dispersion des graines, disparition de la dormance",
-        "Augmentation de la toxicité",
-        "Réduction de la taille des fruits"
-    ],
-    correct: 1,
-    explanation: "Le syndrome de domestication inclut : croissance rapide, taille plus compacte, augmentation de la taille des fruits/graines, réduction ou absence de dispersion des graines, et disparition de la dormance des graines."
-},
-{
-    question: "Qu'est-ce que la non-déhiscence des grains et pourquoi était-elle recherchée ?",
-    options: [
-        "Les grains tombent facilement, facilitant la dispersion naturelle",
-        "Les grains restent attachés à l'épi, permettant une récolte plus efficace",
-        "Les grains sont plus gros",
-        "Les grains germent plus rapidement"
-    ],
-    correct: 1,
-    explanation: "La non-déhiscence signifie que les grains matures restent solidement attachés à l'épi. Ce caractère a été sélectionné inconsciemment car il permettait une récolte beaucoup plus rapide et efficace avec les faucilles."
-},
-{
-    question: "Quelle est l'espèce sauvage ancêtre du maïs ?",
-    options: [
-        "Le blé sauvage",
-        "La téosinte",
-        "Le millet sauvage",
-        "L'orge sauvage"
-    ],
-    correct: 1,
-    explanation: "La téosinte (Zea mays parviglumis) est l'ancêtre sauvage du maïs. La domestication a commencé il y a 7000 ans au Mexique, dans la moyenne vallée du Rio Balsas."
-},
-{
-    question: "Quels changements majeurs le maïs a-t-il subi lors de sa domestication ?",
-    options: [
-        "Diminution de la taille de la plante",
-        "Augmentation de la taille de l'épi, des grains, non-déhiscence, monocaulie",
-        "Multiplication des racines",
-        "Réduction du nombre de grains"
-    ],
-    correct: 1,
-    explanation: "Le maïs a subi plusieurs changements : augmentation de la taille de la plante et de l'épi, augmentation de la taille et du nombre de grains, non-déhiscence des grains, monocaulie (une seule tige), et suppression de la cupule."
-},
-{
-    question: "Qu'est-ce qu'un 'genet' et un 'ramet' en multiplication végétative ?",
-    options: [
-        "Deux types de graines différentes",
-        "Genet = individu génétique (clone), Ramet = individu physique",
-        "Deux types de racines",
-        "Deux types de fleurs"
-    ],
-    correct: 1,
-    explanation: "En multiplication végétative, le genet désigne l'individu génétique (tous les clones génétiquement identiques), tandis que le ramet désigne chaque individu physique produit par ce clone."
-},
-{
-    question: "Quels sont les principaux organes de multiplication végétative souterraine ?",
-    options: [
-        "Graines et fruits",
-        "Tubercule (pomme de terre), bulbe (oignon), rhizome (gingembre)",
-        "Feuilles et tiges aériennes",
-        "Fleurs et pétales"
-    ],
-    correct: 1,
-    explanation: "Les principaux organes de multiplication végétative souterraine sont : le tubercule (tige souterraine modifiée comme la pomme de terre), le bulbe (feuilles souterraines modifiées comme l'oignon), et le rhizome (racine modifiée comme le gingembre)."
-},
-{
-    question: "Qu'est-ce que l'agamospermie ?",
-    options: [
-        "Production de graines stériles",
-        "Production de graines par reproduction clonale sans fécondation",
-        "Production de graines très petites",
-        "Production de graines toxiques"
-    ],
-    correct: 1,
-    explanation: "L'agamospermie est un mode de reproduction où les plantes produisent des graines (bénéfice de la reproduction sexuée) mais sans fécondation, créant ainsi des clones du pied-mère tout en bénéficiant de la dispersion par graines."
-},
-{
-    question: "Qu'est-ce que la polyembryonie et quel est son intérêt agronomique ?",
-    options: [
-        "Présence d'un seul embryon très gros",
-        "Présence de plusieurs embryons dans une graine, permettant propagation rapide et élimination des maladies",
-        "Absence d'embryon",
-        "Embryons toxiques"
-    ],
-    correct: 1,
-    explanation: "La polyembryonie est la présence de plusieurs embryons dans une graine. Elle permet l'élimination des maladies systémiques du pied-mère infecté et la propagation rapide de nombreux semis depuis un individu présentant des caractères intéressants."
-},
-{
-    question: "Qu'est-ce que l'autopolyploïdie ?",
-    options: [
-        "Diminution du nombre de chromosomes",
-        "Augmentation intraspécifique du nombre de jeux de chromosomes homologues",
-        "Fusion de deux espèces différentes",
-        "Perte de chromosomes lors de la reproduction"
-    ],
-    correct: 1,
-    explanation: "L'autopolyploïdie est l'augmentation intraspécifique du nombre de jeux de chromosomes homologues de base, par exemple par des gamètes non réduits (exemples : pomme de terre, poireau)."
-},
-{
-    question: "Qu'est-ce que l'allopolyploïdie ?",
-    options: [
-        "Réduction du nombre de chromosomes",
-        "Augmentation interspécifique du nombre de chromosomes par hybridation",
-        "Modification de la forme des chromosomes",
-        "Perte de matériel génétique"
-    ],
-    correct: 1,
-    explanation: "L'allopolyploïdie est l'augmentation interspécifique du nombre de jeux de chromosomes homologues de base par hybridation(s) entre espèces différentes (exemples : blé, pommier)."
-},
-{
-    question: "Qu'est-ce que la mutagenèse en agriculture ?",
-    options: [
-        "Sélection naturelle des plantes",
-        "Modification de l'ADN par mutations aléatoires (produits chimiques ou irradiation)",
-        "Croisement simple entre deux variétés",
-        "Culture de plantes sans pesticides"
-    ],
-    correct: 1,
-    explanation: "La mutagenèse, apparue dans les années 1920 et utilisée en routine dans les années 1950, consiste à modifier l'ADN des plantes par mutations aléatoires via exposition à des produits chimiques ou à une irradiation pour créer de nouveaux caractères."
-},
-{
-    question: "Combien de variétés de plantes ont été obtenues par mutagenèse ?",
-    options: [
-        "Environ 100 variétés",
-        "Environ 500 variétés",
-        "Plus de 3200 variétés",
-        "Environ 1000 variétés"
-    ],
-    correct: 2,
-    explanation: "Plus de 3200 variétés de plantes ont été obtenues par mutagenèse, incluant le pamplemousse rouge, la banane, l'arachide, la menthe poivrée, le riz, et de nombreuses autres espèces."
-},
-{
-    question: "Quelle était la population humaine mondiale au Néolithique (-8000 avant J.C.) ?",
-    options: [
-        "50 millions",
-        "1 million",
-        "5 millions",
-        "100 millions"
-    ],
-    correct: 2,
-    explanation: "Au Néolithique (début de l'agriculture, -8000 avant J.C.), la population humaine mondiale était d'environ 5 millions d'êtres humains."
-},
-{
-    question: "Quelle est la population humaine mondiale actuelle (d'après le cours) ?",
-    options: [
-        "6 milliards",
-        "7 milliards",
-        "8,25 milliards",
-        "10 milliards"
-    ],
-    correct: 2,
-    explanation: "La population mondiale actuelle est de 8 250 000 000 (8,25 milliards) avec un taux de croissance actuel de 73 millions par an, soit environ 2,3 individus par seconde."
-},
-{
-    question: "Qu'est-ce que la 'Révolution verte' de la 2ème moitié du 20ème siècle ?",
-    options: [
-        "Un mouvement écologique",
-        "Une augmentation des rendements par sélection génétique, biotechnologie, irrigation et intrants",
-        "L'abandon de l'agriculture intensive",
-        "La création de parcs naturels"
-    ],
-    correct: 1,
-    explanation: "La 'Révolution verte' désigne l'augmentation des rendements agricoles grâce à l'utilisation de semences sélectionnées, d'apports biotechnologiques, d'une meilleure gestion de l'irrigation, et d'une augmentation massive d'engrais (+7450%) et de produits phytosanitaires (+7420%)."
-},
-{
-    question: "Quel est le défi majeur de l'agriculture au 21ème siècle ?",
-    options: [
-        "Augmenter les surfaces cultivées indéfiniment",
-        "Maintenir des rendements élevés sans détruire les habitats",
-        "Réduire la production agricole",
-        "Abandonner l'élevage complètement"
-    ],
-    correct: 1,
-    explanation: "Le défi majeur du 21ème siècle est de maintenir des rendements agricoles et halieutiques élevés pour subvenir aux besoins de la population croissante, sans détruire les habitats concernés dans un espace délimité."
-},
-{
-    question: "Qu'est-ce que l'ingénierie génétique (OGM) ?",
-    options: [
-        "Sélection traditionnelle par croisements",
-        "Introduction d'un ou plusieurs gènes spécifiques responsables d'un caractère d'intérêt",
-        "Irradiation des plantes",
-        "Culture in vitro simple"
-    ],
-    correct: 1,
-    explanation: "L'ingénierie génétique (fin du 20ème siècle) permet l'introduction dans un organisme d'un ou plusieurs gènes spécifiques responsables d'un caractère d'intérêt, limitant l'introduction aux seuls gènes identifiés sans gènes non désirés."
-},
-{
-    question: "Comment fonctionne la bactérie Agrobacterium tumefaciens dans la transgénèse ?",
-    options: [
-        "Elle détruit les cellules végétales",
-        "Elle transfère naturellement un plasmide avec ADN-T dans le génome de l'hôte",
-        "Elle produit des pesticides",
-        "Elle fixe l'azote atmosphérique"
-    ],
-    correct: 1,
-    explanation: "Agrobacterium tumefaciens possède la capacité pathogène naturelle de transférer dans les cellules de son hôte un plasmide avec une région transposable (ADN-T) qui s'insère dans le génome de l'hôte. Cette propriété est utilisée pour transférer des constructions génétiques artificielles."
-},
-{
-    question: "Qu'est-ce que le 'maïs Bt' ?",
-    options: [
-        "Un maïs résistant à la sécheresse",
-        "Un maïs qui produit une endotoxine contre la pyrale grâce à un gène de Bacillus thuringiensis",
-        "Un maïs à croissance très rapide",
-        "Un maïs sans gluten"
-    ],
-    correct: 1,
-    explanation: "Le maïs Bt (1996) contient un gène de Bacillus thuringiensis qui produit une endotoxine (Cry) non toxique pour l'Homme mais qui tue les larves de la pyrale (Ostrinia nubilalis), permettant au maïs de se défendre naturellement contre cet herbivore."
-},
-{
-    question: "Quels sont les 5 pays qui représentent 90,5% de la superficie mondiale cultivée en OGM ?",
-    options: [
-        "France, Allemagne, Italie, Espagne, Royaume-Uni",
-        "USA (39%), Brésil (26%), Argentine (12,5%), Canada (7%), Inde (6%)",
-        "Chine, Japon, Corée, Thaïlande, Vietnam",
-        "Russie, Ukraine, Pologne, Roumanie, Bulgarie"
-    ],
-    correct: 1,
-    explanation: "En 2018, 5 pays représentaient 90,5% de la superficie mondiale cultivée en OGM (191,7 millions d'hectares sur 211,8) : USA (39%), Brésil (26%), Argentine (12,5%), Canada (7%), et Inde (6%)."
-},
-{
-    question: "Quelle est la différence entre cisgénèse et transgénèse ?",
-    options: [
-        "Il n'y a aucune différence",
-        "Cisgénèse : gène de la même espèce ; Transgénèse : gène d'une autre espèce",
-        "Cisgénèse : sans OGM ; Transgénèse : avec OGM",
-        "Cisgénèse : plantes ; Transgénèse : animaux"
-    ],
-    correct: 1,
-    explanation: "Dans la cisgénèse, le gène inséré provient de la même espèce (ou d'une espèce proche), tandis que dans la transgénèse conventionnelle, le gène peut provenir de n'importe quelle espèce. Les techniques utilisées sont identiques."
-},
-{
-    question: "Qu'est-ce que l'interférence à ARN (ARNi) ?",
-    options: [
-        "Une technique de multiplication cellulaire",
-        "Un processus qui bloque l'expression des gènes sans modification structurelle du génome",
-        "Une méthode de séquençage génétique",
-        "Un type de mutation génétique"
-    ],
-    correct: 1,
-    explanation: "L'interférence à ARN est un processus naturel de défense des plantes qui peut être détourné pour bloquer l'expression des gènes sans modification structurelle du génome, en formant un complexe ARN double-brin qui ne peut plus être traduit."
-},
-{
-    question: "Qu'est-ce que le système CRISPR-Cas9 ?",
-    options: [
-        "Un type de pesticide",
-        "Un outil d'édition génomique révolutionnaire, simple et peu coûteux",
-        "Une méthode de culture hydroponique",
-        "Un système d'irrigation automatique"
-    ],
-    correct: 1,
-    explanation: "CRISPR-Cas9 (2012) est une révolution technologique en édition génomique : très simple et peu coûteux, il permet de modifier/éditer génétiquement tous les organismes avec une grande précision, comme des 'ciseaux moléculaires' ciblés."
-},
-{
-    question: "Quel est le rôle biologique naturel du complexe CRISPR/Cas chez les procaryotes ?",
-    options: [
-        "Photosynthèse",
-        "Immunité adaptative contre les virus et phages",
-        "Respiration cellulaire",
-        "Division cellulaire"
-    ],
-    correct: 1,
-    explanation: "Le complexe CRISPR/Cas a pour rôle biologique naturel l'immunité adaptative des procaryotes : la bactérie conserve un 'enregistrement' de fragments d'ADN d'organismes invasifs dans son génome (CRISPR) pour les reconnaître et les détruire lors d'une réinfection."
-},
-{
-    question: "Quels sont les deux types de méthodes de modification de l'ADN avec les outils d'édition génomique ?",
-    options: [
-        "Chaleur et froid",
-        "NHEJ (jointure non homologue) pour knock-out et HDR (réparation homologue) pour knock-in",
-        "Croissance et division",
-        "Fusion et fission"
-    ],
-    correct: 1,
-    explanation: "Les outils d'édition génomique utilisent deux méthodes : NHEJ (jointure d'extrémités non homologues) qui crée des indels pour inactiver des gènes (knock-out), et HDR (réparation dirigée par homologie) pour réparer ou ajouter une fonction (knock-in)."
-},
-{
-    question: "Qu'est-ce que la 'viande cultivée' ou 'cellulaire' ?",
-    options: [
-        "De la viande provenant d'animaux nourris biologiquement",
-        "Des amas de cellules musculaires cultivées en laboratoire",
-        "De la viande congelée",
-        "Des substituts végétaux à la viande"
-    ],
-    correct: 1,
-    explanation: "La viande cultivée est constituée d'amas de cellules musculaires cultivées en milieu de culture dans des boîtes de Pétri, mais elle ne reproduit pas complètement les qualités nutritionnelles et sensorielles de la viande (pauvre en fer, nécessite assaisonnement)."
-},
-{
-    question: "Quel est le taux de conversion alimentaire des insectes comparé au bétail ?",
-    options: [
-        "8 kg d'aliments pour 1 kg d'insectes",
-        "2 kg d'aliments pour 1 kg d'insectes (vs 8 kg pour les bovins)",
-        "15 kg d'aliments pour 1 kg d'insectes",
-        "Identique au bétail"
-    ],
-    correct: 1,
-    explanation: "Le taux de conversion alimentaire des insectes est très favorable : 2 kg d'aliments nécessaires pour produire 1 kg d'insectes, contre 8 kg d'aliments pour 1 kg de masse corporelle bovine. Les insectes produisent aussi 10 à 100 fois moins de gaz à effet de serre."
-},
-{
-    question: "Combien d'espèces d'insectes sont comestibles dans le monde selon la FAO ?",
-    options: [
-        "Environ 200 espèces",
-        "Environ 500 espèces",
-        "1 900 espèces",
-        "Plus de 5 000 espèces"
-    ],
-    correct: 2,
-    explanation: "Selon la FAO (Food and Agriculture Organisation), 1 900 espèces d'insectes sont comestibles dans le monde, représentant une excellente alternative à la raréfaction des ressources naturelles."
-},
-{
-    question: "Quelles sont les caractéristiques nutritionnelles des algues ?",
-    options: [
-        "Très pauvres en nutriments",
-        "30% de protéines, <5% de lipides, 36% de fibres, riches en antioxydants",
-        "100% de lipides",
-        "Uniquement des glucides"
-    ],
-    correct: 1,
-    explanation: "Les algues ont des caractéristiques nutritionnelles très avantageuses : 30% de protéines, moins de 5% de lipides, 36% de fibres en moyenne, et riches en antioxydants (caroténoïdes, flavonoïdes, acides phénoliques, vitamines C et E)."
-},
-{
-    question: "Combien d'espèces d'algues sont autorisées à la consommation en France ?",
-    options: [
-        "5 espèces",
-        "Une dizaine d'espèces",
-        "Une vingtaine d'espèces",
-        "Plus de 100 espèces"
-    ],
-    correct: 2,
-    explanation: "Une vingtaine d'espèces d'algues sont autorisées à la consommation en France. Les algues sont considérées comme un 'aliment nouveau' en Europe, bien qu'elles fassent partie des habitudes alimentaires en Asie."
-},
-{
-    question: "Quel problème majeur menace la banane Cavendish ?",
-    options: [
-        "Le réchauffement climatique uniquement",
-        "Une maladie fongique (Fusarium oxysporum) qui pourrait la faire disparaître",
-        "Un manque d'eau",
-        "Des insectes ravageurs"
-    ],
-    correct: 1,
-    explanation: "La banane Cavendish, unique variété vendue dans la plupart des commerces et cultivée en monoculture mondiale, est menacée de disparition par une maladie fongique causée par Fusarium oxysporum. CRISPR pourrait permettre de muter le récepteur utilisé par le champignon."
-},
-    {
-    question: "Quels bénéfices les biotechnologies modernes peuvent-elles apporter à l'agriculture ?",
-    options: [
-        "Uniquement augmenter la taille des fruits",
-        "Diminution des ressources énergétiques, résistance aux parasites, tolérance aux stress, optimisation des minéraux",
-        "Seulement améliorer le goût",
-        "Uniquement réduire les coûts"
-    ],
-    correct: 1,
-    explanation: "Les biotechnologies modernes apportent de nombreux bénéfices : diminution de l'utilisation des ressources énergétiques, optimisation de l'assimilation des éléments minéraux, résistance aux parasites et ravageurs, tolérance aux herbicides et aux stress environnementaux, et stérilité génétique."
-},
-{
-    question: "Qu'est-ce qu'une 'lignée domestiquée' ?",
-    options: [
-        "Un groupe d'animaux sauvages",
-        "Un groupe d'individus ayant acquis des performances, apparence et histoire sélective uniformes selon les sélections de l'Homme",
-        "Une espèce récemment découverte",
-        "Un hybride naturel"
-    ],
-    correct: 1,
-    explanation: "Une lignée domestiquée est un groupe d'individus d'une espèce (animale ou végétale) qui a acquis au fil des générations des performances, une apparence et une histoire sélective uniformes selon les sélections effectuées par l'Homme."
-},
-{
-    question: "Quelle est la différence entre zone de domestication et zone de diversification ?",
-    options: [
-        "Il n'y a pas de différence",
-        "Zone de domestication : mise sous dépendance de l'Homme ; Zone de diversification : sélection de plusieurs formes/lignées",
-        "Les deux termes sont synonymes",
-        "Zone de domestication est toujours plus grande"
-    ],
-    correct: 1,
-    explanation: "La zone de domestication est l'aire où s'est effectuée la mise 'sous dépendance totale' de l'Homme. La zone de diversification est celle où plusieurs formes ont été sélectionnées à partir du premier type domestiqué pour donner plusieurs lignées domestiquées."
-},
-{
-    question: "Qu'est-ce qu'une zone d'acclimatation ?",
-    options: [
-        "La zone d'origine d'une espèce",
-        "Installation d'un organisme dans une région différente de son aire d'origine, capable d'y survivre",
-        "Une zone sans climat",
-        "Une zone protégée"
-    ],
-    correct: 1,
-    explanation: "Une zone d'acclimatation est une région où un organisme a été installé hors de son aire d'origine et où il est capable de survivre et de se maintenir dans ces nouvelles conditions environnementales."
-},
-{
-    question: "Pourquoi les premiers humains ont-ils commencé à pratiquer l'élevage ?",
-    options: [
-        "Pour le sport et les loisirs",
-        "Assurer un approvisionnement régulier en viande fraîche (garde-manger disponible)",
-        "Pour décorer leurs campements",
-        "Par hasard sans raison précise"
-    ],
-    correct: 1,
-    explanation: "L'élevage permettait d'assurer un approvisionnement régulier en viande fraîche, créant un 'garde-manger disponible', contrairement à la chasse qui dépendait du hasard des rencontres et où le surplus de viande se dégradait avec le temps."
-},
-{
-    question: "Quand et où les bovins ont-ils été domestiqués en Inde ?",
-    options: [
-        "Il y a 5 000 ans dans l'Himalaya",
-        "Il y a 10 000 ans dans la vallée de l'Indus",
-        "Il y a 20 000 ans au sud de l'Inde",
-        "Il y a 2 000 ans au Pakistan"
-    ],
-    correct: 1,
-    explanation: "En Inde, les bovins ont été domestiqués il y a 10 000 ans dans la vallée de l'Indus. La domestication s'est produite indépendamment à plusieurs endroits de manière quasi synchrone."
-},
-{
-    question: "Quand la sous-espèce européenne d'aurochs (Bos primigenius primigenius) a-t-elle disparu ?",
-    options: [
-        "Au Moyen Âge",
-        "Au 17ème siècle (1627 en Pologne)",
-        "Au 19ème siècle",
-        "Elle existe encore aujourd'hui"
-    ],
-    correct: 1,
-    explanation: "L'aurochs européen (Bos primigenius primigenius), représenté sur les peintures pariétales de Lascaux et Chauvet, a disparu au 17ème siècle, le dernier spécimen étant mort en 1627 en Pologne."
-},
-{
-    question: "Quelle découverte majeure Edward Jenner a-t-il faite vers 1790 grâce à l'élevage bovin ?",
-    options: [
-        "L'antibiotique",
-        "La vaccination (les personnes travaillant avec les vaches n'attrapaient pas la variole)",
-        "L'insuline",
-        "Les vitamines"
-    ],
-    correct: 1,
-    explanation: "Edward Jenner a découvert la vaccination vers 1790 en observant que les personnes travaillant avec les vaches n'attrapaient jamais la variole car elles étaient porteuses de la vaccine, une maladie similaire mais inoffensive pour les humains."
-},
-{
-    question: "Quelle espèce de chat sauvage est à l'origine du chat domestique actuel ?",
-    options: [
-        "Le chat sauvage européen",
-        "Felis silvestris lybica (Asie du Sud-Ouest et Afrique du Nord)",
-        "Le lynx",
-        "Le tigre"
-    ],
-    correct: 1,
-    explanation: "Le chat domestique actuel descend principalement de Felis silvestris lybica d'Asie du Sud-Ouest et d'Afrique du Nord (Égypte). Prionailurus bengalensis a été utilisé en Chine mais n'a pas contribué aux races actuelles (sauf le chat du Bengale)."
-},
-{
-    question: "Quelle différence comportementale majeure distingue le chat sauvage du chat domestique ?",
-    options: [
-        "Le chat domestique est carnivore, le sauvage herbivore",
-        "Les chats sauvages sont grandement solitaires, les domestiques tolèrent humains et autres chats",
-        "Le chat domestique ne chasse pas",
-        "Il n'y a aucune différence"
-    ],
-    correct: 1,
-    explanation: "Les différences comportementales les plus marquées concernent la sociabilité : les chats sauvages sont grandement solitaires tandis que les chats domestiques 'tolèrent' les humains et les autres chats à proximité."
-},
-{
-    question: "Quel est l'état actuel des populations de chevaux sauvages ?",
-    options: [
-        "Très nombreuses dans le monde entier",
-        "Plus aucune population réellement sauvage n'existe (sauf cheval de Przewalski)",
-        "Seulement en Amérique",
-        "En augmentation constante"
-    ],
-    correct: 1,
-    explanation: "Plus aucune population de cheval réellement 'sauvage' n'existe actuellement. Le cheval de Przewalski (Mongolie) représente l'héritage 'vivant' de la forme sauvage originelle d'il y a 5000 ans, avant l'élevage."
-},
-{
-    question: "Quelles sont les principales différences entre compartiments cultivé et sauvage d'une espèce végétale ?",
-    options: [
-        "Aucune différence",
-        "Cultivé : faible variabilité, sélection artificielle ; Sauvage : grande variabilité, sélection naturelle",
-        "Cultivé : grande variabilité ; Sauvage : faible variabilité",
-        "Les deux ont la même variabilité"
-    ],
-    correct: 1,
-    explanation: "Le compartiment cultivé présente une faible variabilité génétique (sélection artificielle, cultivars élites), tandis que le compartiment sauvage montre une grande variabilité phénotypique (sélection naturelle, adaptations locales, résistance aux maladies)."
-},
-{
-    question: "Pourquoi est-il important de conserver la diversité génétique du compartiment sauvage ?",
-    options: [
-        "Pour des raisons esthétiques uniquement",
-        "Pour l'amélioration des espèces cultivées et l'adaptation aux changements environnementaux",
-        "Ce n'est pas important",
-        "Uniquement pour les musées"
-    ],
-    correct: 1,
-    explanation: "Il est crucial de conserver la diversité génétique (au moins dans le compartiment sauvage) pour l'amélioration des espèces cultivées et pour permettre une adaptation rapide aux changements environnementaux actuels. Pas d'évolution possible sans variabilité."
-},
-{
-    question: "Qu'est-ce que la 'taille efficace de population' (Ne) ?",
-    options: [
-        "Le nombre total d'individus dans une population",
-        "Le nombre de reproducteurs qui ont produit la génération suivante",
-        "La taille physique moyenne des individus",
-        "Le nombre de prédateurs"
-    ],
-    correct: 1,
-    explanation: "La taille efficace de population (Ne) est le nombre de reproducteurs au sein d'une population qui ont produit la génération suivante. L'utilisation intensive de cultivars 'élites' diminue cette taille efficace, créant des populations génétiquement uniformes."
-},
-{
-    question: "Qu'est-ce que le bouturage et quel est son avantage ?",
-    options: [
-        "Une technique de greffe complexe",
-        "Reproduction par partition de parties supérieures, permet maturité sexuelle rapide",
-        "Un type de fertilisation",
-        "Une méthode d'irrigation"
-    ],
-    correct: 1,
-    explanation: "Le bouturage ('cutting') est une technique où des parties supérieures de la plante sont prélevées et développent des racines. Les plantes bouturées atteignent leur maturité sexuelle (floraison) rapidement, ce qui est très utile en horticulture."
-},
-{
-    question: "Qu'est-ce que le marcottage ?",
-    options: [
-        "Production de racines à partir d'une tige touchant le sol",
-        "Division des racines uniquement",
-        "Un type de semis",
-        "Une maladie des plantes"
-    ],
-    correct: 0,
-    explanation: "Le marcottage ('layering') est la production de méristèmes racinaires à partir de tissus apicaux lorsqu'une tige tombe et touche le sol. Au contact du sol (humidité, micro-plaies), il y a dédifférenciation puis redifférenciation en tissu racinaire."
-},
-{
-    question: "Qu'est-ce que le drageonnage ?",
-    options: [
-        "Production de tiges à partir de racines",
-        "Production de fleurs multiples",
-        "Un type de taille des arbres",
-        "Une maladie fongique"
-    ],
-    correct: 0,
-    explanation: "Le drageonnage ('suckering') est la production de méristèmes apicaux (tiges) à partir de tissus racinaires, permettant la création de nouveaux individus physiques (ramets) à partir des racines."
-},
-{
-    question: "Qu'est-ce que la greffe et quel est son principal avantage ?",
-    options: [
-        "Un mode de reproduction naturel",
-        "Association de la vigueur/résistance du porte-greffe et de la productivité du greffon",
-        "Une maladie des arbres",
-        "Un type de fertilisation"
-    ],
-    correct: 1,
-    explanation: "La greffe ('transplant') est plus un mode de propagation qu'un mode de reproduction. Très utilisée chez les arbres fruitiers, elle combine la vigueur/résistance du pied-receveur (porte-greffe) avec la productivité du transplant (greffon)."
-},
-{
-    question: "Comment la téosinte en France s'est-elle adaptée au climat tempéré ?",
-    options: [
-        "Par mutation spontanée uniquement",
-        "Par échanges génétiques avec le maïs tempéré européen (gènes ZCN8 et ACC1)",
-        "Elle ne s'est pas adaptée",
-        "Par sélection naturelle simple"
-    ],
-    correct: 1,
-    explanation: "La téosinte s'est adaptée au climat tempéré français par échanges génétiques avec le maïs tempéré européen, acquérant notamment le gène ZCN8 (précocité de floraison) et la forme mutante du gène ACC1 (résistance aux herbicides)."
-},
-{
-    question: "Quelles sont les 3 catégories principales de techniques de sélection végétale ?",
-    options: [
-        "Arrosage, fertilisation, taille",
-        "Cultures sélectives, mutagenèse, ingénierie génétique",
-        "Semis, plantation, récolte",
-        "Biologique, conventionnel, intensif"
-    ],
-    correct: 1,
-    explanation: "Les trois catégories principales de techniques de sélection pour développer les cultures sont : les cultures sélectives (croisements), la mutagenèse (induction de mutations), et l'ingénierie génétique (modification ciblée)."
-},
-{
-    question: "Quelles sont les limites des cultures sélectives par hybridation ?",
-    options: [
-        "Aucune limite",
-        "Stérilité des variétés, incompatibilité sexuelle, absence du caractère recherché dans l'espèce",
-        "Trop rapide",
-        "Trop efficace"
-    ],
-    correct: 1,
-    explanation: "Les cultures sélectives sont limitées quand : il y a stérilité de la variété donneuse ou receveuse, incompatibilité sexuelle entre lignées parentales, ou absence du caractère recherché chez les plantes de la même espèce (compartiments sauvage et cultivé)."
-},
-{
-    question: "Comment la non-déhiscence des grains a-t-elle été sélectionnée chez les céréales ?",
-    options: [
-        "Par modification génétique moderne",
-        "Sélection inconsciente par utilisation de faucilles (plantes avec grains encore attachés lors de la récolte)",
-        "Par irradiation",
-        "Par croisements complexes"
-    ],
-    correct: 1,
-    explanation: "La non-déhiscence a été sélectionnée inconsciemment : l'utilisation de faucilles pour la récolte favorisait empiriquement les plantes qui avaient un maximum de grains encore attachés sur le pied lors de la récolte, propagés dans les cultures suivantes."
-},
-{
-    question: "Pourquoi les grains plus gros ont-ils été sélectionnés inconsciemment ?",
-    options: [
-        "Pour des raisons esthétiques",
-        "Parce qu'ils germent plus efficacement et produisent des semis plus vigoureux",
-        "Pour faciliter le transport",
-        "Parce qu'ils ont meilleur goût"
-    ],
-    correct: 1,
-    explanation: "Les grains plus gros ont été sélectionnés inconsciemment car ils contiennent plus de quantité alimentaire et de réserves nutritives pour l'embryon, ce qui leur permet de germer plus efficacement et de produire des semis plus vigoureux."
-},
-{
-    question: "Quelles grandes civilisations sud-américaines dépendaient du maïs comme nourriture principale ?",
-    options: [
-        "Égyptiens, Grecs, Romains",
-        "Mayas, Aztèques, Incas",
-        "Vikings, Celtes, Germains",
-        "Sumériens, Babyloniens, Assyriens"
-    ],
-    correct: 1,
-    explanation: "Le maïs est devenu la nourriture principale de toutes les grandes civilisations sud-américaines : les Mayas, les Aztèques et les Incas, après sa domestication il y a 7000 ans au Mexique."
-},
-{
-    question: "Combien de pays cultivaient des OGM en 2018 ?",
-    options: [
-        "10 pays",
-        "26 pays (21 en développement + 5 industrialisés)",
-        "50 pays",
-        "Tous les pays du monde"
-    ],
-    correct: 1,
-    explanation: "En 2018, 26 pays cultivaient des OGM : 21 pays 'en voie de développement' et 5 pays industrialisés, représentant une superficie mondiale de 211,8 millions d'hectares."
-},
-{
-    question: "Quelle est la superficie mondiale cultivée en OGM en 2018 ?",
-    options: [
-        "50 millions d'hectares",
-        "100 millions d'hectares",
-        "211,8 millions d'hectares",
-        "500 millions d'hectares"
-    ],
-    correct: 2,
-    explanation: "En 2018, la superficie mondiale cultivée en OGM était de 211,8 millions d'hectares, dont 191,7 millions (90,5%) concentrés dans 5 pays : USA, Brésil, Argentine, Canada et Inde."
-},
-{
-    question: "Quels sont les quatre principaux outils d'édition génomique mentionnés dans le cours ?",
-    options: [
-        "Microscope, centrifugeuse, PCR, séquenceur",
-        "Méganucléase, nucléases à doigts de zinc, TALEN, CRISPR/Cas9",
-        "Pipette, éprouvette, microscope, incubateur",
-        "PCR, électrophorèse, Western blot, ELISA"
-    ],
-    correct: 1,
-    explanation: "Les quatre principaux outils d'édition génomique sont : les méganucléases, les nucléases à doigts de zinc, les TALEN, et CRISPR/Cas9 (le plus récent et révolutionnaire depuis 2012)."
-},
-{
-    question: "Pourquoi CRISPR/Cas9 a-t-il révolutionné l'édition génomique ?",
-    options: [
-        "Car il est très coûteux",
-        "Car il est très simple, peu coûteux et rapide (jours vs semaines/mois)",
-        "Car il ne fonctionne que sur les bactéries",
-        "Car il est complexe et réservé aux experts"
-    ],
-    correct: 1,
-    explanation: "CRISPR/Cas9 a révolutionné l'édition génomique en 2012 grâce à sa très grande simplicité et son faible coût : le travail qui nécessitait des semaines, mois ou années peut maintenant être effectué en quelques jours."
-},
-{
-    question: "Quelle est la principale limite nutritionnelle de la viande cultivée in vitro ?",
-    options: [
-        "Elle contient trop de protéines",
-        "Elle est pauvre en fer et doit être assaisonnée pour se rapprocher du goût de la viande",
-        "Elle est trop salée",
-        "Elle contient trop de vitamines"
-    ],
-    correct: 1,
-    explanation: "La viande cultivée in vitro ne reproduit pas les qualités nutritionnelles et sensorielles de la viande naturelle : elle est notamment pauvre en fer et doit être assaisonnée avec de nombreux ingrédients pour se rapprocher du goût de la viande."
-},
-{
-    question: "Quel est l'impact énergétique de la production de viande in vitro ?",
-    options: [
-        "Consomme beaucoup moins d'énergie que tous les élevages",
-        "Consomme plus d'énergie que la production de volailles ou de porcs (milieux de culture, incubateurs)",
-        "Ne consomme aucune énergie",
-        "Consomme la même énergie que tous les élevages"
-    ],
-    correct: 1,
-    explanation: "La production de viande in vitro consomme plus d'énergie que la production de volailles ou de porcs en raison de la fabrication des milieux de culture et du chauffage des incubateurs. Son impact futur dépendra de l'utilisation d'énergies vertes."
-},
-{
-    question: "Quelle est la composition typique de la 'viande' d'origine végétale ?",
-    options: [
-        "100% de légumes naturels",
-        "Protéines (16%), gras (12-20%), sel (1,1%), additifs dont méthylcellulose",
-        "Uniquement des protéines",
-        "Aucun additif"
-    ],
-    correct: 1,
-    explanation: "La 'viande' végétale contient environ 16% de protéines (soja, gluten, légumineuses ultra-transformées), 12-20% de gras, 1,1% de sel, et des additifs comme la méthylcellulose (E461) qui peut causer des problèmes intestinaux."
-},
-{
-    question: "Quel est le principal avantage des insectes en termes de production de gaz à effet de serre ?",
-    options: [
-        "Ils en produisent autant que le bétail",
-        "Production 10 à 100 fois plus faible que l'élevage porcin",
-        "Ils n'en produisent aucun",
-        "Production 2 fois plus élevée"
-    ],
-    correct: 1,
-    explanation: "Les insectes produisent 10 à 100 fois moins de gaz à effet de serre que l'élevage porcin, en plus de consommer beaucoup moins d'eau et d'espace qu'un élevage de bétail conventionnel."
-},
-{
-    question: "Quel est le risque de transmission de maladies zoonotiques des insectes ?",
-    options: [
-        "Très élevé",
-        "Faible (contrairement aux élevages conventionnels)",
-        "Identique au bétail",
-        "Inexistant complètement"
-    ],
-    correct: 1,
-    explanation: "Les insectes présentent un faible risque de transmission de maladies zoonotiques (comme la grippe aviaire), contrairement aux élevages de bétail conventionnels, ce qui en fait une alternative plus sûre d'un point de vue sanitaire."
-},
-{
-    question: "Quelle est la population humaine mondiale prévue pour 2050 selon le scénario 'moyen' réaliste ?",
-    options: [
-        "8 milliards",
-        "9,7 milliards",
-        "12 milliards",
-        "15 milliards"
-    ],
-    correct: 1,
-    explanation: "Selon le scénario 'moyen' réaliste, la population humaine sera de 9,7 milliards en 2050, dont 62% (7,6 milliards) vivront en Afrique, Asie du Sud et Asie de l'Est."
-},
-{
-    question: "Dans combien de temps la population mondiale doublera-t-elle à nouveau selon les projections actuelles ?",
-    options: [
-        "Dans 50 ans",
-        "Dans 100 ans",
-        "Dans 200 ans",
-        "Dans 500 ans"
-    ],
-    correct: 2,
-    explanation: "Actuellement, le taux de croissance diminue. La population doublera de nouveau dans 200 ans, alors que précédemment elle doublait en 50 ans (de 1976 à aujourd'hui)."
-},
-{
-    question: "Qu'est-ce que la 'sécurité alimentaire' selon la FAO ?",
-    options: [
-        "Avoir suffisamment de nourriture pour soi-même",
-        "Assurer à toute personne un accès physique et économique aux denrées alimentaires dont elle a besoin",
-        "Produire uniquement des aliments biologiques",
-        "Stocker de la nourriture pour l'avenir"
-    ],
-    correct: 1,
-    explanation: "Selon la FAO (Food and Agriculture Organisation), la sécurité alimentaire signifie 'assurer à toute personne un accès physique et économique aux denrées alimentaires dont elle a besoin'."
-},
-{
-    question: "De combien ont augmenté les apports d'engrais et de produits phytosanitaires pendant la Révolution verte ?",
-    options: [
-        "50% pour les deux",
-        "7 450% pour les engrais et 7 420% pour les phytosanitaires",
-        "100% pour les deux",
-        "Pas d'augmentation"
-    ],
-    correct: 1,
-    explanation: "Durant la Révolution verte (2ème moitié du 20ème siècle), les apports d'engrais ont augmenté de 7 450% et ceux de produits phytosanitaires de 7 420%, contribuant à l'augmentation massive des rendements."
-},
-{
-    question: "Quel pourcentage des forêts terrestres a été perdu avec l'expansion agricole ?",
-    options: [
-        "10%",
-        "25%",
-        "50%",
-        "75%"
-    ],
-    correct: 2,
-    explanation: "L'expansion des terres agricoles s'est faite au détriment des forêts, qui ont diminué de 50%, ainsi que d'autres habitats terrestres, créant un des défis majeurs du 21ème siècle."
-},
-{
-    question: "De combien a augmenté le CO2 atmosphérique dans le contexte agricole du 21ème siècle ?",
-    options: [
-        "+10%",
-        "+30%",
-        "+50%",
-        "+100%"
-    ],
-    correct: 1,
-    explanation: "Dans le contexte de l'agriculture au 21ème siècle, le CO2 atmosphérique et autres gaz à effet de serre ont augmenté de 30%, contribuant aux changements climatiques globaux."
-},
-{
-    question: "Qu'est-ce qu'un 'knock-out' en édition génomique ?",
-    options: [
-        "Ajout d'un nouveau gène",
-        "Inactivation d'un gène par la méthode NHEJ créant des indels",
-        "Réparation d'un gène",
-        "Duplication d'un gène"
-    ],
-    correct: 1,
-    explanation: "Un 'knock-out' est l'inactivation d'un gène obtenue par la méthode NHEJ (jointure d'extrémités non homologues) qui crée des indels (insertions/délétions), rendant le gène non fonctionnel."
-},
-{
-    question: "Qu'est-ce qu'un 'knock-in' en édition génomique ?",
-    options: [
-        "Suppression d'un gène",
-        "Réparation d'un gène ou ajout d'une nouvelle fonction par la méthode HDR",
-        "Inactivation d'un gène",
-        "Mutation aléatoire"
-    ],
-    correct: 1,
-    explanation: "Un 'knock-in' est la réparation d'un gène ou l'ajout d'une nouvelle fonction, obtenu par la méthode HDR (réparation dirigée par homologie) qui utilise la recombinaison homologue pour intégrer précisément une séquence."
-},
+            {
+                question: "Quel impact les chaînes de montagnes ont-elles sur le climat ?",
+                options: [
+                    "Aucun impact",
+                    "Elles agissent comme une barrière climatique",
+                    "Elles réchauffent le climat",
+                    "Elles uniformisent le climat"
+                ],
+                correct: 1,
+                explanation: "Les chaînes de montagnes agissent comme une barrière climatique, influençant ainsi le climat de part et d'autre de la montagne."
+            },
+            {
+                question: "Quelle est la limite de plaques concernée par la Faille Alpine en Nouvelle-Zélande ?",
+                options: [
+                    "Plaque Pacifique et plaque Eurasienne",
+                    "Plaque Pacifique et plaque Indo-Australienne",
+                    "Plaque Africaine et plaque Sud-Américaine",
+                    "Plaque Nord-Américaine et plaque Pacifique"
+                ],
+                correct: 1,
+                explanation: "La Faille Alpine marque la limite entre la plaque Pacifique et la plaque Indo-Australienne."
+            },
+            {
+                question: "Quel type de chaîne de montagnes est l'Himalaya ?",
+                options: [
+                    "Une chaîne de subduction",
+                    "Une chaîne de collision",
+                    "Une chaîne de rift",
+                    "Une chaîne volcanique"
+                ],
+                correct: 1,
+                explanation: "L'Himalaya est une chaîne de collision, formée par la collision entre la plaque Indienne et la plaque Eurasienne."
+            },
+            {
+                question: "Avant le XXème siècle, comment les géologues considéraient-ils la position des continents ?",
+                options: [
+                    "Ils pensaient que les continents étaient mobiles",
+                    "Ils pensaient que les continents étaient en rotation",
+                    "Ils considéraient les continents comme fixes",
+                    "Ils n'avaient aucune théorie"
+                ],
+                correct: 2,
+                explanation: "Jusqu'au début du XXème siècle, les géologues attribuaient aux continents une position fixe."
+            },
+            {
+                question: "Selon Eduard Suess, quelle était l'origine des chaînes de montagnes ?",
+                options: [
+                    "Le déplacement des continents",
+                    "Le refroidissement de la Terre entraînant une diminution de volume et une compression",
+                    "Les volcans",
+                    "Les impacts météoritiques"
+                ],
+                correct: 1,
+                explanation: "Eduard Suess pensait que le refroidissement de la Terre entraînait une diminution de son volume, mettant la surface sous compression et créant les chaînes de montagnes."
+            },
+            {
+                question: "Quelle était la conception de la Terre selon l'idée de 'Terre ridée' ?",
+                options: [
+                    "La Terre se dilate avec le temps",
+                    "La Terre se refroidit, diminue de volume, créant des rides comme les montagnes",
+                    "La Terre est parfaitement sphérique",
+                    "La Terre est plate"
+                ],
+                correct: 1,
+                explanation: "L'idée de Terre ridée suggérait qu'en se refroidissant, la Terre diminuait de volume, créant des 'rides' comme les chaînes de montagnes."
+            },
+            {
+                question: "Qui a publié les premières théories sur la mobilité des continents entre 1912 et 1924 ?",
+                options: [
+                    "Charles Darwin",
+                    "Alfred Wegener",
+                    "Eduard Suess",
+                    "Isaac Newton"
+                ],
+                correct: 1,
+                explanation: "Alfred Wegener, astronome et climatologue, a publié ses théories sur la mobilité des continents entre 1912 et 1924."
+            },
+            {
+                question: "Que signifie SIMA dans la théorie de Wegener ?",
+                options: [
+                    "Silicium-Aluminium",
+                    "Silicium-Magnésium",
+                    "Soufre-Magnésium",
+                    "Sodium-Magnésium"
+                ],
+                correct: 1,
+                explanation: "SIMA signifie Silicium-Magnésium, désignant la composition de la croûte océanique selon Wegener."
+            },
+            {
+                question: "Que signifie SIAL dans la théorie de Wegener ?",
+                options: [
+                    "Silicium-Magnésium",
+                    "Silicium-Aluminium",
+                    "Sodium-Aluminium",
+                    "Soufre-Aluminium"
+                ],
+                correct: 1,
+                explanation: "SIAL signifie Silicium-Aluminium, désignant la composition de la croûte continentale selon Wegener."
+            },
+            {
+                question: "Quel argument géologique Wegener a-t-il utilisé pour soutenir sa théorie ?",
+                options: [
+                    "La couleur des roches",
+                    "Les similitudes entre les structures géologiques des continents",
+                    "La température des océans",
+                    "La vitesse de rotation de la Terre"
+                ],
+                correct: 1,
+                explanation: "Wegener a observé des similitudes entre les structures géologiques de différents continents, comme la chaîne calédonienne entre l'Écosse, la Norvège et le nord du Canada."
+            },
+            {
+                question: "Qu'est-ce qu'un bouclier en géologie ?",
+                options: [
+                    "Une zone volcanique active",
+                    "Un morceau de croûte déformé il y a au minimum 1 Ga et qui n'a pas été déformé depuis",
+                    "Une faille récente",
+                    "Un océan peu profond"
+                ],
+                correct: 1,
+                explanation: "Un bouclier est un morceau de croûte déformé il y a au minimum 1 milliard d'années et qui n'a pas été déformé depuis."
+            },
+            {
+                question: "Pourquoi la théorie des 'ponts continentaux' a-t-elle été réfutée ?",
+                options: [
+                    "Car elle ne pouvait pas expliquer la distribution des fossiles continentaux communs",
+                    "Car elle était trop complexe",
+                    "Car elle ne correspondait pas aux observations géologiques",
+                    "Car les océans ne pouvaient pas avoir disparu"
+                ],
+                correct: 0,
+                explanation: "La théorie des ponts continentaux ne pouvait pas expliquer de manière satisfaisante la distribution des fossiles continentaux communs entre continents séparés."
+            },
+            {
+                question: "Que sont les tillites ?",
+                options: [
+                    "Des roches volcaniques",
+                    "Des roches poudreuses sédimentaires témoins de dépôts glaciaires",
+                    "Des fossiles marins",
+                    "Des cristaux de glace"
+                ],
+                correct: 1,
+                explanation: "Les tillites sont des roches poudreuses sédimentaires causées par les glaciers et témoignent des dépôts glaciaires."
+            },
+            {
+                question: "Comment appelle-t-on le supercontinent proposé par Wegener ?",
+                options: [
+                    "Gondwana",
+                    "Laurasia",
+                    "Pangée",
+                    "Rodinia"
+                ],
+                correct: 2,
+                explanation: "Wegener a proposé que les continents provenaient de la fragmentation d'un continent unique appelé la Pangée."
+            },
+            {
+                question: "À quelle période géologique Wegener situe-t-il la Pangée ?",
+                options: [
+                    "Au Jurassique",
+                    "Au Carbonifère supérieur/Permien (-290/270 Ma)",
+                    "Au Crétacé",
+                    "Au Paléogène"
+                ],
+                correct: 1,
+                explanation: "Wegener situe la Pangée au Carbonifère supérieur/Permien, il y a environ 290 à 270 millions d'années."
+            },
+            {
+                question: "Quelle est l'altitude moyenne des continents ?",
+                options: [
+                    "+100 m",
+                    "+800 m",
+                    "+3800 m",
+                    "+5000 m"
+                ],
+                correct: 1,
+                explanation: "L'altitude moyenne des continents est de +800 m selon la distribution bimodale des altitudes observée par Wegener."
+            },
+            {
+                question: "Quelle est la profondeur moyenne des océans ?",
+                options: [
+                    "-800 m",
+                    "-1500 m",
+                    "-3800 m",
+                    "-6000 m"
+                ],
+                correct: 2,
+                explanation: "La profondeur moyenne des océans est de -3800 m."
+            },
+            {
+                question: "IMAGE DOC1 : Que montre cette courbe de distribution bimodale des altitudes ?",
+                image: "DTS/doc1.jpg",
+                options: [
+                    "Que les océans et continents ont la même origine",
+                    "Que les océans et continents ont deux niveaux initiaux différents, formés de matériaux différents",
+                    "Que la Terre est parfaitement plate",
+                    "Que tous les reliefs ont la même altitude"
+                ],
+                correct: 1,
+                explanation: "La courbe bimodale montre deux pics distincts, suggérant que les océans et continents ont deux niveaux initiaux différents et sont formés de matériaux différents."
+            },
+            {
+                question: "Qui a confirmé les théories de Wegener en 1945 ?",
+                options: [
+                    "Charles Darwin",
+                    "Arthur Holmes",
+                    "Isaac Newton",
+                    "Albert Einstein"
+                ],
+                correct: 1,
+                explanation: "Arthur Holmes a confirmé les théories de Wegener en 1945."
+            },
+            {
+                question: "Qu'est-ce que la Force d'Eötvös proposée par Wegener ?",
+                options: [
+                    "Une force magnétique",
+                    "Une force inertielle due à une variation de l'accélération centrifuge, provoquant la dérive des continents vers l'équateur",
+                    "Une force gravitationnelle",
+                    "Une force électrique"
+                ],
+                correct: 1,
+                explanation: "La Force d'Eötvös est une force inertielle due à une variation de l'accélération centrifuge, censée provoquer la dérive des continents vers l'équateur."
+            },
+            {
+                question: "Quelle force Wegener a-t-il proposée pour expliquer la dérive des continents vers l'ouest ?",
+                options: [
+                    "La force magnétique",
+                    "La force de Coriolis",
+                    "La rotation de la Terre et les forces de marée (système Soleil-Lune)",
+                    "La force gravitationnelle de la Lune seule"
+                ],
+                correct: 2,
+                explanation: "Wegener a proposé que la rotation de la Terre et les forces de marée du système Soleil-Lune provoquaient la dérive des continents vers l'ouest."
+            },
+            {
+                question: "Pourquoi les forces de dérive proposées par Wegener ont-elles été jugées insuffisantes ?",
+                options: [
+                    "Car elles étaient trop fortes",
+                    "Car elles ne pouvaient pas expliquer le déplacement de masses continentales solides sur un support solide",
+                    "Car elles n'existaient pas",
+                    "Car elles changeaient trop rapidement"
+                ],
+                correct: 1,
+                explanation: "Les forces de dérive proposées par Wegener étaient insuffisantes pour permettre le déplacement de masses continentales solides sur un manteau lui-même solide."
+            },
+            {
+                question: "Qu'ont montré les progrès de la sismologie concernant la croûte et le manteau ?",
+                options: [
+                    "Qu'ils sont liquides",
+                    "Qu'ils sont à l'état solide, et non visqueux",
+                    "Qu'ils sont gazeux",
+                    "Qu'ils sont en fusion constante"
+                ],
+                correct: 1,
+                explanation: "Les progrès de la sismologie ont montré que la croûte et le manteau sont à l'état solide, et non visqueux comme le proposait Wegener."
+            },
+            {
+                question: "Quelle a été la première carte globale des fonds océaniques ?",
+                options: [
+                    "En 1920",
+                    "En 1945",
+                    "En 1960",
+                    "En 1980"
+                ],
+                correct: 2,
+                explanation: "La première carte globale des fonds océaniques a été réalisée en 1960."
+            },
+            {
+                question: "Quelle est la longueur de la dorsale océanique qui serpente dans tous les océans ?",
+                options: [
+                    "10 000 km",
+                    "30 000 km",
+                    "65 000 km",
+                    "100 000 km"
+                ],
+                correct: 2,
+                explanation: "La dorsale océanique serpente dans tous les océans sur environ 65 000 km de long."
+            },
+            {
+                question: "À quelle profondeur culmine généralement une dorsale océanique ?",
+                options: [
+                    "500 m",
+                    "1 km",
+                    "2,5 km",
+                    "5 km"
+                ],
+                correct: 2,
+                explanation: "Une dorsale océanique culmine généralement vers 2,5 km de profondeur."
+            },
+            {
+                question: "Quelle est la profondeur des fosses océaniques ?",
+                options: [
+                    "2 à 4 km",
+                    "5 à 7 km",
+                    "8 à 11 km",
+                    "15 à 20 km"
+                ],
+                correct: 2,
+                explanation: "Les fosses océaniques ont une profondeur de 8 à 11 km."
+            },
+            {
+                question: "Où trouve-t-on principalement les fosses océaniques ?",
+                options: [
+                    "Dans l'océan Atlantique",
+                    "Dans l'océan Indien",
+                    "En bordure de l'océan Pacifique",
+                    "Dans l'océan Arctique"
+                ],
+                correct: 2,
+                explanation: "Les fosses océaniques se trouvent principalement en bordure de l'océan Pacifique, comme la fosse des Mariannes."
+            },
+            {
+                question: "Où le flux de chaleur est-il le plus élevé ?",
+                options: [
+                    "Au niveau des continents",
+                    "Au niveau des dorsales",
+                    "Au milieu des océans",
+                    "Dans l'atmosphère"
+                ],
+                correct: 1,
+                explanation: "Le flux de chaleur est plus élevé au niveau des dorsales et des zones de subduction."
+            },
+            {
+                question: "Qui a montré en 1906 que la direction du champ magnétique s'est inversée au cours du temps ?",
+                options: [
+                    "Alfred Wegener",
+                    "Bernard Brunhes",
+                    "Harry Hess",
+                    "Arthur Holmes"
+                ],
+                correct: 1,
+                explanation: "Bernard Brunhes a montré en 1906 que la direction du champ magnétique terrestre s'est totalement inversée au cours du temps."
+            },
+            {
+                question: "Qu'est-ce que l'échelle magnétostratigraphique ?",
+                options: [
+                    "Une mesure de la température des océans",
+                    "Une échelle établie à partir des inversions du champ magnétique enregistrées dans les roches",
+                    "Une mesure de la profondeur des océans",
+                    "Une échelle de temps géologique basée sur les fossiles"
+                ],
+                correct: 1,
+                explanation: "L'échelle magnétostratigraphique est établie à partir des inversions du champ magnétique terrestre enregistrées dans les roches, notamment les empilements de lave."
+            },
+            {
+                question: "Qui a développé la théorie du 'tapis roulant' au fond des océans en 1962 ?",
+                options: [
+                    "Alfred Wegener",
+                    "Bernard Brunhes",
+                    "Harry Hess",
+                    "Charles Darwin"
+                ],
+                correct: 2,
+                explanation: "Harry Hess a développé la théorie du 'tapis roulant' au fond des océans en 1962, expliquant la formation symétrique du plancher océanique de part et d'autre des dorsales."
+            },
+            {
+                question: "Quel est l'âge maximal du plancher océanique ?",
+                options: [
+                    "50 Ma",
+                    "100 Ma",
+                    "180 Ma",
+                    "500 Ma"
+                ],
+                correct: 2,
+                explanation: "Il n'existe pas de plancher océanique plus vieux que 180 millions d'années, ce qui suggère une disparition des océans par subduction."
+            },
+            {
+                question: "Combien de plaques les premiers modèles de tectonique des plaques ont-ils identifiées ?",
+                options: [
+                    "3 plaques",
+                    "6 plaques",
+                    "12 plaques",
+                    "24 plaques"
+                ],
+                correct: 1,
+                explanation: "Les premiers modèles de tectonique des plaques ont identifié 6 plaques, puis 12, puis 24, et certains modèles récents présentent même 52 plaques."
+            },
+            {
+                question: "Qu'est-ce qu'une plaque lithosphérique ?",
+                options: [
+                    "Uniquement la croûte terrestre",
+                    "Un élément de lithosphère rigide composé de la croûte et du manteau lithosphérique",
+                    "Uniquement le manteau",
+                    "Une couche liquide"
+                ],
+                correct: 1,
+                explanation: "Une plaque lithosphérique est un élément de lithosphère rigide composé de la croûte (continentale ou océanique) et du manteau lithosphérique."
+            },
+            {
+                question: "Quelle est l'épaisseur moyenne de la croûte continentale ?",
+                options: [
+                    "8 km",
+                    "30 km",
+                    "100 km",
+                    "200 km"
+                ],
+                correct: 1,
+                explanation: "La croûte continentale fait environ 30 km d'épaisseur."
+            },
+            {
+                question: "Quelle est l'épaisseur moyenne de la croûte océanique ?",
+                options: [
+                    "8 km",
+                    "30 km",
+                    "100 km",
+                    "200 km"
+                ],
+                correct: 0,
+                explanation: "La croûte océanique fait environ 8 km d'épaisseur."
+            },
+            {
+                question: "Quelle est l'épaisseur moyenne de la lithosphère ?",
+                options: [
+                    "8 km",
+                    "30 km",
+                    "100 km",
+                    "200 km"
+                ],
+                correct: 2,
+                explanation: "La lithosphère fait environ 100 km d'épaisseur."
+            },
+            {
+                question: "Où se produisent principalement les mouvements tectoniques ?",
+                options: [
+                    "Au centre des plaques",
+                    "Sur les bordures des plaques (dorsales, subductions)",
+                    "Dans l'atmosphère",
+                    "Uniformément partout"
+                ],
+                correct: 1,
+                explanation: "Les mouvements tectoniques se produisent principalement sur les bordures des plaques, au niveau des dorsales ou des zones de subduction."
+            },
+            {
+                question: "Qu'est-ce qu'un rift ?",
+                options: [
+                    "Une zone où la croûte se sépare",
+                    "Une zone de collision",
+                    "Une faille transformante",
+                    "Un volcan"
+                ],
+                correct: 0,
+                explanation: "Un rift est une zone où la croûte se sépare, formant une vallée qui peut évoluer en dorsale océanique."
+            },
+            {
+                question: "Quel est un exemple de dorsale océanique émergée ?",
+                options: [
+                    "Les Alpes",
+                    "L'Islande",
+                    "L'Himalaya",
+                    "Les Andes"
+                ],
+                correct: 1,
+                explanation: "L'Islande est un exemple de dorsale océanique émergée (la dorsale médio-Atlantique)."
+            },
+            {
+                question: "Qu'est-ce qu'une faille transformante ?",
+                options: [
+                    "Une zone de création de croûte",
+                    "Une zone de destruction de croûte",
+                    "Une faille décrochante avec coulissement horizontal sans formation ni disparition de croûte",
+                    "Une zone volcanique"
+                ],
+                correct: 2,
+                explanation: "Une faille transformante est une faille décrochante où il y a coulissement horizontal des plaques, sans formation ni disparition de croûte."
+            },
+            {
+                question: "Quel est un exemple célèbre de faille transformante ?",
+                options: [
+                    "La faille de San Andreas",
+                    "La dorsale médio-Atlantique",
+                    "L'Himalaya",
+                    "La fosse des Mariannes"
+                ],
+                correct: 0,
+                explanation: "La faille de San Andreas en Californie est un exemple célèbre de faille transformante."
+            },
+            {
+                question: "Qu'est-ce que l'obduction ?",
+                options: [
+                    "Une plaque continentale qui passe sous une plaque océanique",
+                    "Une plaque océanique qui passe sous une plaque continentale",
+                    "La lithosphère océanique qui passe par-dessus la lithosphère continentale, formant des nappes ophiolitiques",
+                    "La formation d'une dorsale"
+                ],
+                correct: 2,
+                explanation: "L'obduction est le processus par lequel la lithosphère océanique passe par-dessus la lithosphère continentale, formant des nappes ophiolitiques."
+            },
+            {
+                question: "Quels sont les trois types de forces intraplaques ?",
+                options: [
+                    "Ridge push, slab pull, cellules de convection",
+                    "Gravité, magnétisme, électricité",
+                    "Rotation, révolution, précession",
+                    "Compression, extension, cisaillement"
+                ],
+                correct: 0,
+                explanation: "Les trois forces intraplaques sont : ridge push (poussée aux dorsales), slab pull (traction du panneau plongeant), et les cellules de convection dans le manteau."
+            },
+            {
+                question: "Qu'est-ce que le 'ridge push' ?",
+                options: [
+                    "La traction exercée par le panneau plongeant",
+                    "La poussée aux dorsales",
+                    "Les cellules de convection",
+                    "La rotation de la Terre"
+                ],
+                correct: 1,
+                explanation: "Le ridge push est la poussée exercée au niveau des dorsales océaniques."
+            },
+            {
+                question: "Qu'est-ce que le 'slab pull' ?",
+                options: [
+                    "La poussée aux dorsales",
+                    "La traction du panneau plongeant dans les zones de subduction",
+                    "Les cellules de convection",
+                    "La force de Coriolis"
+                ],
+                correct: 1,
+                explanation: "Le slab pull est la traction exercée par le panneau plongeant dans les zones de subduction, car la lithosphère est plus dense."
+            },
+            {
+                question: "Qu'est-ce qu'un mouvement absolu de plaque ?",
+                options: [
+                    "Un mouvement par rapport à une autre plaque",
+                    "Un mouvement par rapport à un référentiel fixe (GPS, noyau, points chauds)",
+                    "Un mouvement vertical uniquement",
+                    "Un mouvement circulaire"
+                ],
+                correct: 1,
+                explanation: "Un mouvement absolu est un mouvement par rapport à un référentiel fixe, comme la constellation satellite GPS, le noyau, ou les points chauds."
+            },
+            {
+                question: "Qu'est-ce qu'un point chaud ?",
+                options: [
+                    "Un volcan en surface",
+                    "Un panache mantellique stable provenant de l'interface noyau-manteau",
+                    "Une dorsale océanique",
+                    "Une zone de subduction"
+                ],
+                correct: 1,
+                explanation: "Un point chaud est un panache mantellique chaud et stable provenant de l'interface entre le noyau et le manteau."
+            },
+            {
+                question: "Quel est un exemple célèbre d'alignement de points chauds ?",
+                options: [
+                    "Les Alpes",
+                    "Hawaï-Empereur (chaîne de monts sous-marins)",
+                    "L'Himalaya",
+                    "Les Andes"
+                ],
+                correct: 1,
+                explanation: "L'alignement Hawaï-Empereur est un exemple célèbre de chaîne de monts sous-marins formée par un point chaud."
+            },
+            {
+                question: "Comment calcule-t-on la vitesse d'une plaque à partir d'un point chaud ?",
+                options: [
+                    "En mesurant la température",
+                    "En divisant la distance parcourue par le temps (ex: 1900 km en 27 Ma = 7 cm/an)",
+                    "En mesurant la profondeur de l'océan",
+                    "En comptant les séismes"
+                ],
+                correct: 1,
+                explanation: "La vitesse d'une plaque se calcule en divisant la distance parcourue par le temps. Exemple: 1900 km en 27 Ma donne 7 cm/an."
+            },
+            {
+                question: "Quelle est la vitesse moyenne des plaques lentes ?",
+                options: [
+                    "1 cm/an",
+                    "3-4 cm/an",
+                    "10 cm/an",
+                    "20 cm/an"
+                ],
+                correct: 1,
+                explanation: "Les plaques lentes possèdent une vitesse d'environ 3 à 4 cm/an."
+            },
+            {
+                question: "Pourquoi les plaques avec subduction sont-elles généralement rapides ?",
+                options: [
+                    "À cause de la poussée aux dorsales",
+                    "À cause de la traction du panneau plongeant (slab pull)",
+                    "À cause de la rotation de la Terre",
+                    "À cause du magnétisme"
+                ],
+                correct: 1,
+                explanation: "Les plaques qui plongent sous une autre sont rapides en raison de la traction du panneau plongeant (slab pull)."
+            },
+            {
+                question: "Qu'est-ce qu'un mouvement relatif de plaque ?",
+                options: [
+                    "Un mouvement par rapport à un référentiel fixe",
+                    "Le mouvement d'une plaque par rapport à une autre plaque",
+                    "Un mouvement vertical",
+                    "Un mouvement circulaire"
+                ],
+                correct: 1,
+                explanation: "Un mouvement relatif est le mouvement d'une plaque par rapport à une autre plaque."
+            },
+            {
+                question: "Au niveau d'une limite divergente, comment est orienté le mouvement relatif ?",
+                options: [
+                    "Parallèle à la dorsale",
+                    "Perpendiculaire (orthogonal) à la dorsale",
+                    "En diagonale",
+                    "Circulaire"
+                ],
+                correct: 1,
+                explanation: "Au niveau d'une limite divergente, le mouvement relatif est perpendiculaire (orthogonal) à la dorsale."
+            },
+            {
+                question: "Qu'est-ce que le taux d'expansion océanique ?",
+                options: [
+                    "La vitesse totale d'éloignement des plaques",
+                    "La quantité de matériel océanique formé sur une plaque, égale à 1/2 de la vitesse totale",
+                    "La profondeur de l'océan",
+                    "La température de l'eau"
+                ],
+                correct: 1,
+                explanation: "Le taux d'expansion océanique est la quantité de matériel océanique formé sur une plaque, égale à la moitié de la vitesse totale d'éloignement."
+            },
+            {
+                question: "Au niveau d'une faille transformante, comment est orienté le vecteur vitesse ?",
+                options: [
+                    "Perpendiculaire à la faille",
+                    "Toujours parallèle à la faille",
+                    "En diagonale",
+                    "Vertical"
+                ],
+                correct: 1,
+                explanation: "Au niveau d'une faille transformante, le vecteur vitesse est toujours parallèle à la faille."
+            },
+            {
+                question: "Combien existe-t-il de types de points triples ?",
+                options: [
+                    "3 types",
+                    "12 types",
+                    "78 types",
+                    "100 types"
+                ],
+                correct: 2,
+                explanation: "Il existe 78 types de points triples théoriques, dont certains existent réellement et sont stables."
+            },
+            {
+                question: "Qu'est-ce que le point triple de Rodriguez ?",
+                options: [
+                    "Un point triple T-T-T",
+                    "Un point triple D-D-D (Dorsale-Dorsale-Dorsale) dans l'océan Indien",
+                    "Un point triple de collision",
+                    "Une faille transformante"
+                ],
+                correct: 1,
+                explanation: "Le point triple de Rodriguez est un point triple D-D-D (Dorsale-Dorsale-Dorsale) situé dans l'océan Indien."
+            },
+            {
+                question: "Comment vérifie-t-on si un point triple est stable ?",
+                options: [
+                    "En mesurant la température",
+                    "En vérifiant que le triangle des vitesses se ferme (somme des vecteurs vitesse = 0)",
+                    "En comptant les séismes",
+                    "En mesurant le magnétisme"
+                ],
+                correct: 1,
+                explanation: "Un point triple est stable si le triangle des vitesses se ferme, c'est-à-dire si la somme vectorielle des vitesses relatives est nulle."
+            },
+            {
+                question: "Qu'est-ce que le théorème d'Euler (1777) appliqué à la tectonique ?",
+                options: [
+                    "Un théorème sur la gravité",
+                    "Un théorème stipulant que tout mouvement de plaque à la surface d'une sphère est une rotation autour d'un axe passant par le centre",
+                    "Un théorème sur le magnétisme",
+                    "Un théorème sur la température"
+                ],
+                correct: 1,
+                explanation: "Le théorème d'Euler stipule que tout mouvement de plaque à la surface d'une sphère peut être décrit comme une rotation autour d'un axe passant par le centre de la sphère."
+            },
+            {
+                question: "Qu'est-ce qu'un pôle eulérien ?",
+                options: [
+                    "Le pôle Nord magnétique",
+                    "Le point autour duquel une plaque effectue sa rotation",
+                    "Le centre d'une dorsale",
+                    "Une zone de subduction"
+                ],
+                correct: 1,
+                explanation: "Le pôle eulérien est le point autour duquel une plaque effectue sa rotation à la surface du globe."
+            },
+            {
+                question: "Comment varie la vitesse d'une plaque par rapport au pôle eulérien ?",
+                options: [
+                    "Elle est constante partout",
+                    "Elle est plus faible près du pôle et plus rapide loin du pôle",
+                    "Elle est plus rapide près du pôle et plus faible loin du pôle",
+                    "Elle est aléatoire"
+                ],
+                correct: 1,
+                explanation: "La vitesse d'une plaque est plus faible près du pôle de rotation et plus rapide loin du pôle de rotation."
+            },
+            {
+                question: "Quelle est la formule de la vitesse linéaire d'une plaque ?",
+                options: [
+                    "V = ω × R",
+                    "V = ω × R × sin λ",
+                    "V = R / ω",
+                    "V = ω + R"
+                ],
+                correct: 1,
+                explanation: "La vitesse linéaire d'une plaque est donnée par la formule V = ω × R × sin λ, où ω est la vitesse angulaire, R le rayon de la Terre, et λ l'angle géographique."
+            },
+            {
+                question: "Qu'est-ce que le modèle NUVEL-1 ?",
+                options: [
+                    "Un modèle de prévision météorologique",
+                    "Un modèle global de cinématique instantanée des plaques (Northwestern University VELocities)",
+                    "Un modèle de formation des océans",
+                    "Un modèle climatique"
+                ],
+                correct: 1,
+                explanation: "NUVEL-1 (Northwestern University VELocities) est un modèle global de cinématique instantanée des plaques, publié en 1990 avec 12 plaques."
+            },
+            {
+                question: "Qu'est-ce que le modèle MORVEL ?",
+                options: [
+                    "Un modèle ancien moins précis que NUVEL-1",
+                    "Un modèle plus récent et plus précis basé sur les vitesses des dorsales océaniques (Mid-Oceanic Ridge VELocities)",
+                    "Un modèle climatique",
+                    "Un modèle de formation des continents"
+                ],
+                correct: 1,
+                explanation: "MORVEL (Mid-Oceanic Ridge VELocities) est un modèle plus récent et plus précis que NUVEL-1, publié en 2010 avec 25 plaques."
+            },
+            {
+                question: "Comment les failles transformantes aident-elles à déterminer le pôle eulérien ?",
+                options: [
+                    "Par leur profondeur",
+                    "Les transformantes convergent vers le pôle eulérien car le mouvement est parallèle à ces failles",
+                    "Par leur température",
+                    "Par leur magnétisme"
+                ],
+                correct: 1,
+                explanation: "Les failles transformantes aident à localiser le pôle eulérien car elles convergent vers ce point, le mouvement étant parallèle à ces failles."
+            },
+            {
+                question: "Qu'est-ce que l'altimétrie satellitaire ?",
+                options: [
+                    "Une mesure de la température des océans",
+                    "Une technique de modélisation de la morphologie des fonds marins par satellite (radar) en mesurant la hauteur de l'eau",
+                    "Une mesure du magnétisme",
+                    "Une technique de datation des roches"
+                ],
+                correct: 1,
+                explanation: "L'altimétrie satellitaire est une technique qui permet de modéliser la morphologie des fonds marins par satellite en mesurant précisément la hauteur de l'eau."
+            },
+            {
+                question: "Qu'est-ce que la méthode de Vine et Matthews ?",
+                options: [
+                    "Une méthode de datation des fossiles",
+                    "Une méthode basée sur les anomalies magnétiques pour calculer les vitesses d'expansion océanique",
+                    "Une méthode de mesure de la température",
+                    "Une méthode de prévision des séismes"
+                ],
+                correct: 1,
+                explanation: "La méthode de Vine et Matthews utilise les anomalies magnétiques des fonds océaniques pour calculer les vitesses d'expansion océanique."
+            },
+            {
+                question: "Qu'est-ce que le point de Curie dans le contexte du paléomagnétisme ?",
+                options: [
+                    "Le point où l'eau bout",
+                    "La température (600°C) à laquelle la lave refroidit et les aiguilles de magnétite se fossilisent dans la direction du pôle magnétique",
+                    "Le point le plus profond de l'océan",
+                    "Le centre de la Terre"
+                ],
+                correct: 1,
+                explanation: "Le point de Curie est la température (600°C) à laquelle la lave refroidit suffisamment pour que les aiguilles de magnétite se fossilisent dans la direction du pôle magnétique de l'époque."
+            },
+            {
+                question: "Comment calcule-t-on la vitesse angulaire ω à partir de la vitesse maximale ?",
+                options: [
+                    "ω = Vmax + R",
+                    "ω = Vmax / R",
+                    "ω = Vmax × R",
+                    "ω = R / Vmax"
+                ],
+                correct: 1,
+                explanation: "La vitesse angulaire ω se calcule par ω = Vmax / R, où Vmax est la vitesse linéaire maximale et R le rayon de la Terre (6370 km)."
+            },
+            {
+                question: "Sur combien d'années le modèle NUVEL-1 base-t-il ses vitesses ?",
+                options: [
+                    "Les 100 dernières années",
+                    "Les 3 derniers millions d'années",
+                    "Les 10 derniers millions d'années",
+                    "Les 100 derniers millions d'années"
+                ],
+                correct: 1,
+                explanation: "Le modèle NUVEL-1 base ses vitesses sur une moyenne des 3 derniers millions d'années à partir des anomalies magnétiques."
+            },
+            {
+                question: "Qu'est-ce qu'un vecteur glissement au foyer d'un séisme ?",
+                options: [
+                    "La direction du vent",
+                    "La strie correspondant au glissement sur le plan de faille, perpendiculaire au plan auxiliaire",
+                    "La profondeur du séisme",
+                    "La magnitude du séisme"
+                ],
+                correct: 1,
+                explanation: "Le vecteur glissement est la strie correspondant au glissement sur le plan de faille, c'est une droite perpendiculaire au plan auxiliaire qui montre le mouvement des plaques."
+            },
+            {
+                question: "Qu'est-ce que la géodésie spatiale GPS ?",
+                options: [
+                    "Une technique de prévision météo",
+                    "Une technique de mesure précise des déplacements de plaques par satellite",
+                    "Une technique de forage",
+                    "Une technique de datation"
+                ],
+                correct: 1,
+                explanation: "La géodésie spatiale GPS est une technique de mesure précise des déplacements des plaques tectoniques en utilisant un réseau de satellites."
+            },
+            {
+                question: "Combien de satellites composent le système GPS ?",
+                options: [
+                    "12 satellites",
+                    "24 satellites",
+                    "48 satellites",
+                    "100 satellites"
+                ],
+                correct: 1,
+                explanation: "Le système GPS est composé de 24 satellites situés à 20 000 km d'altitude, répartis sur 6 plans orbitaux différents."
+            },
+            {
+                question: "Quelle précision peut-on atteindre avec la mesure de phase de l'onde porteuse GPS ?",
+                options: [
+                    "Métrique",
+                    "Décimétrique",
+                    "Centimétrique",
+                    "Millimétrique"
+                ],
+                correct: 3,
+                explanation: "En utilisant la mesure de phase de l'onde porteuse GPS, on peut atteindre une précision millimétrique, nécessaire pour mesurer les mouvements de plaques."
+            },
+            {
+                question: "Qu'est-ce que l'ITRF 2000 ?",
+                options: [
+                    "Un modèle climatique",
+                    "L'International Terrestrial Reference Frame, un modèle géodésique global basé sur 6 plaques",
+                    "Un type de satellite",
+                    "Une méthode de datation"
+                ],
+                correct: 1,
+                explanation: "L'ITRF 2000 (International Terrestrial Reference Frame) est un modèle géodésique global publié en 2002 qui prend en compte 6 plaques."
+            },
+            {
+                question: "Pourquoi les vitesses GPS sont-elles généralement plus faibles que celles de NUVEL-1 ?",
+                options: [
+                    "Car le GPS est moins précis",
+                    "Car le GPS mesure sur 20-30 ans tandis que NUVEL-1 sur 3 Ma, et la vitesse des plaques a changé",
+                    "Car NUVEL-1 est obsolète",
+                    "Car les satellites sont trop hauts"
+                ],
+                correct: 1,
+                explanation: "Les vitesses GPS sont plus faibles car elles mesurent sur 20-30 ans, tandis que NUVEL-1 prend une moyenne sur 3 millions d'années, et la vitesse des plaques a changé au cours du temps."
+            },
+            {
+                question: "Qu'est-ce que les mouvements 'finis' des plaques ?",
+                options: [
+                    "Les mouvements actuels",
+                    "Les reconstitutions du mouvement des plaques au cours du temps passé",
+                    "Les mouvements futurs",
+                    "Les mouvements verticaux"
+                ],
+                correct: 1,
+                explanation: "Les mouvements 'finis' sont les reconstitutions du mouvement des plaques au cours du temps passé, par opposition aux mouvements instantanés actuels."
+            },
+            {
+                question: "Qu'est-ce que le cycle de Wilson ?",
+                options: [
+                    "Un cycle climatique",
+                    "L'alternance de périodes de supercontinents et de périodes avec découpage par des océans",
+                    "Un cycle volcanique",
+                    "Un cycle sismique"
+                ],
+                correct: 1,
+                explanation: "Le cycle de Wilson décrit l'alternance de périodes de supercontinents (comme la Pangée) et de périodes avec découpage par des océans."
+            },
+            {
+                question: "Quelle est la durée approximative d'un cycle de Wilson ?",
+                options: [
+                    "50 Ma",
+                    "100 Ma",
+                    "250 Ma",
+                    "500 Ma"
+                ],
+                correct: 2,
+                explanation: "Le cycle de Wilson dure environ 250 millions d'années."
+            },
+            {
+                question: "Quel était le dernier supercontinent connu ?",
+                options: [
+                    "Rodinia",
+                    "Pangée",
+                    "Gondwana",
+                    "Laurasia"
+                ],
+                correct: 1,
+                explanation: "Le dernier supercontinent connu est la Pangée (bien que le Gondwana soit aussi mentionné dans le cours comme un assemblage continental important)."
+            },
+            {
+                question: "Pourquoi est-il difficile de reconstituer les mouvements très anciens des plaques ?",
+                options: [
+                    "Car les ordinateurs sont trop lents",
+                    "Car les traces du plancher océanique disparaissent par la subduction",
+                    "Car il n'y avait pas de plaques avant",
+                    "Car la Terre était plus petite"
+                ],
+                correct: 1,
+                explanation: "Il est difficile de reconstituer les mouvements très anciens car les traces du plancher océanique disparaissent progressivement par la subduction."
+            },
+            {
+                question: "Qu'utilise-t-on pour dater l'âge du fond des océans ?",
+                options: [
+                    "Les fossiles uniquement",
+                    "Les anomalies magnétiques",
+                    "La couleur des roches",
+                    "La profondeur de l'eau"
+                ],
+                correct: 1,
+                explanation: "On utilise les anomalies magnétiques enregistrées dans les basaltes pour dater l'âge du fond des océans."
+            },
+            {
+                question: "Combien de plaques sont prises en compte dans le modèle de Bird ?",
+                options: [
+                    "12 plaques",
+                    "25 plaques",
+                    "52 plaques",
+                    "100 plaques"
+                ],
+                correct: 2,
+                explanation: "Le modèle de Bird prend en compte 52 plaques tectoniques."
+            }
         ];
 
         let currentQuestion = 0;
@@ -1585,4 +1508,3 @@
     </script>
 </body>
 </html>
-
