@@ -1,1 +1,1509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz DTS - Tectonique des Plaques</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
 
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>🌍 Quiz Dynamique Terre Solide</h1>
+            <p>Chapitre I : Tectonique globale et cinématique des plaques</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 80</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Quel impact les chaînes de montagnes ont-elles sur le climat ?",
+                options: [
+                    "Aucun impact",
+                    "Elles agissent comme une barrière climatique",
+                    "Elles réchauffent le climat",
+                    "Elles uniformisent le climat"
+                ],
+                correct: 1,
+                explanation: "Les chaînes de montagnes agissent comme une barrière climatique, influençant ainsi le climat de part et d'autre de la montagne."
+            },
+            {
+                question: "Quelle est la limite de plaques concernée par la Faille Alpine en Nouvelle-Zélande ?",
+                options: [
+                    "Plaque Pacifique et plaque Eurasienne",
+                    "Plaque Pacifique et plaque Indo-Australienne",
+                    "Plaque Africaine et plaque Sud-Américaine",
+                    "Plaque Nord-Américaine et plaque Pacifique"
+                ],
+                correct: 1,
+                explanation: "La Faille Alpine marque la limite entre la plaque Pacifique et la plaque Indo-Australienne."
+            },
+            {
+                question: "Quel type de chaîne de montagnes est l'Himalaya ?",
+                options: [
+                    "Une chaîne de subduction",
+                    "Une chaîne de collision",
+                    "Une chaîne de rift",
+                    "Une chaîne volcanique"
+                ],
+                correct: 1,
+                explanation: "L'Himalaya est une chaîne de collision, formée par la collision entre la plaque Indienne et la plaque Eurasienne."
+            },
+            {
+                question: "Avant le XXème siècle, comment les géologues considéraient-ils la position des continents ?",
+                options: [
+                    "Ils pensaient que les continents étaient mobiles",
+                    "Ils pensaient que les continents étaient en rotation",
+                    "Ils considéraient les continents comme fixes",
+                    "Ils n'avaient aucune théorie"
+                ],
+                correct: 2,
+                explanation: "Jusqu'au début du XXème siècle, les géologues attribuaient aux continents une position fixe."
+            },
+            {
+                question: "Selon Eduard Suess, quelle était l'origine des chaînes de montagnes ?",
+                options: [
+                    "Le déplacement des continents",
+                    "Le refroidissement de la Terre entraînant une diminution de volume et une compression",
+                    "Les volcans",
+                    "Les impacts météoritiques"
+                ],
+                correct: 1,
+                explanation: "Eduard Suess pensait que le refroidissement de la Terre entraînait une diminution de son volume, mettant la surface sous compression et créant les chaînes de montagnes."
+            },
+            {
+                question: "Quelle était la conception de la Terre selon l'idée de 'Terre ridée' ?",
+                options: [
+                    "La Terre se dilate avec le temps",
+                    "La Terre se refroidit, diminue de volume, créant des rides comme les montagnes",
+                    "La Terre est parfaitement sphérique",
+                    "La Terre est plate"
+                ],
+                correct: 1,
+                explanation: "L'idée de Terre ridée suggérait qu'en se refroidissant, la Terre diminuait de volume, créant des 'rides' comme les chaînes de montagnes."
+            },
+            {
+                question: "Qui a publié les premières théories sur la mobilité des continents entre 1912 et 1924 ?",
+                options: [
+                    "Charles Darwin",
+                    "Alfred Wegener",
+                    "Eduard Suess",
+                    "Isaac Newton"
+                ],
+                correct: 1,
+                explanation: "Alfred Wegener, astronome et climatologue, a publié ses théories sur la mobilité des continents entre 1912 et 1924."
+            },
+            {
+                question: "Que signifie SIMA dans la théorie de Wegener ?",
+                options: [
+                    "Silicium-Aluminium",
+                    "Silicium-Magnésium",
+                    "Soufre-Magnésium",
+                    "Sodium-Magnésium"
+                ],
+                correct: 1,
+                explanation: "SIMA signifie Silicium-Magnésium, désignant la composition de la croûte océanique selon Wegener."
+            },
+            {
+                question: "Que signifie SIAL dans la théorie de Wegener ?",
+                options: [
+                    "Silicium-Magnésium",
+                    "Silicium-Aluminium",
+                    "Sodium-Aluminium",
+                    "Soufre-Aluminium"
+                ],
+                correct: 1,
+                explanation: "SIAL signifie Silicium-Aluminium, désignant la composition de la croûte continentale selon Wegener."
+            },
+            {
+                question: "Quel argument géologique Wegener a-t-il utilisé pour soutenir sa théorie ?",
+                options: [
+                    "La couleur des roches",
+                    "Les similitudes entre les structures géologiques des continents",
+                    "La température des océans",
+                    "La vitesse de rotation de la Terre"
+                ],
+                correct: 1,
+                explanation: "Wegener a observé des similitudes entre les structures géologiques de différents continents, comme la chaîne calédonienne entre l'Écosse, la Norvège et le nord du Canada."
+            },
+            {
+                question: "Qu'est-ce qu'un bouclier en géologie ?",
+                options: [
+                    "Une zone volcanique active",
+                    "Un morceau de croûte déformé il y a au minimum 1 Ga et qui n'a pas été déformé depuis",
+                    "Une faille récente",
+                    "Un océan peu profond"
+                ],
+                correct: 1,
+                explanation: "Un bouclier est un morceau de croûte déformé il y a au minimum 1 milliard d'années et qui n'a pas été déformé depuis."
+            },
+            {
+                question: "Pourquoi la théorie des 'ponts continentaux' a-t-elle été réfutée ?",
+                options: [
+                    "Car elle ne pouvait pas expliquer la distribution des fossiles continentaux communs",
+                    "Car elle était trop complexe",
+                    "Car elle ne correspondait pas aux observations géologiques",
+                    "Car les océans ne pouvaient pas avoir disparu"
+                ],
+                correct: 0,
+                explanation: "La théorie des ponts continentaux ne pouvait pas expliquer de manière satisfaisante la distribution des fossiles continentaux communs entre continents séparés."
+            },
+            {
+                question: "Que sont les tillites ?",
+                options: [
+                    "Des roches volcaniques",
+                    "Des roches poudreuses sédimentaires témoins de dépôts glaciaires",
+                    "Des fossiles marins",
+                    "Des cristaux de glace"
+                ],
+                correct: 1,
+                explanation: "Les tillites sont des roches poudreuses sédimentaires causées par les glaciers et témoignent des dépôts glaciaires."
+            },
+            {
+                question: "Comment appelle-t-on le supercontinent proposé par Wegener ?",
+                options: [
+                    "Gondwana",
+                    "Laurasia",
+                    "Pangée",
+                    "Rodinia"
+                ],
+                correct: 2,
+                explanation: "Wegener a proposé que les continents provenaient de la fragmentation d'un continent unique appelé la Pangée."
+            },
+            {
+                question: "À quelle période géologique Wegener situe-t-il la Pangée ?",
+                options: [
+                    "Au Jurassique",
+                    "Au Carbonifère supérieur/Permien (-290/270 Ma)",
+                    "Au Crétacé",
+                    "Au Paléogène"
+                ],
+                correct: 1,
+                explanation: "Wegener situe la Pangée au Carbonifère supérieur/Permien, il y a environ 290 à 270 millions d'années."
+            },
+            {
+                question: "Quelle est l'altitude moyenne des continents ?",
+                options: [
+                    "+100 m",
+                    "+800 m",
+                    "+3800 m",
+                    "+5000 m"
+                ],
+                correct: 1,
+                explanation: "L'altitude moyenne des continents est de +800 m selon la distribution bimodale des altitudes observée par Wegener."
+            },
+            {
+                question: "Quelle est la profondeur moyenne des océans ?",
+                options: [
+                    "-800 m",
+                    "-1500 m",
+                    "-3800 m",
+                    "-6000 m"
+                ],
+                correct: 2,
+                explanation: "La profondeur moyenne des océans est de -3800 m."
+            },
+            {
+                question: "IMAGE DOC1 : Que montre cette courbe de distribution bimodale des altitudes ?",
+                image: "DTS/doc1.jpg",
+                options: [
+                    "Que les océans et continents ont la même origine",
+                    "Que les océans et continents ont deux niveaux initiaux différents, formés de matériaux différents",
+                    "Que la Terre est parfaitement plate",
+                    "Que tous les reliefs ont la même altitude"
+                ],
+                correct: 1,
+                explanation: "La courbe bimodale montre deux pics distincts, suggérant que les océans et continents ont deux niveaux initiaux différents et sont formés de matériaux différents."
+            },
+            {
+                question: "Qui a confirmé les théories de Wegener en 1945 ?",
+                options: [
+                    "Charles Darwin",
+                    "Arthur Holmes",
+                    "Isaac Newton",
+                    "Albert Einstein"
+                ],
+                correct: 1,
+                explanation: "Arthur Holmes a confirmé les théories de Wegener en 1945."
+            },
+            {
+                question: "Qu'est-ce que la Force d'Eötvös proposée par Wegener ?",
+                options: [
+                    "Une force magnétique",
+                    "Une force inertielle due à une variation de l'accélération centrifuge, provoquant la dérive des continents vers l'équateur",
+                    "Une force gravitationnelle",
+                    "Une force électrique"
+                ],
+                correct: 1,
+                explanation: "La Force d'Eötvös est une force inertielle due à une variation de l'accélération centrifuge, censée provoquer la dérive des continents vers l'équateur."
+            },
+            {
+                question: "Quelle force Wegener a-t-il proposée pour expliquer la dérive des continents vers l'ouest ?",
+                options: [
+                    "La force magnétique",
+                    "La force de Coriolis",
+                    "La rotation de la Terre et les forces de marée (système Soleil-Lune)",
+                    "La force gravitationnelle de la Lune seule"
+                ],
+                correct: 2,
+                explanation: "Wegener a proposé que la rotation de la Terre et les forces de marée du système Soleil-Lune provoquaient la dérive des continents vers l'ouest."
+            },
+            {
+                question: "Pourquoi les forces de dérive proposées par Wegener ont-elles été jugées insuffisantes ?",
+                options: [
+                    "Car elles étaient trop fortes",
+                    "Car elles ne pouvaient pas expliquer le déplacement de masses continentales solides sur un support solide",
+                    "Car elles n'existaient pas",
+                    "Car elles changeaient trop rapidement"
+                ],
+                correct: 1,
+                explanation: "Les forces de dérive proposées par Wegener étaient insuffisantes pour permettre le déplacement de masses continentales solides sur un manteau lui-même solide."
+            },
+            {
+                question: "Qu'ont montré les progrès de la sismologie concernant la croûte et le manteau ?",
+                options: [
+                    "Qu'ils sont liquides",
+                    "Qu'ils sont à l'état solide, et non visqueux",
+                    "Qu'ils sont gazeux",
+                    "Qu'ils sont en fusion constante"
+                ],
+                correct: 1,
+                explanation: "Les progrès de la sismologie ont montré que la croûte et le manteau sont à l'état solide, et non visqueux comme le proposait Wegener."
+            },
+            {
+                question: "Quelle a été la première carte globale des fonds océaniques ?",
+                options: [
+                    "En 1920",
+                    "En 1945",
+                    "En 1960",
+                    "En 1980"
+                ],
+                correct: 2,
+                explanation: "La première carte globale des fonds océaniques a été réalisée en 1960."
+            },
+            {
+                question: "Quelle est la longueur de la dorsale océanique qui serpente dans tous les océans ?",
+                options: [
+                    "10 000 km",
+                    "30 000 km",
+                    "65 000 km",
+                    "100 000 km"
+                ],
+                correct: 2,
+                explanation: "La dorsale océanique serpente dans tous les océans sur environ 65 000 km de long."
+            },
+            {
+                question: "À quelle profondeur culmine généralement une dorsale océanique ?",
+                options: [
+                    "500 m",
+                    "1 km",
+                    "2,5 km",
+                    "5 km"
+                ],
+                correct: 2,
+                explanation: "Une dorsale océanique culmine généralement vers 2,5 km de profondeur."
+            },
+            {
+                question: "Quelle est la profondeur des fosses océaniques ?",
+                options: [
+                    "2 à 4 km",
+                    "5 à 7 km",
+                    "8 à 11 km",
+                    "15 à 20 km"
+                ],
+                correct: 2,
+                explanation: "Les fosses océaniques ont une profondeur de 8 à 11 km."
+            },
+            {
+                question: "Où trouve-t-on principalement les fosses océaniques ?",
+                options: [
+                    "Dans l'océan Atlantique",
+                    "Dans l'océan Indien",
+                    "En bordure de l'océan Pacifique",
+                    "Dans l'océan Arctique"
+                ],
+                correct: 2,
+                explanation: "Les fosses océaniques se trouvent principalement en bordure de l'océan Pacifique, comme la fosse des Mariannes."
+            },
+            {
+                question: "Où le flux de chaleur est-il le plus élevé ?",
+                options: [
+                    "Au niveau des continents",
+                    "Au niveau des dorsales",
+                    "Au milieu des océans",
+                    "Dans l'atmosphère"
+                ],
+                correct: 1,
+                explanation: "Le flux de chaleur est plus élevé au niveau des dorsales et des zones de subduction."
+            },
+            {
+                question: "Qui a montré en 1906 que la direction du champ magnétique s'est inversée au cours du temps ?",
+                options: [
+                    "Alfred Wegener",
+                    "Bernard Brunhes",
+                    "Harry Hess",
+                    "Arthur Holmes"
+                ],
+                correct: 1,
+                explanation: "Bernard Brunhes a montré en 1906 que la direction du champ magnétique terrestre s'est totalement inversée au cours du temps."
+            },
+            {
+                question: "Qu'est-ce que l'échelle magnétostratigraphique ?",
+                options: [
+                    "Une mesure de la température des océans",
+                    "Une échelle établie à partir des inversions du champ magnétique enregistrées dans les roches",
+                    "Une mesure de la profondeur des océans",
+                    "Une échelle de temps géologique basée sur les fossiles"
+                ],
+                correct: 1,
+                explanation: "L'échelle magnétostratigraphique est établie à partir des inversions du champ magnétique terrestre enregistrées dans les roches, notamment les empilements de lave."
+            },
+            {
+                question: "Qui a développé la théorie du 'tapis roulant' au fond des océans en 1962 ?",
+                options: [
+                    "Alfred Wegener",
+                    "Bernard Brunhes",
+                    "Harry Hess",
+                    "Charles Darwin"
+                ],
+                correct: 2,
+                explanation: "Harry Hess a développé la théorie du 'tapis roulant' au fond des océans en 1962, expliquant la formation symétrique du plancher océanique de part et d'autre des dorsales."
+            },
+            {
+                question: "Quel est l'âge maximal du plancher océanique ?",
+                options: [
+                    "50 Ma",
+                    "100 Ma",
+                    "180 Ma",
+                    "500 Ma"
+                ],
+                correct: 2,
+                explanation: "Il n'existe pas de plancher océanique plus vieux que 180 millions d'années, ce qui suggère une disparition des océans par subduction."
+            },
+            {
+                question: "Combien de plaques les premiers modèles de tectonique des plaques ont-ils identifiées ?",
+                options: [
+                    "3 plaques",
+                    "6 plaques",
+                    "12 plaques",
+                    "24 plaques"
+                ],
+                correct: 1,
+                explanation: "Les premiers modèles de tectonique des plaques ont identifié 6 plaques, puis 12, puis 24, et certains modèles récents présentent même 52 plaques."
+            },
+            {
+                question: "Qu'est-ce qu'une plaque lithosphérique ?",
+                options: [
+                    "Uniquement la croûte terrestre",
+                    "Un élément de lithosphère rigide composé de la croûte et du manteau lithosphérique",
+                    "Uniquement le manteau",
+                    "Une couche liquide"
+                ],
+                correct: 1,
+                explanation: "Une plaque lithosphérique est un élément de lithosphère rigide composé de la croûte (continentale ou océanique) et du manteau lithosphérique."
+            },
+            {
+                question: "Quelle est l'épaisseur moyenne de la croûte continentale ?",
+                options: [
+                    "8 km",
+                    "30 km",
+                    "100 km",
+                    "200 km"
+                ],
+                correct: 1,
+                explanation: "La croûte continentale fait environ 30 km d'épaisseur."
+            },
+            {
+                question: "Quelle est l'épaisseur moyenne de la croûte océanique ?",
+                options: [
+                    "8 km",
+                    "30 km",
+                    "100 km",
+                    "200 km"
+                ],
+                correct: 0,
+                explanation: "La croûte océanique fait environ 8 km d'épaisseur."
+            },
+            {
+                question: "Quelle est l'épaisseur moyenne de la lithosphère ?",
+                options: [
+                    "8 km",
+                    "30 km",
+                    "100 km",
+                    "200 km"
+                ],
+                correct: 2,
+                explanation: "La lithosphère fait environ 100 km d'épaisseur."
+            },
+            {
+                question: "Où se produisent principalement les mouvements tectoniques ?",
+                options: [
+                    "Au centre des plaques",
+                    "Sur les bordures des plaques (dorsales, subductions)",
+                    "Dans l'atmosphère",
+                    "Uniformément partout"
+                ],
+                correct: 1,
+                explanation: "Les mouvements tectoniques se produisent principalement sur les bordures des plaques, au niveau des dorsales ou des zones de subduction."
+            },
+            {
+                question: "Qu'est-ce qu'un rift ?",
+                options: [
+                    "Une zone où la croûte se sépare",
+                    "Une zone de collision",
+                    "Une faille transformante",
+                    "Un volcan"
+                ],
+                correct: 0,
+                explanation: "Un rift est une zone où la croûte se sépare, formant une vallée qui peut évoluer en dorsale océanique."
+            },
+            {
+                question: "Quel est un exemple de dorsale océanique émergée ?",
+                options: [
+                    "Les Alpes",
+                    "L'Islande",
+                    "L'Himalaya",
+                    "Les Andes"
+                ],
+                correct: 1,
+                explanation: "L'Islande est un exemple de dorsale océanique émergée (la dorsale médio-Atlantique)."
+            },
+            {
+                question: "Qu'est-ce qu'une faille transformante ?",
+                options: [
+                    "Une zone de création de croûte",
+                    "Une zone de destruction de croûte",
+                    "Une faille décrochante avec coulissement horizontal sans formation ni disparition de croûte",
+                    "Une zone volcanique"
+                ],
+                correct: 2,
+                explanation: "Une faille transformante est une faille décrochante où il y a coulissement horizontal des plaques, sans formation ni disparition de croûte."
+            },
+            {
+                question: "Quel est un exemple célèbre de faille transformante ?",
+                options: [
+                    "La faille de San Andreas",
+                    "La dorsale médio-Atlantique",
+                    "L'Himalaya",
+                    "La fosse des Mariannes"
+                ],
+                correct: 0,
+                explanation: "La faille de San Andreas en Californie est un exemple célèbre de faille transformante."
+            },
+            {
+                question: "Qu'est-ce que l'obduction ?",
+                options: [
+                    "Une plaque continentale qui passe sous une plaque océanique",
+                    "Une plaque océanique qui passe sous une plaque continentale",
+                    "La lithosphère océanique qui passe par-dessus la lithosphère continentale, formant des nappes ophiolitiques",
+                    "La formation d'une dorsale"
+                ],
+                correct: 2,
+                explanation: "L'obduction est le processus par lequel la lithosphère océanique passe par-dessus la lithosphère continentale, formant des nappes ophiolitiques."
+            },
+            {
+                question: "Quels sont les trois types de forces intraplaques ?",
+                options: [
+                    "Ridge push, slab pull, cellules de convection",
+                    "Gravité, magnétisme, électricité",
+                    "Rotation, révolution, précession",
+                    "Compression, extension, cisaillement"
+                ],
+                correct: 0,
+                explanation: "Les trois forces intraplaques sont : ridge push (poussée aux dorsales), slab pull (traction du panneau plongeant), et les cellules de convection dans le manteau."
+            },
+            {
+                question: "Qu'est-ce que le 'ridge push' ?",
+                options: [
+                    "La traction exercée par le panneau plongeant",
+                    "La poussée aux dorsales",
+                    "Les cellules de convection",
+                    "La rotation de la Terre"
+                ],
+                correct: 1,
+                explanation: "Le ridge push est la poussée exercée au niveau des dorsales océaniques."
+            },
+            {
+                question: "Qu'est-ce que le 'slab pull' ?",
+                options: [
+                    "La poussée aux dorsales",
+                    "La traction du panneau plongeant dans les zones de subduction",
+                    "Les cellules de convection",
+                    "La force de Coriolis"
+                ],
+                correct: 1,
+                explanation: "Le slab pull est la traction exercée par le panneau plongeant dans les zones de subduction, car la lithosphère est plus dense."
+            },
+            {
+                question: "Qu'est-ce qu'un mouvement absolu de plaque ?",
+                options: [
+                    "Un mouvement par rapport à une autre plaque",
+                    "Un mouvement par rapport à un référentiel fixe (GPS, noyau, points chauds)",
+                    "Un mouvement vertical uniquement",
+                    "Un mouvement circulaire"
+                ],
+                correct: 1,
+                explanation: "Un mouvement absolu est un mouvement par rapport à un référentiel fixe, comme la constellation satellite GPS, le noyau, ou les points chauds."
+            },
+            {
+                question: "Qu'est-ce qu'un point chaud ?",
+                options: [
+                    "Un volcan en surface",
+                    "Un panache mantellique stable provenant de l'interface noyau-manteau",
+                    "Une dorsale océanique",
+                    "Une zone de subduction"
+                ],
+                correct: 1,
+                explanation: "Un point chaud est un panache mantellique chaud et stable provenant de l'interface entre le noyau et le manteau."
+            },
+            {
+                question: "Quel est un exemple célèbre d'alignement de points chauds ?",
+                options: [
+                    "Les Alpes",
+                    "Hawaï-Empereur (chaîne de monts sous-marins)",
+                    "L'Himalaya",
+                    "Les Andes"
+                ],
+                correct: 1,
+                explanation: "L'alignement Hawaï-Empereur est un exemple célèbre de chaîne de monts sous-marins formée par un point chaud."
+            },
+            {
+                question: "Comment calcule-t-on la vitesse d'une plaque à partir d'un point chaud ?",
+                options: [
+                    "En mesurant la température",
+                    "En divisant la distance parcourue par le temps (ex: 1900 km en 27 Ma = 7 cm/an)",
+                    "En mesurant la profondeur de l'océan",
+                    "En comptant les séismes"
+                ],
+                correct: 1,
+                explanation: "La vitesse d'une plaque se calcule en divisant la distance parcourue par le temps. Exemple: 1900 km en 27 Ma donne 7 cm/an."
+            },
+            {
+                question: "Quelle est la vitesse moyenne des plaques lentes ?",
+                options: [
+                    "1 cm/an",
+                    "3-4 cm/an",
+                    "10 cm/an",
+                    "20 cm/an"
+                ],
+                correct: 1,
+                explanation: "Les plaques lentes possèdent une vitesse d'environ 3 à 4 cm/an."
+            },
+            {
+                question: "Pourquoi les plaques avec subduction sont-elles généralement rapides ?",
+                options: [
+                    "À cause de la poussée aux dorsales",
+                    "À cause de la traction du panneau plongeant (slab pull)",
+                    "À cause de la rotation de la Terre",
+                    "À cause du magnétisme"
+                ],
+                correct: 1,
+                explanation: "Les plaques qui plongent sous une autre sont rapides en raison de la traction du panneau plongeant (slab pull)."
+            },
+            {
+                question: "Qu'est-ce qu'un mouvement relatif de plaque ?",
+                options: [
+                    "Un mouvement par rapport à un référentiel fixe",
+                    "Le mouvement d'une plaque par rapport à une autre plaque",
+                    "Un mouvement vertical",
+                    "Un mouvement circulaire"
+                ],
+                correct: 1,
+                explanation: "Un mouvement relatif est le mouvement d'une plaque par rapport à une autre plaque."
+            },
+            {
+                question: "Au niveau d'une limite divergente, comment est orienté le mouvement relatif ?",
+                options: [
+                    "Parallèle à la dorsale",
+                    "Perpendiculaire (orthogonal) à la dorsale",
+                    "En diagonale",
+                    "Circulaire"
+                ],
+                correct: 1,
+                explanation: "Au niveau d'une limite divergente, le mouvement relatif est perpendiculaire (orthogonal) à la dorsale."
+            },
+            {
+                question: "Qu'est-ce que le taux d'expansion océanique ?",
+                options: [
+                    "La vitesse totale d'éloignement des plaques",
+                    "La quantité de matériel océanique formé sur une plaque, égale à 1/2 de la vitesse totale",
+                    "La profondeur de l'océan",
+                    "La température de l'eau"
+                ],
+                correct: 1,
+                explanation: "Le taux d'expansion océanique est la quantité de matériel océanique formé sur une plaque, égale à la moitié de la vitesse totale d'éloignement."
+            },
+            {
+                question: "Au niveau d'une faille transformante, comment est orienté le vecteur vitesse ?",
+                options: [
+                    "Perpendiculaire à la faille",
+                    "Toujours parallèle à la faille",
+                    "En diagonale",
+                    "Vertical"
+                ],
+                correct: 1,
+                explanation: "Au niveau d'une faille transformante, le vecteur vitesse est toujours parallèle à la faille."
+            },
+            {
+                question: "Combien existe-t-il de types de points triples ?",
+                options: [
+                    "3 types",
+                    "12 types",
+                    "78 types",
+                    "100 types"
+                ],
+                correct: 2,
+                explanation: "Il existe 78 types de points triples théoriques, dont certains existent réellement et sont stables."
+            },
+            {
+                question: "Qu'est-ce que le point triple de Rodriguez ?",
+                options: [
+                    "Un point triple T-T-T",
+                    "Un point triple D-D-D (Dorsale-Dorsale-Dorsale) dans l'océan Indien",
+                    "Un point triple de collision",
+                    "Une faille transformante"
+                ],
+                correct: 1,
+                explanation: "Le point triple de Rodriguez est un point triple D-D-D (Dorsale-Dorsale-Dorsale) situé dans l'océan Indien."
+            },
+            {
+                question: "Comment vérifie-t-on si un point triple est stable ?",
+                options: [
+                    "En mesurant la température",
+                    "En vérifiant que le triangle des vitesses se ferme (somme des vecteurs vitesse = 0)",
+                    "En comptant les séismes",
+                    "En mesurant le magnétisme"
+                ],
+                correct: 1,
+                explanation: "Un point triple est stable si le triangle des vitesses se ferme, c'est-à-dire si la somme vectorielle des vitesses relatives est nulle."
+            },
+            {
+                question: "Qu'est-ce que le théorème d'Euler (1777) appliqué à la tectonique ?",
+                options: [
+                    "Un théorème sur la gravité",
+                    "Un théorème stipulant que tout mouvement de plaque à la surface d'une sphère est une rotation autour d'un axe passant par le centre",
+                    "Un théorème sur le magnétisme",
+                    "Un théorème sur la température"
+                ],
+                correct: 1,
+                explanation: "Le théorème d'Euler stipule que tout mouvement de plaque à la surface d'une sphère peut être décrit comme une rotation autour d'un axe passant par le centre de la sphère."
+            },
+            {
+                question: "Qu'est-ce qu'un pôle eulérien ?",
+                options: [
+                    "Le pôle Nord magnétique",
+                    "Le point autour duquel une plaque effectue sa rotation",
+                    "Le centre d'une dorsale",
+                    "Une zone de subduction"
+                ],
+                correct: 1,
+                explanation: "Le pôle eulérien est le point autour duquel une plaque effectue sa rotation à la surface du globe."
+            },
+            {
+                question: "Comment varie la vitesse d'une plaque par rapport au pôle eulérien ?",
+                options: [
+                    "Elle est constante partout",
+                    "Elle est plus faible près du pôle et plus rapide loin du pôle",
+                    "Elle est plus rapide près du pôle et plus faible loin du pôle",
+                    "Elle est aléatoire"
+                ],
+                correct: 1,
+                explanation: "La vitesse d'une plaque est plus faible près du pôle de rotation et plus rapide loin du pôle de rotation."
+            },
+            {
+                question: "Quelle est la formule de la vitesse linéaire d'une plaque ?",
+                options: [
+                    "V = ω × R",
+                    "V = ω × R × sin λ",
+                    "V = R / ω",
+                    "V = ω + R"
+                ],
+                correct: 1,
+                explanation: "La vitesse linéaire d'une plaque est donnée par la formule V = ω × R × sin λ, où ω est la vitesse angulaire, R le rayon de la Terre, et λ l'angle géographique."
+            },
+            {
+                question: "Qu'est-ce que le modèle NUVEL-1 ?",
+                options: [
+                    "Un modèle de prévision météorologique",
+                    "Un modèle global de cinématique instantanée des plaques (Northwestern University VELocities)",
+                    "Un modèle de formation des océans",
+                    "Un modèle climatique"
+                ],
+                correct: 1,
+                explanation: "NUVEL-1 (Northwestern University VELocities) est un modèle global de cinématique instantanée des plaques, publié en 1990 avec 12 plaques."
+            },
+            {
+                question: "Qu'est-ce que le modèle MORVEL ?",
+                options: [
+                    "Un modèle ancien moins précis que NUVEL-1",
+                    "Un modèle plus récent et plus précis basé sur les vitesses des dorsales océaniques (Mid-Oceanic Ridge VELocities)",
+                    "Un modèle climatique",
+                    "Un modèle de formation des continents"
+                ],
+                correct: 1,
+                explanation: "MORVEL (Mid-Oceanic Ridge VELocities) est un modèle plus récent et plus précis que NUVEL-1, publié en 2010 avec 25 plaques."
+            },
+            {
+                question: "Comment les failles transformantes aident-elles à déterminer le pôle eulérien ?",
+                options: [
+                    "Par leur profondeur",
+                    "Les transformantes convergent vers le pôle eulérien car le mouvement est parallèle à ces failles",
+                    "Par leur température",
+                    "Par leur magnétisme"
+                ],
+                correct: 1,
+                explanation: "Les failles transformantes aident à localiser le pôle eulérien car elles convergent vers ce point, le mouvement étant parallèle à ces failles."
+            },
+            {
+                question: "Qu'est-ce que l'altimétrie satellitaire ?",
+                options: [
+                    "Une mesure de la température des océans",
+                    "Une technique de modélisation de la morphologie des fonds marins par satellite (radar) en mesurant la hauteur de l'eau",
+                    "Une mesure du magnétisme",
+                    "Une technique de datation des roches"
+                ],
+                correct: 1,
+                explanation: "L'altimétrie satellitaire est une technique qui permet de modéliser la morphologie des fonds marins par satellite en mesurant précisément la hauteur de l'eau."
+            },
+            {
+                question: "Qu'est-ce que la méthode de Vine et Matthews ?",
+                options: [
+                    "Une méthode de datation des fossiles",
+                    "Une méthode basée sur les anomalies magnétiques pour calculer les vitesses d'expansion océanique",
+                    "Une méthode de mesure de la température",
+                    "Une méthode de prévision des séismes"
+                ],
+                correct: 1,
+                explanation: "La méthode de Vine et Matthews utilise les anomalies magnétiques des fonds océaniques pour calculer les vitesses d'expansion océanique."
+            },
+            {
+                question: "Qu'est-ce que le point de Curie dans le contexte du paléomagnétisme ?",
+                options: [
+                    "Le point où l'eau bout",
+                    "La température (600°C) à laquelle la lave refroidit et les aiguilles de magnétite se fossilisent dans la direction du pôle magnétique",
+                    "Le point le plus profond de l'océan",
+                    "Le centre de la Terre"
+                ],
+                correct: 1,
+                explanation: "Le point de Curie est la température (600°C) à laquelle la lave refroidit suffisamment pour que les aiguilles de magnétite se fossilisent dans la direction du pôle magnétique de l'époque."
+            },
+            {
+                question: "Comment calcule-t-on la vitesse angulaire ω à partir de la vitesse maximale ?",
+                options: [
+                    "ω = Vmax + R",
+                    "ω = Vmax / R",
+                    "ω = Vmax × R",
+                    "ω = R / Vmax"
+                ],
+                correct: 1,
+                explanation: "La vitesse angulaire ω se calcule par ω = Vmax / R, où Vmax est la vitesse linéaire maximale et R le rayon de la Terre (6370 km)."
+            },
+            {
+                question: "Sur combien d'années le modèle NUVEL-1 base-t-il ses vitesses ?",
+                options: [
+                    "Les 100 dernières années",
+                    "Les 3 derniers millions d'années",
+                    "Les 10 derniers millions d'années",
+                    "Les 100 derniers millions d'années"
+                ],
+                correct: 1,
+                explanation: "Le modèle NUVEL-1 base ses vitesses sur une moyenne des 3 derniers millions d'années à partir des anomalies magnétiques."
+            },
+            {
+                question: "Qu'est-ce qu'un vecteur glissement au foyer d'un séisme ?",
+                options: [
+                    "La direction du vent",
+                    "La strie correspondant au glissement sur le plan de faille, perpendiculaire au plan auxiliaire",
+                    "La profondeur du séisme",
+                    "La magnitude du séisme"
+                ],
+                correct: 1,
+                explanation: "Le vecteur glissement est la strie correspondant au glissement sur le plan de faille, c'est une droite perpendiculaire au plan auxiliaire qui montre le mouvement des plaques."
+            },
+            {
+                question: "Qu'est-ce que la géodésie spatiale GPS ?",
+                options: [
+                    "Une technique de prévision météo",
+                    "Une technique de mesure précise des déplacements de plaques par satellite",
+                    "Une technique de forage",
+                    "Une technique de datation"
+                ],
+                correct: 1,
+                explanation: "La géodésie spatiale GPS est une technique de mesure précise des déplacements des plaques tectoniques en utilisant un réseau de satellites."
+            },
+            {
+                question: "Combien de satellites composent le système GPS ?",
+                options: [
+                    "12 satellites",
+                    "24 satellites",
+                    "48 satellites",
+                    "100 satellites"
+                ],
+                correct: 1,
+                explanation: "Le système GPS est composé de 24 satellites situés à 20 000 km d'altitude, répartis sur 6 plans orbitaux différents."
+            },
+            {
+                question: "Quelle précision peut-on atteindre avec la mesure de phase de l'onde porteuse GPS ?",
+                options: [
+                    "Métrique",
+                    "Décimétrique",
+                    "Centimétrique",
+                    "Millimétrique"
+                ],
+                correct: 3,
+                explanation: "En utilisant la mesure de phase de l'onde porteuse GPS, on peut atteindre une précision millimétrique, nécessaire pour mesurer les mouvements de plaques."
+            },
+            {
+                question: "Qu'est-ce que l'ITRF 2000 ?",
+                options: [
+                    "Un modèle climatique",
+                    "L'International Terrestrial Reference Frame, un modèle géodésique global basé sur 6 plaques",
+                    "Un type de satellite",
+                    "Une méthode de datation"
+                ],
+                correct: 1,
+                explanation: "L'ITRF 2000 (International Terrestrial Reference Frame) est un modèle géodésique global publié en 2002 qui prend en compte 6 plaques."
+            },
+            {
+                question: "Pourquoi les vitesses GPS sont-elles généralement plus faibles que celles de NUVEL-1 ?",
+                options: [
+                    "Car le GPS est moins précis",
+                    "Car le GPS mesure sur 20-30 ans tandis que NUVEL-1 sur 3 Ma, et la vitesse des plaques a changé",
+                    "Car NUVEL-1 est obsolète",
+                    "Car les satellites sont trop hauts"
+                ],
+                correct: 1,
+                explanation: "Les vitesses GPS sont plus faibles car elles mesurent sur 20-30 ans, tandis que NUVEL-1 prend une moyenne sur 3 millions d'années, et la vitesse des plaques a changé au cours du temps."
+            },
+            {
+                question: "Qu'est-ce que les mouvements 'finis' des plaques ?",
+                options: [
+                    "Les mouvements actuels",
+                    "Les reconstitutions du mouvement des plaques au cours du temps passé",
+                    "Les mouvements futurs",
+                    "Les mouvements verticaux"
+                ],
+                correct: 1,
+                explanation: "Les mouvements 'finis' sont les reconstitutions du mouvement des plaques au cours du temps passé, par opposition aux mouvements instantanés actuels."
+            },
+            {
+                question: "Qu'est-ce que le cycle de Wilson ?",
+                options: [
+                    "Un cycle climatique",
+                    "L'alternance de périodes de supercontinents et de périodes avec découpage par des océans",
+                    "Un cycle volcanique",
+                    "Un cycle sismique"
+                ],
+                correct: 1,
+                explanation: "Le cycle de Wilson décrit l'alternance de périodes de supercontinents (comme la Pangée) et de périodes avec découpage par des océans."
+            },
+            {
+                question: "Quelle est la durée approximative d'un cycle de Wilson ?",
+                options: [
+                    "50 Ma",
+                    "100 Ma",
+                    "250 Ma",
+                    "500 Ma"
+                ],
+                correct: 2,
+                explanation: "Le cycle de Wilson dure environ 250 millions d'années."
+            },
+            {
+                question: "Quel était le dernier supercontinent connu ?",
+                options: [
+                    "Rodinia",
+                    "Pangée",
+                    "Gondwana",
+                    "Laurasia"
+                ],
+                correct: 1,
+                explanation: "Le dernier supercontinent connu est la Pangée (bien que le Gondwana soit aussi mentionné dans le cours comme un assemblage continental important)."
+            },
+            {
+                question: "Pourquoi est-il difficile de reconstituer les mouvements très anciens des plaques ?",
+                options: [
+                    "Car les ordinateurs sont trop lents",
+                    "Car les traces du plancher océanique disparaissent par la subduction",
+                    "Car il n'y avait pas de plaques avant",
+                    "Car la Terre était plus petite"
+                ],
+                correct: 1,
+                explanation: "Il est difficile de reconstituer les mouvements très anciens car les traces du plancher océanique disparaissent progressivement par la subduction."
+            },
+            {
+                question: "Qu'utilise-t-on pour dater l'âge du fond des océans ?",
+                options: [
+                    "Les fossiles uniquement",
+                    "Les anomalies magnétiques",
+                    "La couleur des roches",
+                    "La profondeur de l'eau"
+                ],
+                correct: 1,
+                explanation: "On utilise les anomalies magnétiques enregistrées dans les basaltes pour dater l'âge du fond des océans."
+            },
+            {
+                question: "Combien de plaques sont prises en compte dans le modèle de Bird ?",
+                options: [
+                    "12 plaques",
+                    "25 plaques",
+                    "52 plaques",
+                    "100 plaques"
+                ],
+                correct: 2,
+                explanation: "Le modèle de Bird prend en compte 52 plaques tectoniques."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
