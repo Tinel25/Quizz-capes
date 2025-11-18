@@ -1,1 +1,1344 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phylogénie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>OEB</h1>
+            <p>Phylogénie</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+    question: "Qu'est-ce que la domestication ?",
+    options: [
+        "Le processus de capture d'animaux sauvages",
+        "L'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme",
+        "La modification génétique des espèces en laboratoire",
+        "L'introduction d'espèces dans de nouveaux territoires"
+    ],
+    correct: 1,
+    explanation: "La domestication est l'ensemble des processus évolutifs d'une population pour s'adapter aux contraintes dirigées par l'Homme (sélection artificielle) selon ses aptitudes biologiques."
+},
+{
+    question: "À quelle époque trouve-t-on les premières preuves de domestication (à l'exception du chien) ?",
+    options: [
+        "Au Paléolithique, il y a 50 000 ans",
+        "Au début du Néolithique, il y a 11 000 ans",
+        "À l'époque romaine, il y a 2 000 ans",
+        "Au Moyen Âge, il y a 1 000 ans"
+    ],
+    correct: 1,
+    explanation: "Les premières preuves de domestication datent du début du Néolithique (11 000 ans), dans le 'croissant fertile' (Mésopotamie), lorsque les humains ont commencé à se sédentariser."
+},
+{
+    question: "Quel animal a été le premier à être domestiqué par l'Homme ?",
+    options: [
+        "Le mouton",
+        "La vache",
+        "Le chien",
+        "Le cheval"
+    ],
+    correct: 2,
+    explanation: "Le chien (Canis familiaris) a été domestiqué il y a environ 15 000 ans, bien avant n'importe quel autre animal, à partir du loup gris."
+},
+{
+    question: "Quels sont les deux prérequis essentiels pour la domestication des animaux ?",
+    options: [
+        "Être carnivore et avoir une grande taille",
+        "Vivre en densités élevées et se reproduire en présence de l'Homme",
+        "Être herbivore et avoir un pelage épais",
+        "Vivre en solitaire et être agressif"
+    ],
+    correct: 1,
+    explanation: "Les prérequis pour la domestication sont : vivre à des densités de population importantes (en groupe) et se reproduire en présence de l'Homme (en captivité)."
+},
+{
+    question: "Pourquoi le loup et l'Homme ont-ils pu former un partenariat naturel ?",
+    options: [
+        "Car ils avaient peur des mêmes prédateurs",
+        "Car ils occupaient la même guilde et avaient des organisations sociales similaires",
+        "Car le loup était naturellement docile",
+        "Car l'Homme pouvait nourrir facilement le loup"
+    ],
+    correct: 1,
+    explanation: "Homme et loup occupaient la même guilde (groupe fonctionnel) avec des sociabilités complexes et des organisations proches, ce qui a permis un mutualisme dans la chasse."
+},
+{
+    question: "Quel impact majeur la domestication du chien a-t-elle eu sur l'histoire humaine ?",
+    options: [
+        "Uniquement la compagnie et le divertissement",
+        "Meilleurs succès de chasse, augmentation de protéines et conséquences sur l'hominisation",
+        "Seulement la protection des campements",
+        "Aucun impact significatif"
+    ],
+    correct: 1,
+    explanation: "La domestication du chien a permis de meilleurs succès de chasse (3 fois plus de gibier), un apport accru de protéines, une augmentation du volume cérébral et aurait été un élément-clé dans l'origine de plusieurs civilisations.",
+    },
+    {
+    question: "Quels bénéfices les biotechnologies modernes peuvent-elles apporter à l'agriculture ?",
+    options: [
+        "Uniquement augmenter la taille des fruits",
+        "Diminution des ressources énergétiques, résistance aux parasites, tolérance aux stress, optimisation des minéraux",
+        "Seulement améliorer le goût",
+        "Uniquement réduire les coûts"
+    ],
+    correct: 1,
+    explanation: "Les biotechnologies modernes apportent de nombreux bénéfices : diminution de l'utilisation des ressources énergétiques, optimisation de l'assimilation des éléments minéraux, résistance aux parasites et ravageurs, tolérance aux herbicides et aux stress environnementaux, et stérilité génétique."
+},
+{
+    question: "Qu'est-ce qu'une 'lignée domestiquée' ?",
+    options: [
+        "Un groupe d'animaux sauvages",
+        "Un groupe d'individus ayant acquis des performances, apparence et histoire sélective uniformes selon les sélections de l'Homme",
+        "Une espèce récemment découverte",
+        "Un hybride naturel"
+    ],
+    correct: 1,
+    explanation: "Une lignée domestiquée est un groupe d'individus d'une espèce (animale ou végétale) qui a acquis au fil des générations des performances, une apparence et une histoire sélective uniformes selon les sélections effectuées par l'Homme."
+},
+{
+    question: "Quelle est la différence entre zone de domestication et zone de diversification ?",
+    options: [
+        "Il n'y a pas de différence",
+        "Zone de domestication : mise sous dépendance de l'Homme ; Zone de diversification : sélection de plusieurs formes/lignées",
+        "Les deux termes sont synonymes",
+        "Zone de domestication est toujours plus grande"
+    ],
+    correct: 1,
+    explanation: "La zone de domestication est l'aire où s'est effectuée la mise 'sous dépendance totale' de l'Homme. La zone de diversification est celle où plusieurs formes ont été sélectionnées à partir du premier type domestiqué pour donner plusieurs lignées domestiquées."
+},
+{
+    question: "Qu'est-ce qu'une zone d'acclimatation ?",
+    options: [
+        "La zone d'origine d'une espèce",
+        "Installation d'un organisme dans une région différente de son aire d'origine, capable d'y survivre",
+        "Une zone sans climat",
+        "Une zone protégée"
+    ],
+    correct: 1,
+    explanation: "Une zone d'acclimatation est une région où un organisme a été installé hors de son aire d'origine et où il est capable de survivre et de se maintenir dans ces nouvelles conditions environnementales."
+},
+{
+    question: "Pourquoi les premiers humains ont-ils commencé à pratiquer l'élevage ?",
+    options: [
+        "Pour le sport et les loisirs",
+        "Assurer un approvisionnement régulier en viande fraîche (garde-manger disponible)",
+        "Pour décorer leurs campements",
+        "Par hasard sans raison précise"
+    ],
+    correct: 1,
+    explanation: "L'élevage permettait d'assurer un approvisionnement régulier en viande fraîche, créant un 'garde-manger disponible', contrairement à la chasse qui dépendait du hasard des rencontres et où le surplus de viande se dégradait avec le temps."
+},
+{
+    question: "Quand et où les bovins ont-ils été domestiqués en Inde ?",
+    options: [
+        "Il y a 5 000 ans dans l'Himalaya",
+        "Il y a 10 000 ans dans la vallée de l'Indus",
+        "Il y a 20 000 ans au sud de l'Inde",
+        "Il y a 2 000 ans au Pakistan"
+    ],
+    correct: 1,
+    explanation: "En Inde, les bovins ont été domestiqués il y a 10 000 ans dans la vallée de l'Indus. La domestication s'est produite indépendamment à plusieurs endroits de manière quasi synchrone."
+},
+{
+    question: "Quand la sous-espèce européenne d'aurochs (Bos primigenius primigenius) a-t-elle disparu ?",
+    options: [
+        "Au Moyen Âge",
+        "Au 17ème siècle (1627 en Pologne)",
+        "Au 19ème siècle",
+        "Elle existe encore aujourd'hui"
+    ],
+    correct: 1,
+    explanation: "L'aurochs européen (Bos primigenius primigenius), représenté sur les peintures pariétales de Lascaux et Chauvet, a disparu au 17ème siècle, le dernier spécimen étant mort en 1627 en Pologne."
+},
+{
+    question: "Quelle découverte majeure Edward Jenner a-t-il faite vers 1790 grâce à l'élevage bovin ?",
+    options: [
+        "L'antibiotique",
+        "La vaccination (les personnes travaillant avec les vaches n'attrapaient pas la variole)",
+        "L'insuline",
+        "Les vitamines"
+    ],
+    correct: 1,
+    explanation: "Edward Jenner a découvert la vaccination vers 1790 en observant que les personnes travaillant avec les vaches n'attrapaient jamais la variole car elles étaient porteuses de la vaccine, une maladie similaire mais inoffensive pour les humains."
+},
+{
+    question: "Quelle espèce de chat sauvage est à l'origine du chat domestique actuel ?",
+    options: [
+        "Le chat sauvage européen",
+        "Felis silvestris lybica (Asie du Sud-Ouest et Afrique du Nord)",
+        "Le lynx",
+        "Le tigre"
+    ],
+    correct: 1,
+    explanation: "Le chat domestique actuel descend principalement de Felis silvestris lybica d'Asie du Sud-Ouest et d'Afrique du Nord (Égypte). Prionailurus bengalensis a été utilisé en Chine mais n'a pas contribué aux races actuelles (sauf le chat du Bengale)."
+},
+{
+    question: "Quelle différence comportementale majeure distingue le chat sauvage du chat domestique ?",
+    options: [
+        "Le chat domestique est carnivore, le sauvage herbivore",
+        "Les chats sauvages sont grandement solitaires, les domestiques tolèrent humains et autres chats",
+        "Le chat domestique ne chasse pas",
+        "Il n'y a aucune différence"
+    ],
+    correct: 1,
+    explanation: "Les différences comportementales les plus marquées concernent la sociabilité : les chats sauvages sont grandement solitaires tandis que les chats domestiques 'tolèrent' les humains et les autres chats à proximité."
+},
+{
+    question: "Quel est l'état actuel des populations de chevaux sauvages ?",
+    options: [
+        "Très nombreuses dans le monde entier",
+        "Plus aucune population réellement sauvage n'existe (sauf cheval de Przewalski)",
+        "Seulement en Amérique",
+        "En augmentation constante"
+    ],
+    correct: 1,
+    explanation: "Plus aucune population de cheval réellement 'sauvage' n'existe actuellement. Le cheval de Przewalski (Mongolie) représente l'héritage 'vivant' de la forme sauvage originelle d'il y a 5000 ans, avant l'élevage."
+},
+{
+    question: "Quelles sont les principales différences entre compartiments cultivé et sauvage d'une espèce végétale ?",
+    options: [
+        "Aucune différence",
+        "Cultivé : faible variabilité, sélection artificielle ; Sauvage : grande variabilité, sélection naturelle",
+        "Cultivé : grande variabilité ; Sauvage : faible variabilité",
+        "Les deux ont la même variabilité"
+    ],
+    correct: 1,
+    explanation: "Le compartiment cultivé présente une faible variabilité génétique (sélection artificielle, cultivars élites), tandis que le compartiment sauvage montre une grande variabilité phénotypique (sélection naturelle, adaptations locales, résistance aux maladies)."
+},
+{
+    question: "Pourquoi est-il important de conserver la diversité génétique du compartiment sauvage ?",
+    options: [
+        "Pour des raisons esthétiques uniquement",
+        "Pour l'amélioration des espèces cultivées et l'adaptation aux changements environnementaux",
+        "Ce n'est pas important",
+        "Uniquement pour les musées"
+    ],
+    correct: 1,
+    explanation: "Il est crucial de conserver la diversité génétique (au moins dans le compartiment sauvage) pour l'amélioration des espèces cultivées et pour permettre une adaptation rapide aux changements environnementaux actuels. Pas d'évolution possible sans variabilité."
+},
+{
+    question: "Qu'est-ce que la 'taille efficace de population' (Ne) ?",
+    options: [
+        "Le nombre total d'individus dans une population",
+        "Le nombre de reproducteurs qui ont produit la génération suivante",
+        "La taille physique moyenne des individus",
+        "Le nombre de prédateurs"
+    ],
+    correct: 1,
+    explanation: "La taille efficace de population (Ne) est le nombre de reproducteurs au sein d'une population qui ont produit la génération suivante. L'utilisation intensive de cultivars 'élites' diminue cette taille efficace, créant des populations génétiquement uniformes."
+},
+{
+    question: "Qu'est-ce que le bouturage et quel est son avantage ?",
+    options: [
+        "Une technique de greffe complexe",
+        "Reproduction par partition de parties supérieures, permet maturité sexuelle rapide",
+        "Un type de fertilisation",
+        "Une méthode d'irrigation"
+    ],
+    correct: 1,
+    explanation: "Le bouturage ('cutting') est une technique où des parties supérieures de la plante sont prélevées et développent des racines. Les plantes bouturées atteignent leur maturité sexuelle (floraison) rapidement, ce qui est très utile en horticulture."
+},
+{
+    question: "Qu'est-ce que le marcottage ?",
+    options: [
+        "Production de racines à partir d'une tige touchant le sol",
+        "Division des racines uniquement",
+        "Un type de semis",
+        "Une maladie des plantes"
+    ],
+    correct: 0,
+    explanation: "Le marcottage ('layering') est la production de méristèmes racinaires à partir de tissus apicaux lorsqu'une tige tombe et touche le sol. Au contact du sol (humidité, micro-plaies), il y a dédifférenciation puis redifférenciation en tissu racinaire."
+},
+{
+    question: "Qu'est-ce que le drageonnage ?",
+    options: [
+        "Production de tiges à partir de racines",
+        "Production de fleurs multiples",
+        "Un type de taille des arbres",
+        "Une maladie fongique"
+    ],
+    correct: 0,
+    explanation: "Le drageonnage ('suckering') est la production de méristèmes apicaux (tiges) à partir de tissus racinaires, permettant la création de nouveaux individus physiques (ramets) à partir des racines."
+},
+{
+    question: "Qu'est-ce que la greffe et quel est son principal avantage ?",
+    options: [
+        "Un mode de reproduction naturel",
+        "Association de la vigueur/résistance du porte-greffe et de la productivité du greffon",
+        "Une maladie des arbres",
+        "Un type de fertilisation"
+    ],
+    correct: 1,
+    explanation: "La greffe ('transplant') est plus un mode de propagation qu'un mode de reproduction. Très utilisée chez les arbres fruitiers, elle combine la vigueur/résistance du pied-receveur (porte-greffe) avec la productivité du transplant (greffon)."
+},
+{
+    question: "Comment la téosinte en France s'est-elle adaptée au climat tempéré ?",
+    options: [
+        "Par mutation spontanée uniquement",
+        "Par échanges génétiques avec le maïs tempéré européen (gènes ZCN8 et ACC1)",
+        "Elle ne s'est pas adaptée",
+        "Par sélection naturelle simple"
+    ],
+    correct: 1,
+    explanation: "La téosinte s'est adaptée au climat tempéré français par échanges génétiques avec le maïs tempéré européen, acquérant notamment le gène ZCN8 (précocité de floraison) et la forme mutante du gène ACC1 (résistance aux herbicides)."
+},
+{
+    question: "Quelles sont les 3 catégories principales de techniques de sélection végétale ?",
+    options: [
+        "Arrosage, fertilisation, taille",
+        "Cultures sélectives, mutagenèse, ingénierie génétique",
+        "Semis, plantation, récolte",
+        "Biologique, conventionnel, intensif"
+    ],
+    correct: 1,
+    explanation: "Les trois catégories principales de techniques de sélection pour développer les cultures sont : les cultures sélectives (croisements), la mutagenèse (induction de mutations), et l'ingénierie génétique (modification ciblée)."
+},
+{
+    question: "Quelles sont les limites des cultures sélectives par hybridation ?",
+    options: [
+        "Aucune limite",
+        "Stérilité des variétés, incompatibilité sexuelle, absence du caractère recherché dans l'espèce",
+        "Trop rapide",
+        "Trop efficace"
+    ],
+    correct: 1,
+    explanation: "Les cultures sélectives sont limitées quand : il y a stérilité de la variété donneuse ou receveuse, incompatibilité sexuelle entre lignées parentales, ou absence du caractère recherché chez les plantes de la même espèce (compartiments sauvage et cultivé)."
+},
+{
+    question: "Comment la non-déhiscence des grains a-t-elle été sélectionnée chez les céréales ?",
+    options: [
+        "Par modification génétique moderne",
+        "Sélection inconsciente par utilisation de faucilles (plantes avec grains encore attachés lors de la récolte)",
+        "Par irradiation",
+        "Par croisements complexes"
+    ],
+    correct: 1,
+    explanation: "La non-déhiscence a été sélectionnée inconsciemment : l'utilisation de faucilles pour la récolte favorisait empiriquement les plantes qui avaient un maximum de grains encore attachés sur le pied lors de la récolte, propagés dans les cultures suivantes."
+},
+{
+    question: "Pourquoi les grains plus gros ont-ils été sélectionnés inconsciemment ?",
+    options: [
+        "Pour des raisons esthétiques",
+        "Parce qu'ils germent plus efficacement et produisent des semis plus vigoureux",
+        "Pour faciliter le transport",
+        "Parce qu'ils ont meilleur goût"
+    ],
+    correct: 1,
+    explanation: "Les grains plus gros ont été sélectionnés inconsciemment car ils contiennent plus de quantité alimentaire et de réserves nutritives pour l'embryon, ce qui leur permet de germer plus efficacement et de produire des semis plus vigoureux."
+},
+{
+    question: "Quelles grandes civilisations sud-américaines dépendaient du maïs comme nourriture principale ?",
+    options: [
+        "Égyptiens, Grecs, Romains",
+        "Mayas, Aztèques, Incas",
+        "Vikings, Celtes, Germains",
+        "Sumériens, Babyloniens, Assyriens"
+    ],
+    correct: 1,
+    explanation: "Le maïs est devenu la nourriture principale de toutes les grandes civilisations sud-américaines : les Mayas, les Aztèques et les Incas, après sa domestication il y a 7000 ans au Mexique."
+},
+{
+    question: "Combien de pays cultivaient des OGM en 2018 ?",
+    options: [
+        "10 pays",
+        "26 pays (21 en développement + 5 industrialisés)",
+        "50 pays",
+        "Tous les pays du monde"
+    ],
+    correct: 1,
+    explanation: "En 2018, 26 pays cultivaient des OGM : 21 pays 'en voie de développement' et 5 pays industrialisés, représentant une superficie mondiale de 211,8 millions d'hectares."
+},
+{
+    question: "Quelle est la superficie mondiale cultivée en OGM en 2018 ?",
+    options: [
+        "50 millions d'hectares",
+        "100 millions d'hectares",
+        "211,8 millions d'hectares",
+        "500 millions d'hectares"
+    ],
+    correct: 2,
+    explanation: "En 2018, la superficie mondiale cultivée en OGM était de 211,8 millions d'hectares, dont 191,7 millions (90,5%) concentrés dans 5 pays : USA, Brésil, Argentine, Canada et Inde."
+},
+{
+    question: "Quels sont les quatre principaux outils d'édition génomique mentionnés dans le cours ?",
+    options: [
+        "Microscope, centrifugeuse, PCR, séquenceur",
+        "Méganucléase, nucléases à doigts de zinc, TALEN, CRISPR/Cas9",
+        "Pipette, éprouvette, microscope, incubateur",
+        "PCR, électrophorèse, Western blot, ELISA"
+    ],
+    correct: 1,
+    explanation: "Les quatre principaux outils d'édition génomique sont : les méganucléases, les nucléases à doigts de zinc, les TALEN, et CRISPR/Cas9 (le plus récent et révolutionnaire depuis 2012)."
+},
+{
+    question: "Pourquoi CRISPR/Cas9 a-t-il révolutionné l'édition génomique ?",
+    options: [
+        "Car il est très coûteux",
+        "Car il est très simple, peu coûteux et rapide (jours vs semaines/mois)",
+        "Car il ne fonctionne que sur les bactéries",
+        "Car il est complexe et réservé aux experts"
+    ],
+    correct: 1,
+    explanation: "CRISPR/Cas9 a révolutionné l'édition génomique en 2012 grâce à sa très grande simplicité et son faible coût : le travail qui nécessitait des semaines, mois ou années peut maintenant être effectué en quelques jours."
+},
+{
+    question: "Quelle est la principale limite nutritionnelle de la viande cultivée in vitro ?",
+    options: [
+        "Elle contient trop de protéines",
+        "Elle est pauvre en fer et doit être assaisonnée pour se rapprocher du goût de la viande",
+        "Elle est trop salée",
+        "Elle contient trop de vitamines"
+    ],
+    correct: 1,
+    explanation: "La viande cultivée in vitro ne reproduit pas les qualités nutritionnelles et sensorielles de la viande naturelle : elle est notamment pauvre en fer et doit être assaisonnée avec de nombreux ingrédients pour se rapprocher du goût de la viande."
+},
+{
+    question: "Quel est l'impact énergétique de la production de viande in vitro ?",
+    options: [
+        "Consomme beaucoup moins d'énergie que tous les élevages",
+        "Consomme plus d'énergie que la production de volailles ou de porcs (milieux de culture, incubateurs)",
+        "Ne consomme aucune énergie",
+        "Consomme la même énergie que tous les élevages"
+    ],
+    correct: 1,
+    explanation: "La production de viande in vitro consomme plus d'énergie que la production de volailles ou de porcs en raison de la fabrication des milieux de culture et du chauffage des incubateurs. Son impact futur dépendra de l'utilisation d'énergies vertes."
+},
+{
+    question: "Quelle est la composition typique de la 'viande' d'origine végétale ?",
+    options: [
+        "100% de légumes naturels",
+        "Protéines (16%), gras (12-20%), sel (1,1%), additifs dont méthylcellulose",
+        "Uniquement des protéines",
+        "Aucun additif"
+    ],
+    correct: 1,
+    explanation: "La 'viande' végétale contient environ 16% de protéines (soja, gluten, légumineuses ultra-transformées), 12-20% de gras, 1,1% de sel, et des additifs comme la méthylcellulose (E461) qui peut causer des problèmes intestinaux."
+},
+{
+    question: "Quel est le principal avantage des insectes en termes de production de gaz à effet de serre ?",
+    options: [
+        "Ils en produisent autant que le bétail",
+        "Production 10 à 100 fois plus faible que l'élevage porcin",
+        "Ils n'en produisent aucun",
+        "Production 2 fois plus élevée"
+    ],
+    correct: 1,
+    explanation: "Les insectes produisent 10 à 100 fois moins de gaz à effet de serre que l'élevage porcin, en plus de consommer beaucoup moins d'eau et d'espace qu'un élevage de bétail conventionnel."
+},
+{
+    question: "Quel est le risque de transmission de maladies zoonotiques des insectes ?",
+    options: [
+        "Très élevé",
+        "Faible (contrairement aux élevages conventionnels)",
+        "Identique au bétail",
+        "Inexistant complètement"
+    ],
+    correct: 1,
+    explanation: "Les insectes présentent un faible risque de transmission de maladies zoonotiques (comme la grippe aviaire), contrairement aux élevages de bétail conventionnels, ce qui en fait une alternative plus sûre d'un point de vue sanitaire."
+},
+{
+    question: "Quelle est la population humaine mondiale prévue pour 2050 selon le scénario 'moyen' réaliste ?",
+    options: [
+        "8 milliards",
+        "9,7 milliards",
+        "12 milliards",
+        "15 milliards"
+    ],
+    correct: 1,
+    explanation: "Selon le scénario 'moyen' réaliste, la population humaine sera de 9,7 milliards en 2050, dont 62% (7,6 milliards) vivront en Afrique, Asie du Sud et Asie de l'Est."
+},
+{
+    question: "Dans combien de temps la population mondiale doublera-t-elle à nouveau selon les projections actuelles ?",
+    options: [
+        "Dans 50 ans",
+        "Dans 100 ans",
+        "Dans 200 ans",
+        "Dans 500 ans"
+    ],
+    correct: 2,
+    explanation: "Actuellement, le taux de croissance diminue. La population doublera de nouveau dans 200 ans, alors que précédemment elle doublait en 50 ans (de 1976 à aujourd'hui)."
+},
+{
+    question: "Qu'est-ce que la 'sécurité alimentaire' selon la FAO ?",
+    options: [
+        "Avoir suffisamment de nourriture pour soi-même",
+        "Assurer à toute personne un accès physique et économique aux denrées alimentaires dont elle a besoin",
+        "Produire uniquement des aliments biologiques",
+        "Stocker de la nourriture pour l'avenir"
+    ],
+    correct: 1,
+    explanation: "Selon la FAO (Food and Agriculture Organisation), la sécurité alimentaire signifie 'assurer à toute personne un accès physique et économique aux denrées alimentaires dont elle a besoin'."
+},
+{
+    question: "De combien ont augmenté les apports d'engrais et de produits phytosanitaires pendant la Révolution verte ?",
+    options: [
+        "50% pour les deux",
+        "7 450% pour les engrais et 7 420% pour les phytosanitaires",
+        "100% pour les deux",
+        "Pas d'augmentation"
+    ],
+    correct: 1,
+    explanation: "Durant la Révolution verte (2ème moitié du 20ème siècle), les apports d'engrais ont augmenté de 7 450% et ceux de produits phytosanitaires de 7 420%, contribuant à l'augmentation massive des rendements."
+},
+{
+    question: "Quel pourcentage des forêts terrestres a été perdu avec l'expansion agricole ?",
+    options: [
+        "10%",
+        "25%",
+        "50%",
+        "75%"
+    ],
+    correct: 2,
+    explanation: "L'expansion des terres agricoles s'est faite au détriment des forêts, qui ont diminué de 50%, ainsi que d'autres habitats terrestres, créant un des défis majeurs du 21ème siècle."
+},
+{
+    question: "De combien a augmenté le CO2 atmosphérique dans le contexte agricole du 21ème siècle ?",
+    options: [
+        "+10%",
+        "+30%",
+        "+50%",
+        "+100%"
+    ],
+    correct: 1,
+    explanation: "Dans le contexte de l'agriculture au 21ème siècle, le CO2 atmosphérique et autres gaz à effet de serre ont augmenté de 30%, contribuant aux changements climatiques globaux."
+},
+{
+    question: "Qu'est-ce qu'un 'knock-out' en édition génomique ?",
+    options: [
+        "Ajout d'un nouveau gène",
+        "Inactivation d'un gène par la méthode NHEJ créant des indels",
+        "Réparation d'un gène",
+        "Duplication d'un gène"
+    ],
+    correct: 1,
+    explanation: "Un 'knock-out' est l'inactivation d'un gène obtenue par la méthode NHEJ (jointure d'extrémités non homologues) qui crée des indels (insertions/délétions), rendant le gène non fonctionnel."
+},
+{
+    question: "Qu'est-ce qu'un 'knock-in' en édition génomique ?",
+    options: [
+        "Suppression d'un gène",
+        "Réparation d'un gène ou ajout d'une nouvelle fonction par la méthode HDR",
+        "Inactivation d'un gène",
+        "Mutation aléatoire"
+    ],
+    correct: 1,
+    explanation: "Un 'knock-in' est la réparation d'un gène ou l'ajout d'une nouvelle fonction, obtenu par la méthode HDR (réparation dirigée par homologie) qui utilise la recombinaison homologue pour intégrer précisément une séquence."
+},
+{
+    question: "Quelle modification morphologique distingue particulièrement le chien du loup ?",
+    options: [
+        "La taille des pattes",
+        "Les muscles faciaux autour de l'œil permettant de lever les sourcils",
+        "La forme des oreilles",
+        "La longueur de la queue"
+    ],
+    correct: 1,
+    explanation: "Les chiens ont des muscles faciaux qui leur permettent de lever leurs sourcils intérieurs, ce qui fait paraître leurs yeux grands et tristes. Cette caractéristique a été façonnée par les préjugés humains inconscients."
+},
+{
+    question: "Quel a été le premier animal d'élevage domestiqué il y a 11 000 ans ?",
+    options: [
+        "La chèvre",
+        "Le mouton",
+        "Le cochon",
+        "La vache"
+    ],
+    correct: 1,
+    explanation: "Les moutons ont été les premiers animaux domestiqués comme source de nourriture il y a 11 000 ans, comme en témoignent les os d'agneaux retrouvés dans un campement au Nord de l'Irak."
+},
+{
+    question: "Quelle est l'espèce sauvage ancêtre de la vache domestique ?",
+    options: [
+        "Le bison",
+        "Le buffle",
+        "L'aurochs (Bos primigenius)",
+        "Le zébu sauvage"
+    ],
+    correct: 2,
+    explanation: "L'aurochs (Bos primigenius) est l'espèce sauvage ancêtre de toutes les vaches domestiques actuelles. Il est apparu en Inde il y a 2 millions d'années et a disparu au 17ème siècle (1627 en Pologne)."
+},
+{
+    question: "Combien d'individus auraient été à l'origine de tous les bovins domestiques actuels ?",
+    options: [
+        "Environ 10 individus",
+        "Environ 80 individus",
+        "Environ 500 individus",
+        "Environ 2000 individus"
+    ],
+    correct: 1,
+    explanation: "Tous les bovins domestiques actuels descendraient d'un très faible nombre d'individus (environ 80) domestiqués au Proche-Orient il y a 10 500 ans."
+},
+{
+    question: "Quel impact évolutif la domestication de la vache a-t-elle eu sur l'Homme ?",
+    options: [
+        "Développement de la résistance au paludisme",
+        "Persistance de la tolérance au lactose à l'âge adulte",
+        "Augmentation de la taille corporelle",
+        "Modification de la couleur de peau"
+    ],
+    correct: 1,
+    explanation: "La domestication de la vache a entraîné la persistance de la tolérance au lactose à l'âge adulte dans les populations liées historiquement à l'élevage bovin, car elles consommaient du lait non humain après le sevrage."
+},
+{
+    question: "Pourquoi le chat a-t-il été domestiqué il y a 10 000 ans ?",
+    options: [
+        "Pour la compagnie uniquement",
+        "Pour chasser les souris dans les champs et protéger les récoltes",
+        "Pour sa fourrure",
+        "Pour la protection contre les prédateurs"
+    ],
+    correct: 1,
+    explanation: "Le chat a été domestiqué il y a 10 000 ans pour chasser les souris dans les champs, contemporaine à la domestication végétale et aux premières cultures, protégeant ainsi les silos à grains des pullulations de rongeurs."
+},
+{
+    question: "Quelle différence majeure existe-t-il entre le chat et le chien domestiques ?",
+    options: [
+        "Le chat a été plus transformé par l'Homme",
+        "Le chat conserve une autonomie qui l'apparente à un animal 'presque' sauvage",
+        "Le chat ne peut pas survivre sans l'Homme",
+        "Le chat a perdu tous ses instincts de prédateur"
+    ],
+    correct: 1,
+    explanation: "Contrairement au chien qui a été transformé par l'Homme et dépend de lui, le chat conserve une autonomie qui l'apparente à un animal 'presque' sauvage et est génétiquement très similaire à ses ancêtres."
+},
+{
+    question: "Quel impact révolutionnaire le cheval a-t-il eu sur l'histoire humaine ?",
+    options: [
+        "Uniquement dans l'agriculture",
+        "Révolution du transport, du commerce, de la guerre et de la communication",
+        "Seulement dans les loisirs",
+        "Aucun impact significatif"
+    ],
+    correct: 1,
+    explanation: "Le cheval a révolutionné la façon de voyager et faire du commerce, de faire la guerre, de communiquer, et a considérablement accéléré les flux de gènes et culturels entre populations humaines, permettant les premières connexions territoriales à grande échelle."
+},
+{
+    question: "Qu'est-ce que le syndrome de domestication végétale ?",
+    options: [
+        "Une maladie qui affecte les plantes cultivées",
+        "Des caractères modifiés par l'Homme qui facilitent culture et récolte mais rendent les plantes incapables de survivre seules",
+        "Un processus naturel d'adaptation",
+        "Une technique de modification génétique"
+    ],
+    correct: 1,
+    explanation: "Le syndrome de domestication végétale désigne des caractères d'intérêt modifiés par l'Homme qui facilitent culture, récolte et stockage, mais qui peuvent rendre les plantes incapables de survivre seules dans un milieu sauvage."
+},
+{
+    question: "Quelles sont les caractéristiques principales du syndrome de domestication chez les plantes ?",
+    options: [
+        "Croissance lente et petite taille",
+        "Augmentation de la taille des fruits, réduction de la dispersion des graines, disparition de la dormance",
+        "Augmentation de la toxicité",
+        "Réduction de la taille des fruits"
+    ],
+    correct: 1,
+    explanation: "Le syndrome de domestication inclut : croissance rapide, taille plus compacte, augmentation de la taille des fruits/graines, réduction ou absence de dispersion des graines, et disparition de la dormance des graines."
+},
+{
+    question: "Qu'est-ce que la non-déhiscence des grains et pourquoi était-elle recherchée ?",
+    options: [
+        "Les grains tombent facilement, facilitant la dispersion naturelle",
+        "Les grains restent attachés à l'épi, permettant une récolte plus efficace",
+        "Les grains sont plus gros",
+        "Les grains germent plus rapidement"
+    ],
+    correct: 1,
+    explanation: "La non-déhiscence signifie que les grains matures restent solidement attachés à l'épi. Ce caractère a été sélectionné inconsciemment car il permettait une récolte beaucoup plus rapide et efficace avec les faucilles."
+},
+{
+    question: "Quelle est l'espèce sauvage ancêtre du maïs ?",
+    options: [
+        "Le blé sauvage",
+        "La téosinte",
+        "Le millet sauvage",
+        "L'orge sauvage"
+    ],
+    correct: 1,
+    explanation: "La téosinte (Zea mays parviglumis) est l'ancêtre sauvage du maïs. La domestication a commencé il y a 7000 ans au Mexique, dans la moyenne vallée du Rio Balsas."
+},
+{
+    question: "Quels changements majeurs le maïs a-t-il subi lors de sa domestication ?",
+    options: [
+        "Diminution de la taille de la plante",
+        "Augmentation de la taille de l'épi, des grains, non-déhiscence, monocaulie",
+        "Multiplication des racines",
+        "Réduction du nombre de grains"
+    ],
+    correct: 1,
+    explanation: "Le maïs a subi plusieurs changements : augmentation de la taille de la plante et de l'épi, augmentation de la taille et du nombre de grains, non-déhiscence des grains, monocaulie (une seule tige), et suppression de la cupule."
+},
+{
+    question: "Qu'est-ce qu'un 'genet' et un 'ramet' en multiplication végétative ?",
+    options: [
+        "Deux types de graines différentes",
+        "Genet = individu génétique (clone), Ramet = individu physique",
+        "Deux types de racines",
+        "Deux types de fleurs"
+    ],
+    correct: 1,
+    explanation: "En multiplication végétative, le genet désigne l'individu génétique (tous les clones génétiquement identiques), tandis que le ramet désigne chaque individu physique produit par ce clone."
+},
+{
+    question: "Quels sont les principaux organes de multiplication végétative souterraine ?",
+    options: [
+        "Graines et fruits",
+        "Tubercule (pomme de terre), bulbe (oignon), rhizome (gingembre)",
+        "Feuilles et tiges aériennes",
+        "Fleurs et pétales"
+    ],
+    correct: 1,
+    explanation: "Les principaux organes de multiplication végétative souterraine sont : le tubercule (tige souterraine modifiée comme la pomme de terre), le bulbe (feuilles souterraines modifiées comme l'oignon), et le rhizome (racine modifiée comme le gingembre)."
+},
+{
+    question: "Qu'est-ce que l'agamospermie ?",
+    options: [
+        "Production de graines stériles",
+        "Production de graines par reproduction clonale sans fécondation",
+        "Production de graines très petites",
+        "Production de graines toxiques"
+    ],
+    correct: 1,
+    explanation: "L'agamospermie est un mode de reproduction où les plantes produisent des graines (bénéfice de la reproduction sexuée) mais sans fécondation, créant ainsi des clones du pied-mère tout en bénéficiant de la dispersion par graines."
+},
+{
+    question: "Qu'est-ce que la polyembryonie et quel est son intérêt agronomique ?",
+    options: [
+        "Présence d'un seul embryon très gros",
+        "Présence de plusieurs embryons dans une graine, permettant propagation rapide et élimination des maladies",
+        "Absence d'embryon",
+        "Embryons toxiques"
+    ],
+    correct: 1,
+    explanation: "La polyembryonie est la présence de plusieurs embryons dans une graine. Elle permet l'élimination des maladies systémiques du pied-mère infecté et la propagation rapide de nombreux semis depuis un individu présentant des caractères intéressants."
+},
+{
+    question: "Qu'est-ce que l'autopolyploïdie ?",
+    options: [
+        "Diminution du nombre de chromosomes",
+        "Augmentation intraspécifique du nombre de jeux de chromosomes homologues",
+        "Fusion de deux espèces différentes",
+        "Perte de chromosomes lors de la reproduction"
+    ],
+    correct: 1,
+    explanation: "L'autopolyploïdie est l'augmentation intraspécifique du nombre de jeux de chromosomes homologues de base, par exemple par des gamètes non réduits (exemples : pomme de terre, poireau)."
+},
+{
+    question: "Qu'est-ce que l'allopolyploïdie ?",
+    options: [
+        "Réduction du nombre de chromosomes",
+        "Augmentation interspécifique du nombre de chromosomes par hybridation",
+        "Modification de la forme des chromosomes",
+        "Perte de matériel génétique"
+    ],
+    correct: 1,
+    explanation: "L'allopolyploïdie est l'augmentation interspécifique du nombre de jeux de chromosomes homologues de base par hybridation(s) entre espèces différentes (exemples : blé, pommier)."
+},
+{
+    question: "Qu'est-ce que la mutagenèse en agriculture ?",
+    options: [
+        "Sélection naturelle des plantes",
+        "Modification de l'ADN par mutations aléatoires (produits chimiques ou irradiation)",
+        "Croisement simple entre deux variétés",
+        "Culture de plantes sans pesticides"
+    ],
+    correct: 1,
+    explanation: "La mutagenèse, apparue dans les années 1920 et utilisée en routine dans les années 1950, consiste à modifier l'ADN des plantes par mutations aléatoires via exposition à des produits chimiques ou à une irradiation pour créer de nouveaux caractères."
+},
+{
+    question: "Combien de variétés de plantes ont été obtenues par mutagenèse ?",
+    options: [
+        "Environ 100 variétés",
+        "Environ 500 variétés",
+        "Plus de 3200 variétés",
+        "Environ 1000 variétés"
+    ],
+    correct: 2,
+    explanation: "Plus de 3200 variétés de plantes ont été obtenues par mutagenèse, incluant le pamplemousse rouge, la banane, l'arachide, la menthe poivrée, le riz, et de nombreuses autres espèces."
+},
+{
+    question: "Quelle était la population humaine mondiale au Néolithique (-8000 avant J.C.) ?",
+    options: [
+        "50 millions",
+        "1 million",
+        "5 millions",
+        "100 millions"
+    ],
+    correct: 2,
+    explanation: "Au Néolithique (début de l'agriculture, -8000 avant J.C.), la population humaine mondiale était d'environ 5 millions d'êtres humains."
+},
+{
+    question: "Quelle est la population humaine mondiale actuelle (d'après le cours) ?",
+    options: [
+        "6 milliards",
+        "7 milliards",
+        "8,25 milliards",
+        "10 milliards"
+    ],
+    correct: 2,
+    explanation: "La population mondiale actuelle est de 8 250 000 000 (8,25 milliards) avec un taux de croissance actuel de 73 millions par an, soit environ 2,3 individus par seconde."
+},
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
