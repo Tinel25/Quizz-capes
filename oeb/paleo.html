@@ -1,1 +1,941 @@
 
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paléobiodiversité</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>OEB</h1>
+            <p>Paléobiodiversité</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+          {
+    question: "Qu'est-ce que la paléobiodiversité et par quoi est-elle principalement révélée au Phanérozoïque ?",
+    options: [
+        "Paléobiodiversité biodiversité préservée passé révélée fossiles restes organismes anciens disparus préservés sédiments",
+        "Paléobiodiversité uniquement biodiversité actuelle vivante sans lien fossiles organismes disparus préservés sédiments",
+        "Paléobiodiversité étude organismes vivants contemporains sans fossiles passé géologique ancien disparu sédiments",
+        "Paléobiodiversité uniquement biodiversité végétale terrestre sans organismes marins fossiles passé géologique sédiments"
+    ],
+    correct: 0,
+    explanation: "La paléobiodiversité est la biodiversité préservée du passé, révélée par des fossiles (Phanérozoïque) de restes des organismes anciens, disparus de la vie, préservés dans les sédiments."
+},
+{
+    question: "Quelles sont les trois familles principales de biominéraux produites par les êtres vivants ?",
+    options: [
+        "Biominéraux uniquement calcaires sans silice phosphate autre famille minérale organique vivants composition",
+        "Biominéraux exclusivement phosphatiques sans carbonates siliceux autres familles minérales vivants composition",
+        "Biominéraux seulement silicieux sans carbonates phosphatiques autres compositions minérales vivants production",
+        "Biominéraux carbonatés calcite aragonite, biominéraux silicieux SiO2, biominéraux phosphatiques apatite composition"
+    ],
+    correct: 3,
+    explanation: "Familles de biominéraux : carbonatée (calcite ou aragonite), biominéral silicieux, biominéral phosphatique (chez l'Homme dans les os et dents)."
+},
+{
+    question: "Qu'est-ce qu'un Lagerstätten et pourquoi ces gisements sont-ils considérés comme exceptionnels ?",
+    options: [
+        "Lagerstätten gisements minéraux précieux métaux rares sans fossiles organismes vivants préservation exceptionnelle",
+        "Lagerstätten gisements fossilisation exceptionnelle conservation parties molles organismes rares préservation complète tissus",
+        "Lagerstätten uniquement gisements charbon pétrole sans fossiles organismes complets préservés tissus parties dures",
+        "Lagerstätten gisements ordinaires uniquement parties dures sans préservation parties molles organismes fossiles"
+    ],
+    correct: 1,
+    explanation: "Il existe des gisements de fossilisation exceptionnels, qui sont exceptionnels par le fait qu'il y a conservation de parties molles (=Lagerstätten)."
+},
+{
+    question: "Quelle est la différence de stabilité diagénétique entre la calcite et l'aragonite ?",
+    options: [
+        "Aragonite beaucoup plus stable calcite toujours préservée fossiles temps géologiques longs diagenèse transformation",
+        "Calcite aragonite exactement même stabilité diagénétique aucune différence préservation temps géologique transformation",
+        "Aragonite toujours stable calcite disparaît rapidement processus diagénétique transformation fossiles minéralogie secondaire",
+        "Calcite relativement stable diagenèse aragonite plus instable échelle temps géologiques même substance systèmes cristallisation"
+    ],
+    correct: 3,
+    explanation: "La calcite et l'aragonite sont formées par la même substance mais avec des systèmes de cristallisation différents. De plus, la calcite, lors de la diagenèse, est relativement stable que l'aragonite qui est plus instable à l'échelle des temps géologiques."
+},
+{
+    question: "Qu'est-ce que la taphonomie et quel aspect de la fossilisation étudie-t-elle ?",
+    options: [
+        "Taphonomie discipline étudie processus aspects préservation partielle organismes mort enfouissement sédiments diagenèse fossilisation",
+        "Taphonomie uniquement classification taxonomique espèces fossiles sans processus préservation organismes morts enfouissement",
+        "Taphonomie exclusivement datation absolue fossiles sans étude préservation organismes morts passé enfouissement sédiments",
+        "Taphonomie seulement reconstruction paléoenvironnements sans considération processus fossilisation organismes préservation enfouissement"
+    ],
+    correct: 0,
+    explanation: "Taphonomie = discipline qui étudie les processus et les aspects de la préservation partielle des organismes à leur mort."
+},
+{
+    question: "Quels organismes planctoniques produisent principalement de la silice (SiO2) comme biominéral ?",
+    options: [
+        "Uniquement coraux éponges produisent silice biominérale sans organismes planctoniques microscopiques photosynthèse production primaire",
+        "Diatomées radiolaires produisent silice SiO2 organismes planctoniques biomasse photosynthèse contribuent cycle carbone séquestration",
+        "Bivalves gastéropodes mollusques produisent principalement silice coquilles calcaires aragonite calcite biominéralisation carbonate",
+        "Foraminifères coccolithes produisent exclusivement silice biomasse planctonique océanique marins microorganismes photosynthèse production"
+    ],
+    correct: 1,
+    explanation: "La silice est produite par différents organismes planctoniques comme les diatomées et les radiolaires (biomasse par photosynthèse). Ils peuvent également contribuer au cycle du carbone."
+},
+{
+    question: "Quelle est la composition chimique des minéraux phosphatiques constituant le squelette des vertébrés ?",
+    options: [
+        "Silice SiO2 exclusivement minéral phosphatique constituant squelette vertébrés os tissus composition chimique structure cristallisation",
+        "Aragonite uniquement minéral phosphatique os dents vertébrés squelette composition chimique cristallisation structure résistance",
+        "Apatite Ca5(PO4)3(OH,Cl,F) minéraux phosphatiques os dents vertébrés squelette morphologie taille cristalline composition réactivité",
+        "Calcite CaCO3 uniquement minéral phosphatique squelette vertébrés os dents composition chimique cristallisation structure résistance"
+    ],
+    correct: 2,
+    explanation: "Minéraux phosphatiques : Ce sont les os et les dents des vertébrés (squelette). Apatite = Ca5(PO4)3(OH,Cl,F). Morphologie, taille cristalline, composition et réactivité sont adaptées à la fonction biologique des tissus."
+},
+{
+    question: "Qu'est-ce que la chitine et dans quels organismes la retrouve-t-on principalement ?",
+    options: [
+        "Chitine C8H13NO5)n matière organique non minérale exosquelette insectes cuticule arthropodes très résistante permettant fossilisation",
+        "Chitine uniquement minéral calcaire coquilles mollusques bivalves gastéropodes organismes marins biominéralisation composition chimique",
+        "Chitine exclusivement vertébrés os squelette phosphatique sans arthropodes insectes organismes invertébrés exosquelette cuticule",
+        "Chitine seulement plantes terrestres cellulose parois cellulaires sans animaux arthropodes organismes invertébrés exosquelette"
+    ],
+    correct: 0,
+    explanation: "Chitine (C8H13NO5)n : Matière organique et non minérale. On la retrouve dans l'exosquelette des insectes (cuticule) et autres arthropodes. Elle est très résistante permettant la fossilisation."
+},
+{
+    question: "Quelles matières organiques très résistantes permettent la fossilisation des plantes terrestres ?",
+    options: [
+        "Sporopollenine spores plantes, dinosporine, cystes matières organiques très résistantes potentiel fossilisation plantes terrestres charbons",
+        "Uniquement cellulose simple parois cellulaires sans matières résistantes fossilisation plantes terrestres végétaux préservation tissus",
+        "Exclusivement lignine bois sans autres matières organiques résistantes fossilisation plantes terrestres végétaux préservation tissus",
+        "Seulement amidon réserves glucidiques sans matières résistantes fossilisation plantes terrestres végétaux préservation tissus"
+    ],
+    correct: 0,
+    explanation: "Fossilisation des plantes terrestres : les spores des plantes produisent de la sporopollenine. On peut aussi avoir des cystes ou de la dinosporine comme matière organique très résistante (potentielle de fossilisation)."
+},
+{
+    question: "Quels sont les modes exceptionnels de conservation d'individus entiers lors de la fossilisation ?",
+    options: [
+        "Conservation individus entiers rare emprisonnés glace permafrost mammouths, goudron asphalte, résine ambre Crétacé préservation",
+        "Conservation individus entiers uniquement sédiments ordinaires sans conditions exceptionnelles particulières préservation complète tissus",
+        "Individus entiers jamais préservés toujours fragmentation complète organismes fossiles parties squelettes dispersés sédiments",
+        "Conservation uniquement parties dures jamais individus complets entiers fossiles préservés tissus mous organiques"
+    ],
+    correct: 0,
+    explanation: "Conservation d'individus entiers (rare) : emprisonné dans la glace (ex. mammouth dans le permafrost de Sibérie) ou dans le goudron, résine ou ambre (Crétacé moyen)."
+},
+{
+    question: "Qu'est-ce que la fossilisation par minéralisation et comment se produit-elle ?",
+    options: [
+        "Minéralisation impossible fossiles uniquement moulages externes internes sans infiltration chimique minéraux secondaires diagenèse",
+        "Fossilisation minéralisation seulement parties molles sans parties dures organismes squelette coquilles tests diagenèse",
+        "Minéraux eau infiltrent parties dures forment minéralogie secondaire squelette ammonites pyrite fluides conditions dysoxie",
+        "Fossilisation minéralisation uniquement moulage externe sans infiltration minéraux parties dures organismes squelettes coquilles"
+    ],
+    correct: 2,
+    explanation: "Les minéraux dans l'eau s'infiltre dans les parties dures pour former une minéralogie secondaire du squelette = fossilisation par minéralisation. Ex. les ammonites préservaient en pyrite (FeSu), alors qu'elles étaient constituées d'aragonite, les fluides circulent dans les parties dissoutes de la coquille (conditions dysoxie = peu d'oxygène)."
+},
+{
+    question: "Que sont les Schistes de Burgess et pourquoi sont-ils scientifiquement importants ?",
+    options: [
+        "Schistes Burgess uniquement roches sédimentaires ordinaires sans fossiles exceptionnels organismes parties molles préservation",
+        "Schistes Burgess seulement gisement minéraux précieux sans intérêt paléontologique fossiles organismes anciens Cambrien",
+        "Schistes Burgess exclusivement formations récentes Quaternaire sans fossiles anciens Cambrien Paléozoïque ère géologique",
+        "Schistes Burgess Lagerstätten gisement fossilisation exceptionnelle argilites Anomalocaris Marella affleurement Canada 520Ma Cambrien"
+    ],
+    correct: 3,
+    explanation: "Lagerstätten = gisement de fossilisation exceptionnelle. Ex. les Schistes de Burgess, qui sont des argilites, avec la présence de Anomalocaris et Marella à l'affleurement (roches à nues), datant d'il y a 520Ma."
+},
+{
+    question: "Quelle théorie des années 1970 s'oppose au gradualisme phylétique de Darwin ?",
+    options: [
+        "Équilibre ponctué Eldredge Gould paléontologues années 70 espèces restent inchangées stases moments changements morphologiques rapides",
+        "Théorie gradualisme phylétique uniquement vision acceptée évolution aucune opposition alternative modèle proposé paléontologues",
+        "Équilibre ponctué prouve évolution impossible espèces toujours fixes immuables créationnisme fixisme sans changements",
+        "Théorie mutations neutres uniquement sans changements morphologiques rapides spéciation événements stases équilibres ponctués"
+    ],
+    correct: 0,
+    explanation: "Dans les années 70, des paléontologues établissent que la plupart des espèces restent inchangées avec des moments de changements morphologiques très rapides, avec l'émergence de nouvelles espèces. C'est la théorie de l'équilibre ponctué."
+},
+{
+    question: "Comment la Paléontologie a-t-elle permis d'établir l'échelle des temps géologiques ?",
+    options: [
+        "Fossiles inutiles établir échelle temps géologiques uniquement méthodes physiques chimiques radiométrie isotopes radiométriques",
+        "Paléontologie seulement reconstruction paléoenvironnements sans chronologie relative temps géologiques stratigraphie fossiles repères",
+        "Paléontologie uniquement datation absolue isotopes radioactifs sans fossiles échelle temps géologiques relatifs repères",
+        "Changements majeurs fossiles extinctions masses repères chronologiques relatifs établir limites ères Phanérozoïque coupures"
+    ],
+    correct: 3,
+    explanation: "On peut reconstituer les échelles de temps géologiques, notamment du Phanérozoïque. Les changements majeurs de fossiles (extinctions de masses) sont des repères chronologiques relatifs pour établir les limites des ères."
+},
+{
+    question: "Qui a établi le concept d'étage géologique et quelle innovation a-t-il apportée ?",
+    options: [
+        "Cuvier Georges seulement inventeur étages géologiques sans autres contributions paléontologues scientifiques stratigraphie catastrophisme",
+        "Orbigny établit concept étage conservait terrains ajoutait contenu fossilifère variations lithologiques estompées stratigraphie universelle",
+        "Darwin uniquement inventeur étages géologiques sans contribution Orbigny paléontologie stratigraphie biostratigraphie fossiles temps",
+        "Lyell Charles exclusivement établi concept étage sans Orbigny fossiles stratigraphie géologie uniformitarisme temps"
+    ],
+    correct: 1,
+    explanation: "Le concept d'étage a été établit par Orbigny. Il conservait le nom de terrains, mais il ajoutait à l'objet le contenu fossilifère en le mettant au premier plan. Les variations lithologiques étaient estompées. Invention de l'étage = progrès fondamental. La Stratigraphie est devenue conceptuelle et a pris une dimension universelle."
+},
+{
+    question: "Qu'est-ce qui caractérise la crise biologique du Toarcien au Jurassique inférieur ?",
+    options: [
+        "Crise Toarcien uniquement glaciation massive sans anoxie océanique événements biologiques perturbations extinctions organismes",
+        "Crise Toarcien exclusivement impact météoritique bolide sans volcanisme anoxie océanique changements climatiques environnementaux",
+        "Crise biologique Toarcien Jurassique inférieur événements anoxiques océans dépôts matière organique volcanisme réchauffement climatique",
+        "Toarcien période stabilité parfaite sans crise biologique événements anoxiques océans perturbations environnementales climatiques"
+    ],
+    correct: 2,
+    explanation: "Crise biologique du Toarcien (Jurassique inférieur), événements anoxiques dans les océans avec dépôts de matière organique. On relie la réponse biotique à un événement global. Volcanisme massif comme facteur de changements globaux des cycles bio-géochimiques : du réchauffement climatique, affectant chimie des océans."
+},
+{
+    question: "Comment peut-on déterminer le mode de vie d'un Lamellibranché fossile selon sa morphologie ?",
+    options: [
+        "Lamellibranché mode vie indéterminable impossible fossiles aucune caractéristique morphologique anatomique informative écologique",
+        "Sinus indique Bivalve avait siphon enfoui sédiments stries croissance sécrétion couches calcitiques marqueurs arrêt croissance",
+        "Uniquement taille coquille détermine mode vie Lamellibranché sans autres caractéristiques morphologiques anatomiques informatives",
+        "Seulement épaisseur coquille indique profondeur vie sans sinus siphon stries croissance caractéristiques morphologiques"
+    ],
+    correct: 1,
+    explanation: "On peut étudier l'environnement de vie d'un Laméllibranche en fonction de ces caractéristiques morphologiques. Le sinus nous indique que le Bivalve avait un siphon, il était donc enfouis dans le sédiments. Les stries de croissance sont la sécrétion d'une fine couche calcitique ou aragonitique par le manteau."
+},
+{
+    question: "Qu'est-ce qui a caractérisé l'expansion des niches écologiques des fonds marins au Cambrien ?",
+    options: [
+        "Expansion niches écologiques fonds marins Cambrien début biominéralisation révolution substrats innovations écologiques carnivorie métazoaires",
+        "Cambrien aucune innovation écologique niches restent identiques Précambrien sans biominéralisation carnivorie métazoaires diversification",
+        "Uniquement photosynthèse innovation écologique Cambrien sans biominéralisation carnivorie métazoaires diversification fonds marins",
+        "Expansion niches uniquement profondeur océanique sans biominéralisation carnivorie métazoaires innovations écologiques fonds"
+    ],
+    correct: 0,
+    explanation: "On a une expansion des niches écologiques des fonds marins au Cambrien, avec le début de la biominéralisation. On a une révolution des substrats. Il y a eu des innovations écologiques amenant au groupe des métazoaires à prendre de l'importance, avec le début de la carnivorie."
+},
+{
+    question: "Quel événement climatique majeur s'est produit à la limite Éocène-Oligocène ?",
+    options: [
+        "Réchauffement climatique important majeur limite Éocène-Oligocène augmentation températures océans atmosphère greenhouse effet serre",
+        "Stabilité climatique parfaite limite Éocène-Oligocène aucun changement température océans atmosphère isotopes oxygène",
+        "Limite Éocène-Oligocène diminution température fond marin refroidissement planète isolement Antarctique calottes glaciaires passages océaniques",
+        "Uniquement changements niveau marin eustatisme sans température climat océans limite Éocène-Oligocène isotopes oxygène"
+    ],
+    correct: 2,
+    explanation: "On a découvert, à la limite Éocène-Oligocène, une diminution de la température au fond marin. Plus le δ18O augmente, plus on a un refroidissement. La Terre au Paléocène-Éocène = Green house (35Ma). Le refroidissement de la planète s'est fait progressivement, dû à l'isolement de l'Antarctique (calottes glaciaires)."
+},
+{
+    question: "Qu'est-ce qu'un holotype et un paratype en taxonomie paléontologique ?",
+    options: [
+        "Holotype individu définit nouvel spécimen paratypes autres variations phénotypiques morphologiques pratique taxonomique variabilité espèce",
+        "Holotype paratype exactement identiques aucune différence morphologique phénotypique variations taxonomique classification espèce",
+        "Holotype uniquement fossile complet sans paratypes variations morphologiques classification taxonomique espèce fossile",
+        "Paratypes plus importants holotype définition espèce variations morphologiques classification taxonomique paléontologie fossiles"
+    ],
+    correct: 0,
+    explanation: "On définit un nouvel individu comme un holotype et les autres variations phénotypiques sont des paratypes. La pratique taxonomique oblige de définir ces termes pour montrer les variations morphologiques. Avec le temps, la variabilité morphologique d'une espèce peut être mieux connue et le concept d'espèce modifié."
+},
+{
+    question: "Quelle est la différence entre cladogénèse et anagénèse dans l'évolution des lignées ?",
+    options: [
+        "Cladogénèse anagénèse exactement identiques aucune différence processus évolutifs lignées populations spéciations transformations",
+        "Cladogénèse spéciation sous-population caractères distincts processus scission Anagénèse succession populations relation descendance ancêtres",
+        "Cladogénèse uniquement extinction lignées sans spéciation Anagénèse seulement apparition nouvelles espèces sans succession",
+        "Anagénèse processus scission populations Cladogénèse succession populations descendance ancêtres évolution lignées différentes"
+    ],
+    correct: 1,
+    explanation: "Cladogénèse : spéciation peut être une sous-population qui a des caractères bien distincts = processus de scission. Anagénèse : succession de population qui ont une relation de descendance avec des ancêtres mais qui évoluent séparément des autres lignées."
+},
+{
+    question: "Quelles sont les caractéristiques distinctives des différentes morpho-espèces du genre Podocyrtis ?",
+    options: [
+        "Podocyrtis papalis thorax plus gros abdomen mal formé, sinuosa forme tonneaux pieds, mitra largeur déplacée, chalara grands pores",
+        "Toutes espèces Podocyrtis identiques morphologiquement aucune différence thorax abdomen pores segments caractéristiques",
+        "Podocyrtis uniquement différenciées taille sans caractéristiques morphologiques thorax abdomen pores segments distincts",
+        "Genre Podocyrtis impossible distinguer morphologiquement fossiles radiolaires aucune caractéristique distinctive observable préservée"
+    ],
+    correct: 0,
+    explanation: "Podocyrtis papalis a un thorax plus gros et un abdomen mal formé. Podocyrtis sinuosa a une forme en tonneaux avec 3ème segment plus large et posséde des pieds. Podocyrtis mitra a sa largueur maximale déplacé vers le bas. Podocyrtis chalara possède des pores beaucoup plus grands."
+},
+{
+    question: "Combien de grandes extinctions de masse sont visibles sur la courbe de biodiversité du Phanérozoïque ?",
+    options: [
+        "Uniquement 3 grandes extinctions masses Phanérozoïque Ordovicien Permien Crétacé sans autres crises biologiques majeures",
+        "Aucune extinction masse visible courbe biodiversité Phanérozoïque uniquement diversification continue croissance exponentielle groupes",
+        "Courbe biodiversité illustre 5 grandes extinctions masses plus importante Permien-Trias chute moitié familles organismes",
+        "Seulement 2 extinctions masses Phanérozoïque Permien Crétacé sans autres crises biologiques majeures familles"
+    ],
+    correct: 2,
+    explanation: "Cette courbe illustre les 5 grandes extinctions de masses avec la plus importante celle du Permien/Trias. On peut voir le taux d'extinction/diversité au cours du temps géologique. Les pics ressortant de la droite de régression sont donc anormaux."
+},
+{
+    question: "Quelle crise biologique a été particulièrement dévastatrice pour les Conodontes et les Ammonoïdes ?",
+    options: [
+        "Crise Ordovicien uniquement affecte Conodontes Ammonoïdes sans autres crises Trias Crétacé extinctions groupes",
+        "Aucune crise affecte Conodontes Ammonoïdes survivent toutes extinctions masses Phanérozoïque sans disparitions",
+        "Crise fin Trias très importante nécton commune trois groupes Conodontes Ammonoïdes Lamellibranches extinctions sélectives",
+        "Uniquement crise Crétacé-Tertiaire affecte Ammonoïdes sans Conodontes Lamellibranches autres groupes organismes"
+    ],
+    correct: 2,
+    explanation: "La crise de la fin du Trias est très importante pour le nécton et est commune aux trois [Conodontes, Ammonoïdes, Lamellibranches]. Les Amonoïdes ont subis de nombreuses crises, notamment celle du Trias, pour disparaître au Crétacé."
+},
+{
+    question: "Quelles caractéristiques définissent les trois faunes évolutives du Phanérozoïque selon Sepkoski ?",
+    options: [
+        "Trois faunes évolutives Phanérozoïque Cambrien Paléozoïque Moderne groupent communautés trajectoire évolutive diversifient disparaissent ensemble",
+        "Faunes évolutives uniquement géographiques sans trajectoire évolutive commune diversification disparition indépendantes groupes organismes",
+        "Sepkoski établit 10 faunes évolutives différentes Phanérozoïque sans regroupement trajectoires communes diversification extinctions",
+        "Faunes évolutives seulement terrestres continentales sans organismes marins océaniques benthiques nectoniques planctoniques"
+    ],
+    correct: 0,
+    explanation: "On parle de communautés évolutives car elles ont la même trajectoire évolutive = elles se diversifient et disparaissent ensemble. Sepkoski à également établit une analyse factorielle regroupant 3 communes d'organismes qui ont eu la même trajectoire évolutive (diversité et disparition)."
+},
+{
+    question: "Quels organismes constituent principalement la faune évolutive cambrienne ?",
+    options: [
+        "Faune cambrienne Trilobites Arthropodes, Brachiopodes inarticulés, Mollusques, Echinodermes fond marin plateformes régimes variés carnivorie",
+        "Faune cambrienne exclusivement planctonique dérivante courants sans vie benthique fond substrat plateformes organismes",
+        "Faune cambrienne seulement prédateurs carnivores sans filtreurs herbivores régimes alimentaires variés diversifiés groupes",
+        "Faune cambrienne uniquement Arthropodes sans Brachiopodes Mollusques Echinodermes diversité groupes organismes marins"
+    ],
+    correct: 0,
+    explanation: "Faune évolutive cambrienne = Trilobites (Arthropodes), Brachiopodes inarticulés, Mollusques, Echinodermes. Il s'agit de communautés qui occupaient le fond marin et notamment les plateformes. Ils se déplaçaient lentement avec des régimes variés (herbivores, carnivores et filtreurs). La carnivorie, le mode de vie benthique et la biominéralisation apparaissent durant le Cambrien."
+},
+{
+    question: "Quels groupes constituent la faune évolutive du Paléozoïque et leurs habitats ?",
+    options: [
+        "Faune Paléozoïque uniquement terrestres continentaux sans vie marine océanique benthique nectonique planctonique organismes",
+        "Faune Paléozoïque exclusivement planctonique sans organismes benthiques nectoniques récifs coralliens constructeurs diversité",
+        "Faune Paléozoïque seulement Trilobites sans Brachiopodes Coraux Ammonoïdes Graptolithes diversité groupes habitats",
+        "Faune Paléozoïque Brachiopodes articulés, Coraux, Crinoïdes, Ammonoïdes, Graptolithes organismes benthiques necton plancton récifs"
+    ],
+    correct: 3,
+    explanation: "Faune évolutive du Paléozoïque constituée d'organismes benthiques sur les plateaux continentaux avec la formation de récifs coralliens, on a des organismes du necton et du plancton dans la colonne d'eau. On retrouve des Brachiopodes articulés, des Coraux, des Echinodermes de types crinoïdes, dans le nectoniques les Céphalopodes de types Amonoïdes et dans le plancton les Graptolithes."
+},
+{
+    question: "Que révèle le gisement des Schistes de Burgess sur la disparité des Arthropodes au Cambrien ?",
+    options: [
+        "Schistes Burgess absence totale Arthropodes Cambrien sans diversité morphologique disparité anatomique plans organisation",
+        "Schistes Burgess Arthropodes disparité morphologique plus grande suite 24 types Baüplans différents seulement 4 persistent",
+        "Gisement Burgess uniquement fossiles récents modernes sans organismes anciens Cambrien Paléozoïque Arthropodes diversité",
+        "Schistes Burgess exclusivement parties dures biominéralisées sans préservation parties molles Arthropodes organismes"
+    ],
+    correct: 1,
+    explanation: "Cette faune contient des fossiles avec des parties biominéralisées et à corps mou. Le plus marquant ce passe chez les Arthropodes avec une disparité plus grande que par la suite (24 types), seulement 4 persistent."
+},
+{
+    question: "Quelles caractéristiques morphologiques permettent d'identifier les Charophytes fossiles ?",
+    options: [
+        "Charophytes lignée petites algues pluricellulaire eau douce allure prêle rameux oogones coquille calcitique lamelles spiralées",
+        "Charophytes uniquement algues marines océaniques sans environnements eau douce continentaux lacustres fluviatiles organismes",
+        "Charophytes exclusivement plantes terrestres Trachéophytes vasculaires sans caractère alguaire aquatique eau douce",
+        "Charophytes impossibles identifier fossiles aucune caractéristique morphologique préservée fossilisée distinctive oogones calcitiques"
+    ],
+    correct: 0,
+    explanation: "Les Charophytes sont une lignée de petites algues pluricellulaire, existant toujours actuellement (environnement eau douce). Ils ont allure de prêle. Ils portent des rameux et des organes femelles au bout = oogones. Les oogones ont une coquille calcitique avec des lamelles spiralées (5)."
+},
+{
+    question: "Quelles sont les limitations adaptatives des Bryophytes comme plantes terrestres ?",
+    options: [
+        "Bryophytes parfaitement adaptées milieux terrestres secs sans limitation hydrique racines développées profondes système vasculaire",
+        "Bryophytes possèdent système vasculaire complexe xylème phloème lignine bois hauteur importante arbres arborescents",
+        "Bryophytes plantes terrestres premières imparfaitement adaptées rhizoïdes pas vraies racines petite taille vivent milieux humides",
+        "Bryophytes uniquement aquatiques marines jamais terrestres sans adaptation sortie colonisation eau continents terres"
+    ],
+    correct: 2,
+    explanation: "Les Bryophytes sont des plantes terrestres et certainement les premières mais sont imparfaitement adaptées. Ils ont des rhizoïdes mais pas de vrais racines (absorption par toute la surface), de petite taille (absente des lignine) et vivent presque toujours dans des milieux humides. Ils n'ont pas de tissus conducteurs de sève donc pas de système vasculaire."
+},
+{
+    question: "Quelles innovations anatomiques des Trachéophytes ont permis la formation des premiers arbres ?",
+    options: [
+        "Trachéophytes tissus conducteurs xylème lignifiés lignine support soutien croissance secondaire cambium permettant former arbres arborescents",
+        "Trachéophytes aucune innovation anatomique restent petites taille herbacées sans arbres forêts arborescentes hauteur",
+        "Trachéophytes uniquement aquatiques sans tissus conducteurs lignine adaptation terrestre continents terres émergées",
+        "Formation arbres impossible Trachéophytes uniquement Angiospermes arbres modernes récents actuels floraison pollinisation"
+    ],
+    correct: 0,
+    explanation: "Trachéophytes = plantes vasculaires tissus conducteurs xylème lignifiés imprégnés lignine polymère phénolique rigidité support permettant croissance secondaire cambium hauteur former arbres. Les Trachéophytes ont découvert l'asymétrie (ramifications). Lépidodendron est une Lycophyte arborescente (50m)."
+},
+{
+    question: "Quelles conséquences ont eu les forêts d'arbres à feuillages au Dévonien ?",
+    options: [
+        "Forêts arbres feuillages aucune conséquence environnementale écologique sols climat CO2 diversification organismes niches",
+        "Uniquement augmentation température climatique sans diversification niches sols profonds modification CO2 atmosphérique forêts",
+        "Forêts denses feuillages création diversité niches fragmentation espace diversification formation sols profonds modification CO2",
+        "Seulement diminution biodiversité sans création niches sols profonds modification CO2 atmosphérique forêts arbres"
+    ],
+    correct: 2,
+    explanation: "Formation d'arbres dans différentes lignées, les Trachéophytes avec des feuillages produisait des forêts plus denses (fermées) contrairement aux forêts avec des arbres dépourvus de feuilles (ouvertes). Conséquences : création de diversité de niches plus importantes, fragmentation de l'espace = favorisation de diversification / formation de sols profonds (humus) / modification du taux de CO2 atmosphérique."
+},
+{
+    question: "Quelles innovations anatomiques caractérisent la transition des Sarcoptérygiens vers les Tétrapodes ?",
+    options: [
+        "Ostéolépiformes possèdent nageoires pectorales pièces osseuses humérus ulna Tétrapodes squelette interne os articulent transition",
+        "Aucune innovation anatomique transition aquatique terrestre Vertébrés changement brusque instantané sans formes intermédiaires",
+        "Transition Tétrapodes uniquement modification branchies poumons sans changements nageoires membres squelettiques osseux",
+        "Sarcoptérygiens identiques Tétrapodes aucune différence anatomique squelettique nageoires membres transition graduelle progressive"
+    ],
+    correct: 0,
+    explanation: "Les Ostéolépiformes possèdent des nageoires pectorales avec des pièces osseuses. Les Tétrapodes sont des Sarcoptérygiens renfoncés par un squelette interne. Les os s'articulent les uns par rapport aux autres. La transition vers les premiers Tétrapodes se fait a travers différents taxa. Le plus ancien témoin est Eusthénoptéron au Dévonien supérieur, sa nageoire présente un humérus, ulna."
+}
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
+
