@@ -1,1 +1,1093 @@
 
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espèces et spéciation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>OEB</h1>
+            <p>Espèces et spéciation</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+    question: "Quel événement du 19ème siècle a marqué le début de la pensée environnementaliste ?",
+    options: [
+        "Essor révolution industrielle, surexploitation ressources naturelles (1ère moitié 19ème siècle)",
+        "Création premières universités dédiées écologie moderne dans les pays européens",
+        "Invention microscope permettant observer micro-organismes vivants pour première fois",
+        "Découverte Australie et de sa faune unique par explorateurs européens"
+    ],
+    correct: 0,
+    explanation: "L'essor de la révolution industrielle et la surexploitation des ressources naturelles dans la 1ère moitié du 19ème siècle ont conduit au développement de la pensée environnementaliste en Europe et en Amérique du Nord."
+},
+{
+    question: "Quelle théorie Darwin a-t-il publiée en 1859 ?",
+    options: [
+        "Théorie génération spontanée organismes vivants à partir matière inorganique",
+        "Théorie catastrophes expliquant extinctions massives dans histoire Terre",
+        "Théorie hérédité caractères acquis par usage et non-usage organes",
+        "'De l'origine espèces' : 1ère théorie scientifique convaincante diversité vivant"
+    ],
+    correct: 3,
+    explanation: "En 1859, Charles Darwin a publié 'De l'origine des espèces', qui constitue la première théorie scientifique convaincante sur l'origine de la diversité du vivant."
+},
+{
+    question: "Quel est le premier parc national créé et en quelle année ?",
+    options: [
+        "Parc national Yosemite aux États-Unis en 1890, protection séquoias géants",
+        "Yellowstone aux États-Unis en 1872 (concept sanctuarisation nature sauvage)",
+        "Parc national Kruger en Afrique Sud en 1898, protection grands mammifères",
+        "Parc national Cévennes en France en 1970, protection moyenne montagne"
+    ],
+    correct: 1,
+    explanation: "Yellowstone a été créé en 1872 aux États-Unis suite à la conquête de l'Ouest. C'est l'apparition du concept de parc national et de 'sanctuarisation' comme solution pour protéger la nature."
+},
+{
+    question: "Quand a eu lieu la 1ère Conférence Internationale de la Protection de la Nature ?",
+    options: [
+        "En 1945 après Seconde Guerre mondiale à Paris, reconstruction post-guerre",
+        "En 1972 lors Sommet Terre à Stockholm, première conférence environnement",
+        "En 1913 à Berne, première réunion internationale protection nature mondiale",
+        "En 1992 lors Convention diversité biologique à Rio Janeiro, Brésil"
+    ],
+    correct: 2,
+    explanation: "La 1ère Conférence Internationale de la Protection de la Nature a eu lieu en 1913 à Berne, marquant le début de la coopération internationale sur ces questions."
+},
+{
+    question: "Qu'est-ce qui a marqué les années 1960 en termes de protection de la nature ?",
+    options: [
+        "Création massive réserves naturelles dans tous pays développés monde entier",
+        "Interdiction totale chasse dans tous pays développés Europe et Amérique",
+        "Découverte trou couche ozone stratosphérique au-dessus pôle Sud Antarctique",
+        "1ères alertes crise écologique anthropisation, écologie devient politique mondiale"
+    ],
+    correct: 3,
+    explanation: "Les années 1960 ont vu les 1ères alertes sur la menace d'une crise écologique causée par l'anthropisation, conduisant au développement de la sensibilité écologique et à la politisation de l'écologie."
+},
+{
+    question: "Quels événements majeurs des années 1970 ont établi les bases de la gestion durable ?",
+    options: [
+        "Plusieurs événements programmes recherche établissent bases scientifiques gestion durable ressources",
+        "Uniquement création UICN et rien d'autre concernant protection environnement mondial",
+        "Seulement premières lois pollution atmosphérique dans quelques pays industrialisés Europe",
+        "Découverte réchauffement climatique par satellites observation Terre depuis espace"
+    ],
+    correct: 0,
+    explanation: "Les années 1970 ont vu plusieurs événements et programmes de recherche qui ont établi les bases scientifiques pour une gestion durable des ressources naturelles."
+},
+{
+    question: "Quand le terme 'Biodiversité' a-t-il été popularisé et par qui ?",
+    options: [
+        "Années 1950 Rachel Carson 'Printemps silencieux' alerte pesticides environnement",
+        "Années 1990 lors Sommet Terre à Rio Janeiro, convention diversité biologique",
+        "Années 1980 E.O. Wilson (biologiste) forum conservation diversité biologique mondiale",
+        "Années 2000 Al Gore 'Vérité qui dérange' documentaire réchauffement climatique"
+    ],
+    correct: 2,
+    explanation: "Le terme 'Biodiversité' a été popularisé dans les années 1980 par E.O. Wilson, biologiste, lors d'un forum sur la conservation de la diversité biologique."
+},
+{
+    question: "Qu'est-ce que la biodiversité selon la définition du cours ?",
+    options: [
+        "Uniquement nombre espèces animales présentes dans écosystème donné territoire",
+        "Diversité vivant tous niveaux : gènes, individus, espèces, écosystèmes planète",
+        "Seulement diversité génétique au sein population donnée même espèce",
+        "Variété paysages naturels présents sur planète Terre sans intervention humaine"
+    ],
+    correct: 1,
+    explanation: "La biodiversité désigne la diversité du vivant à tous les niveaux d'organisation : diversité génétique, diversité des individus, diversité des espèces, et diversité des écosystèmes."
+},
+{
+    question: "Combien y a-t-il d'espèces décrites actuellement selon le cours ?",
+    options: [
+        "Environ 500 000 espèces répertoriées bases données taxonomiques mondiales",
+        "Environ 5 millions espèces documentées littérature scientifique internationale",
+        "Environ 10 millions espèces cataloguées muséums histoire naturelle mondiaux",
+        "Environ 2 millions espèces décrites par taxonomistes mondiaux à ce jour"
+    ],
+    correct: 3,
+    explanation: "Actuellement, environ 2 millions d'espèces ont été décrites, mais on estime qu'il existe entre 5 et 100 millions d'espèces au total sur Terre."
+},
+{
+    question: "Combien estime-t-on le nombre total d'espèces existantes sur Terre ?",
+    options: [
+        "Entre 5 et 100 millions espèces (grandes incertitudes selon méthodes estimation)",
+        "Entre 500 000 et 1 million espèces maximum sur ensemble planète",
+        "Entre 2 et 3 millions espèces seulement sur planète Terre actuellement",
+        "Exactement 10 millions espèces, nombre précisément calculé par extrapolation"
+    ],
+    correct: 0,
+    explanation: "On estime qu'il existe entre 5 et 100 millions d'espèces sur Terre, avec de grandes incertitudes selon les méthodes d'estimation utilisées. Seulement environ 2 millions ont été décrites."
+},
+{
+    question: "Quel groupe d'insectes représente la moitié des espèces d'insectes décrites ?",
+    options: [
+        "Ordre Lépidoptères (papillons chenilles) très diversifié dans régions tropicales",
+        "Ordre Coléoptères (moitié espèces insectes décrites) groupe le plus diversifié",
+        "Ordre Hyménoptères (abeilles guêpes fourmis) très important pour pollinisation",
+        "Ordre Diptères (mouches moustiques) présents dans tous milieux planète"
+    ],
+    correct: 1,
+    explanation: "Les insectes sont le groupe le plus décrit avec l'ordre des Coléoptères qui représente à lui seul la moitié des espèces d'insectes décrites."
+},
+{
+    question: "Quel biais majeur affecte l'inventaire des formes de vie sur Terre ?",
+    options: [
+        "Manque financement expéditions scientifiques internationales dans régions tropicales monde",
+        "Absence taxonomistes qualifiés pays en développement pour identifier nouvelles espèces",
+        "Gros biais échantillonnage ('attractivité' certains taxons par rapport autres groupes)",
+        "Impossibilité technique capturer certains organismes vivants milieux extrêmes inaccessibles"
+    ],
+    correct: 2,
+    explanation: "Il existe un gros biais d'échantillonnage dû à l''attractivité' de certains taxons par rapport à d'autres. Les 10 animaux les plus emblématiques sont considérés à tort comme non en danger."
+},
+{
+    question: "De quoi dépend également l'inventaire des formes de vie ?",
+    options: [
+        "Uniquement volonté politique gouvernements nationaux financer recherche taxonomique",
+        "Seulement nombre chercheurs travaillant taxonomie dans institutions recherche",
+        "Exclusivement budget alloué recherche fondamentale par agences financement",
+        "Outils technologiques disponibles (microscope, bathyscaphe, canopée équipement spécialisé)"
+    ],
+    correct: 3,
+    explanation: "L'inventaire des formes de vie dépend des outils technologiques disponibles comme le microscope (pour les micro-organismes), le bathyscaphe (pour les fonds marins), l'accès à la canopée, etc."
+},
+{
+    question: "Qu'est-ce qu'une espèce morphologique (=morpho-espèce) ?",
+    options: [
+        "Groupe individus partageant caractéristiques morphologiques communes distinctes autres groupes",
+        "Groupe individus capables se reproduire entre eux uniquement et nulle part ailleurs",
+        "Groupe individus occupant même niche écologique donnée dans même habitat",
+        "Groupe individus possédant exactement même génome complet sans aucune variation"
+    ],
+    correct: 0,
+    explanation: "Une espèce morphologique (ou morpho-espèce) est un groupe d'individus partageant des caractéristiques morphologiques communes et distinctes des autres groupes similaires."
+},
+{
+    question: "Quelle est la limite principale du concept d'espèce morphologique ?",
+    options: [
+        "Impossibilité appliquer concept aux organismes microscopiques trop petits observer",
+        "Difficultés liées dimorphisme sexuel, polymorphisme, stades développement (larves adultes)",
+        "Nécessité avoir spécimens vivants pour observation morphologique détaillée organes",
+        "Coût trop élevé analyses morphométriques détaillées nécessitant équipements spécialisés"
+    ],
+    correct: 1,
+    explanation: "Les limites du concept morphologique incluent les difficultés liées au dimorphisme sexuel, au polymorphisme au sein d'une même espèce, et aux différents stades de développement (larves vs adultes)."
+},
+{
+    question: "Qu'est-ce qu'une paléo-espèce (ou chrono-espèce) ?",
+    options: [
+        "Espèce ayant vécu exclusivement pendant ère paléozoïque très ancienne",
+        "Point vue historique, intermédiaires fossiles comblent lacunes, série continue sans discontinuité",
+        "Espèce éteinte dont on ne connaît aucun fossile actuellement",
+        "Espèce ancestrale commune tous vertébrés actuels vivant sur Terre"
+    ],
+    correct: 1,
+    explanation: "Une paléo-espèce (chrono-espèce) : du point de vue historique à travers le temps, la découverte d'intermédiaires fossiles permet de combler les lacunes, donnant une série continue sans discontinuité évidente."
+},
+{
+    question: "L'espèce est-elle une réalité biologique selon le cours ?",
+    options: [
+        "Oui, unité taxonomique fondamentale avec réalité in natura, organismes se reconnaissent mutuellement",
+        "Non, c'est uniquement construction intellectuelle humaine arbitraire sans base naturelle",
+        "Partiellement, elle n'existe que pour certains groupes organismes pas tous",
+        "Non, toutes catégories taxonomiques sont également arbitraires sans exception aucune"
+    ],
+    correct: 0,
+    explanation: "L'espèce est l'unité taxonomique fondamentale qui trouve une réalité in natura (pas uniquement intellectuelle). Les organismes d'une même espèce se reconnaissent entre eux. Les autres catégories sont arbitraires."
+},
+{
+    question: "Qu'est-ce qu'une espèce biologique selon le concept de Mayr (1942) ?",
+    options: [
+        "Groupe populations naturelles interfertiles, isolées reproductivement autres groupes similaires organismes",
+        "Groupe individus ayant exactement même séquence ADN sans aucune variation génétique",
+        "Groupe individus occupant exactement même habitat géographique sans aucune dispersion",
+        "Groupe organismes partageant même régime alimentaire spécialisé dans même écosystème"
+    ],
+    correct: 0,
+    explanation: "Selon Mayr (1942), une espèce biologique est un groupe de populations naturelles réellement ou potentiellement interfertiles et reproductivement isolées des autres groupes similaires."
+},
+{
+    question: "Quelles sont les limites du concept d'espèce biologique ?",
+    options: [
+        "Uniquement applicable mammifères oiseaux actuels vivants pas autres groupes",
+        "Inapplicable organismes asexués, fossiles, populations allopatriques, hybrides fertiles nombreux",
+        "Ne s'applique qu'aux organismes vivant milieu aquatique pas milieu terrestre",
+        "Trop restrictif, ne permet définir aucune espèce réelle dans nature"
+    ],
+    correct: 1,
+    explanation: "Le concept d'espèce biologique est inapplicable aux organismes à reproduction asexuée, aux fossiles, aux populations allopatriques non testables, et ne tient pas compte des cas d'hybrides fertiles."
+},
+{
+    question: "Qu'est-ce qu'une espèce phylogénétique ?",
+    options: [
+        "Groupe individus vivant dans même zone géographique sans dispersion possible",
+        "Ensemble populations ayant divergé il y a exactement un million années",
+        "Plus petit groupe individus partageant ancêtre commun unique reconnaissable (monophylétique)",
+        "Groupe organismes occupant même niveau trophique dans écosystème donné"
+    ],
+    correct: 2,
+    explanation: "Une espèce phylogénétique est le plus petit groupe d'individus partageant un ancêtre commun unique et reconnaissable (groupe monophylétique)."
+},
+{
+    question: "Qu'est-ce qu'un groupe monophylétique ?",
+    options: [
+        "Groupe contenant organismes similaires sans lien ancestral commun entre eux",
+        "Groupe espèces ayant évolué manière convergente dans environnements similaires",
+        "Ensemble organismes partageant même nombre chromosomes sans variation ploïdie",
+        "Ancêtre commun et ensemble totalité descendants (clade) groupe évolutif cohérent"
+    ],
+    correct: 3,
+    explanation: "Un groupe monophylétique (= clade) comprend un ancêtre commun et l'ensemble de la totalité de ses descendants, formant une entité évolutive cohérente."
+},
+{
+    question: "Qu'est-ce qu'un groupe paraphylétique ?",
+    options: [
+        "Ancêtre commun mais pas totalité descendants (certains exclus arbitrairement raisons morphologiques)",
+        "Groupe contenant uniquement descendants ancêtre commun sans aucune exclusion",
+        "Groupe espèces n'ayant aucun lien parenté entre elles dans arbre phylogénétique",
+        "Ensemble organismes ayant même type reproduction sans lien évolutif"
+    ],
+    correct: 0,
+    explanation: "Un groupe paraphylétique contient un ancêtre commun mais pas la totalité de ses descendants (certains sont exclus de façon arbitraire pour des raisons de ressemblances ou différences morphologiques)."
+},
+{
+    question: "Qu'est-ce qu'un groupe polyphylétique ?",
+    options: [
+        "Groupe contenant ancêtre unique et tous ses descendants sans exception aucune",
+        "Groupe espèces ayant toutes même nombre chromosomes sans variation",
+        "Ensemble organismes vivant dans même type habitat conditions environnementales similaires",
+        "Pas ancêtre commun unique, organismes regroupés selon critères apparence écologie (ex: poissons algues)"
+    ],
+    correct: 3,
+    explanation: "Un groupe polyphylétique ne contient pas d'ancêtre commun unique à tous ses membres. Les organismes sont regroupés selon des critères d'apparence ou écologiques (ex: poissons, algues)."
+},
+{
+    question: "Quelles sont les trois grandes catégories de barrières reproductives ?",
+    options: [
+        "Barrières géographiques, climatiques et alimentaires uniquement sans autres facteurs",
+        "Barrières génétiques, chromosomiques et métaboliques seulement dans reproduction",
+        "Barrières comportementales, morphologiques et physiologiques isolant populations reproductrices",
+        "Barrières prézygotiques, postzygotiques et environnementales isolant flux gènes entre populations"
+    ],
+    correct: 3,
+    explanation: "Les trois grandes catégories de barrières reproductives sont : les barrières prézygotiques (avant formation du zygote), postzygotiques (après formation du zygote), et environnementales (séparation géographique/écologique)."
+},
+{
+    question: "Que sont les barrières prézygotiques ?",
+    options: [
+        "Barrières empêchant formation zygote (isolement habitat, reproduction, mécanique, gamétique entre espèces)",
+        "Barrières apparaissant uniquement après naissance hybride dans génération suivante",
+        "Barrières causant exclusivement stérilité descendants hybrides sans autre effet",
+        "Barrières liées uniquement mortalité embryons hybrides pendant développement embryonnaire"
+    ],
+    correct: 0,
+    explanation: "Les barrières prézygotiques empêchent la formation du zygote et incluent : isolement d'habitat, isolement de reproduction (comportemental, temporel), isolement mécanique, et isolement gamétique."
+},
+{
+    question: "Qu'est-ce que l'isolement d'habitat (barrière prézygotique) ?",
+    options: [
+        "Populations vivent continents complètement différents séparés par océans",
+        "Populations se rencontrent mais ne se reconnaissent pas mutuellement",
+        "Populations s'accouplent mais gamètes sont incompatibles biochimiquement",
+        "Populations coexistent même zone mais occupent habitats différents, empêchant rencontre individus reproducteurs"
+    ],
+    correct: 3,
+    explanation: "L'isolement d'habitat : les populations coexistent dans la même zone géographique mais occupent des habitats différents (microhabitats), empêchant les rencontres entre individus reproducteurs."
+},
+{
+    question: "Qu'est-ce que l'isolement de reproduction comportemental ?",
+    options: [
+        "Absence reconnaissance entre individus (signaux, parades nuptiales différents entre espèces proches)",
+        "Incompatibilité physique organes reproducteurs entre espèces voisines géographiquement",
+        "Périodes reproduction décalées temporellement dans temps pour chaque espèce",
+        "Impossibilité spermatozoïdes féconder ovules pour raisons biochimiques immunologiques"
+    ],
+    correct: 0,
+    explanation: "L'isolement de reproduction comportemental résulte de l'absence de reconnaissance entre individus de populations différentes (signaux de reconnaissance, parades nuptiales, chants, phéromones différents)."
+},
+{
+    question: "Qu'est-ce que l'isolement de reproduction temporel ?",
+    options: [
+        "Différences durée gestation entre espèces apparentées dans même région géographique",
+        "Périodes reproduction, floraison, émission gamètes décalées temporellement entre espèces proches géographiquement",
+        "Variations âge maturité sexuelle individus au sein même population",
+        "Décalage rythmes circadiens entre populations vivant latitudes très différentes"
+    ],
+    correct: 1,
+    explanation: "L'isolement de reproduction temporel : les périodes de reproduction, de floraison ou d'émission des gamètes sont décalées temporellement entre espèces proches (ex: décalage de quelques semaines chez les Épilobes)."
+},
+{
+    question: "Qu'est-ce que l'isolement mécanique (barrière prézygotique) ?",
+    options: [
+        "Comportements parade nuptiale incompatibles entre espèces proches même région",
+        "Périodes reproduction ne coïncident jamais temporellement dans année",
+        "Gamètes mâles femelles ne peuvent pas fusionner biochimiquement",
+        "Incompatibilité structurelle organes reproducteurs empêche accouplement pollinisation (ex: génitalia insectes)"
+    ],
+    correct: 3,
+    explanation: "L'isolement mécanique : incompatibilité structurelle des organes reproducteurs qui empêche l'accouplement ou la pollinisation (ex: morphologie différente des génitalia chez les insectes)."
+},
+{
+    question: "Qu'est-ce que l'isolement gamétique ?",
+    options: [
+        "Gamètes sont produits uniquement moments différents dans cycle reproductif",
+        "Gamètes ont tailles incompatibles entre espèces voisines géographiquement",
+        "Gamètes ne peuvent pas se déplacer dans milieu pour rencontrer gamètes opposés",
+        "Gamètes d'espèces différentes ne peuvent féconder ovules (barrières biochimiques immunologiques)"
+    ],
+    correct: 3,
+    explanation: "L'isolement gamétique : les gamètes (spermatozoïdes) d'une espèce ne peuvent pas féconder les ovules d'une autre espèce en raison de barrières biochimiques ou immunologiques."
+},
+{
+    question: "Que sont les barrières postzygotiques ?",
+    options: [
+        "Barrières qui empêchent rencontre entre individus reproducteurs dans populations",
+        "Barrières causées uniquement par différences comportementales entre espèces proches",
+        "Barrières liées exclusivement incompatibilité gamètes entre espèces différentes",
+        "Barrières réduisant viabilité fertilité hybrides (inviabilité, stérilité, dépression hybrides formés)"
+    ],
+    correct: 3,
+    explanation: "Les barrières postzygotiques réduisent la viabilité et/ou la fertilité des hybrides et incluent : inviabilité des hybrides, stérilité des hybrides, et dépression hybride."
+},
+{
+    question: "Qu'est-ce que l'inviabilité des hybrides ?",
+    options: [
+        "Hybrides sont parfaitement viables mais complètement stériles sans descendance",
+        "Hybrides se développent normalement et sont très fertiles avec descendance nombreuse",
+        "Hybrides ne peuvent pas trouver partenaire reproducteur dans populations parentales",
+        "Hybrides formés ne terminent pas développement embryonnaire ou meurent après naissance (incompatibilités génétiques)"
+    ],
+    correct: 3,
+    explanation: "L'inviabilité des hybrides : les hybrides formés ne terminent pas leur développement embryonnaire ou meurent prématurément après la naissance (incompatibilités génétiques létales)."
+},
+{
+    question: "Qu'est-ce que la stérilité des hybrides ?",
+    options: [
+        "Hybrides viables mais stériles (pas production gamètes fonctionnels, problèmes méiose chromosomique)",
+        "Hybrides meurent avant atteindre maturité sexuelle dans populations",
+        "Hybrides sont fertiles mais leur descendance est stérile génération suivante",
+        "Hybrides ne peuvent pas s'accoupler avec autres individus populations parentales"
+    ],
+    correct: 0,
+    explanation: "La stérilité des hybrides : les hybrides sont viables mais stériles, incapables de produire des gamètes fonctionnels en raison de problèmes lors de la méiose (ex: mulet, bardot, ligre)."
+},
+{
+    question: "Qu'énonce la règle de Haldane concernant la stérilité hybride ?",
+    options: [
+        "Tous hybrides sont toujours stériles sans exception dans toutes combinaisons",
+        "Seuls hybrides mâles sont toujours stériles dans toutes espèces",
+        "Stérilité n'affecte que hybrides femelles dans toutes combinaisons interspécifiques",
+        "Stérilité hybride limitée sexe hétérogamétique (deux gonosomes différents ou un seul chromosome sexuel)"
+    ],
+    correct: 3,
+    explanation: "Règle de Haldane : la stérilité d'un hybride est souvent limitée au sexe hétérogamétique, celui qui possède deux gonosomes différents (hétérosomie, ex: XY) ou un seul gonosome (monosomie, ex: XO)."
+},
+{
+    question: "Quel est le système de détermination du sexe chez les mammifères ?",
+    options: [
+        "Mâles sont hétérogamétiques (XY), femelles homogamétiques (XX) dans toutes espèces mammifères",
+        "Mâles sont homogamétiques (ZZ), femelles hétérogamétiques (ZW) toutes espèces",
+        "Mâles possèdent un seul gonosome (XO), femelles (XX) toutes espèces",
+        "Système variable selon espèces mammifères différentes répartition géographique"
+    ],
+    correct: 0,
+    explanation: "Chez les mammifères, les mâles sont hétérogamétiques (XY) et les femelles sont homogamétiques (XX)."
+},
+{
+    question: "Quel est le système de détermination du sexe chez les oiseaux et lépidoptères ?",
+    options: [
+        "Mâles hétérogamétiques (XY), femelles homogamétiques (XX) toutes espèces",
+        "Femelles hétérogamétiques (ZW), mâles homogamétiques (ZZ) oiseaux lépidoptères papillons",
+        "Mâles avec un seul gonosome (ZO), femelles (ZZ) toutes espèces",
+        "Système identique celui mammifères sans aucune différence chromosomique"
+    ],
+    correct: 1,
+    explanation: "Chez les oiseaux et les lépidoptères (papillons), les femelles sont hétérogamétiques (ZW) et les mâles sont homogamétiques (ZZ)."
+},
+{
+    question: "Qu'est-ce que la dépression hybride ?",
+    options: [
+        "Hybrides première génération complètement stériles sans possibilité reproduction",
+        "Mort systématique tous embryons hybrides pendant développement embryonnaire",
+        "Impossibilité totale formation hybrides entre espèces voisines géographiquement",
+        "Descendance hybrides peu vigoureuse stérile (décalage génération depuis production hybrides F2)"
+    ],
+    correct: 3,
+    explanation: "La dépression hybride : la descendance des hybrides est peu vigoureuse et/ou stérile (décalage d'une génération depuis la production des hybrides). Ex: hybrides du coton vigoureux en F1, mais faible germination et forte mortalité en F2."
+},
+{
+    question: "Quels types de barrières environnementales isolent les populations ?",
+    options: [
+        "Climats, chaînes montagnes, glaciers, déserts, lacs isolés, anthropisation (fragmentation habitats naturels)",
+        "Uniquement océans mers profondes séparant continents différents planète",
+        "Seulement différences température humidité entre régions géographiques",
+        "Exclusivement barrières créées activités humaines sans facteurs naturels"
+    ],
+    correct: 0,
+    explanation: "Les barrières environnementales incluent : climats, chaînes de montagnes, glaciers, déserts, lacs isolés, et anthropisation (routes, champs, zones d'habitations) causant la fragmentation du milieu."
+},
+{
+    question: "Comment agissent d'abord les barrières environnementales dans la spéciation ?",
+    options: [
+        "Elles créent directement incompatibilités génétiques entre populations séparées géographiquement",
+        "Elles causent immédiatement stérilité hybrides formés entre populations",
+        "Elles modifient comportements reproducteurs sans autre effet sur populations",
+        "Interrompent flux gènes pré postzygotiques, pressions sélection différentes, divergence populations isolées"
+    ],
+    correct: 3,
+    explanation: "Les barrières environnementales (souvent les premières) interrompent les flux de gènes pré-/postzygotiques entre groupes. Des pressions de sélection différentes s'exercent sur ces groupes, causant leur divergence."
+},
+{
+    question: "Que se passe-t-il quand les groupes divergents sont remis en contact ?",
+    options: [
+        "Ils fusionnent immédiatement en une seule population homogène sans barrières",
+        "Divergence disparaît complètement par croisements massifs entre populations",
+        "Aucun effet observable sur populations concernées après contact secondaire",
+        "Barrières biologiques empêchent flux gènes survenir (après divergence pendant isolement)"
+    ],
+    correct: 3,
+    explanation: "Lorsque les groupes divergents sont remis secondairement en contact, les barrières biologiques (qui se sont développées pendant l'isolement) empêchent les flux de gènes de survenir."
+},
+{
+    question: "Qu'est-ce que la spéciation ?",
+    options: [
+        "Processus évolutif par lequel nouvelles espèces apparaissent (isolement reproductif entre populations interfertiles)",
+        "Processus disparition progressive espèces existantes dans écosystèmes",
+        "Migration massive espèce vers nouveau territoire non occupé",
+        "Adaptation espèce changement climatique brutal dans environnement"
+    ],
+    correct: 0,
+    explanation: "La spéciation est le processus évolutif par lequel de nouvelles espèces biologiques apparaissent, impliquant l'isolement reproductif entre populations initialement interfertiles."
+},
+{
+    question: "Qu'est-ce que la spéciation allopatrique ?",
+    options: [
+        "Spéciation au sein même population sans séparation géographique entre individus",
+        "Spéciation causée uniquement par mutations chromosomiques polyploïdie instantanée",
+        "Spéciation résultant isolement géographique populations (barrière physique empêche flux gènes entre populations)",
+        "Spéciation résultant exclusivement sélection sexuelle sans facteur géographique"
+    ],
+    correct: 2,
+    explanation: "La spéciation allopatrique résulte de l'isolement géographique de populations (une barrière physique empêche les flux de gènes). C'est le mode de spéciation le plus fréquent."
+},
+{
+    question: "Qu'est-ce que la spéciation sympatrique ?",
+    options: [
+        "Spéciation nécessitant toujours séparation géographique complète entre populations",
+        "Spéciation sans isolement géographique au sein même population (polyploïdie, disruptive sélection)",
+        "Spéciation causée uniquement par barrières climatiques entre populations",
+        "Spéciation résultant colonisation îles océaniques isolées par océans"
+    ],
+    correct: 1,
+    explanation: "La spéciation sympatrique se produit sans isolement géographique, au sein même d'une population (ex: polyploïdie instantanée chez les plantes, sélection disruptive)."
+},
+{
+    question: "Qu'est-ce que la spéciation parapatrique ?",
+    options: [
+        "Populations géographiquement séparées sans aucun contact possible entre individus",
+        "Populations complètement isolées sur îles différentes sans échange gènes",
+        "Populations occupant exactement même territoire sans séparation aucune",
+        "Populations adjacentes avec zone contact hybridation réduite (cline environnemental génétique adaptatif)"
+    ],
+    correct: 3,
+    explanation: "La spéciation parapatrique : populations adjacentes avec une zone de contact où l'hybridation est réduite (présence d'un cline environnemental et/ou génétique, adaptation à des conditions différentes)."
+},
+{
+    question: "Qu'est-ce que la spéciation péripatrique ?",
+    options: [
+        "Grande population centrale qui se divise progressivement en sous-populations",
+        "Population marine colonisant milieu terrestre adjacent côtier progressivement",
+        "Population montagnarde descendant vers plaines environnantes progressivement altitudes",
+        "Petite population périphérique isolée, dérive génétique sélection forte (effet fondateur rapide)"
+    ],
+    correct: 3,
+    explanation: "La spéciation péripatrique : une petite population périphérique s'isole de la population principale. Dérive génétique et sélection forte agissent (effet fondateur), conduisant à une divergence rapide."
+},
+{
+    question: "Qu'est-ce que le gradualisme phylétique ?",
+    options: [
+        "Évolution par grandes mutations soudaines révolutionnaires sans transition",
+        "Absence totale évolution sur longues périodes temps géologique",
+        "Spéciation instantanée sans transition évolutive entre espèces ancestrales",
+        "Accumulation graduelle petites modifications transformant espèce entière (anagénèse lente progressive)"
+    ],
+    correct: 3,
+    explanation: "Le gradualisme phylétique : l'accumulation graduelle de petites modifications transforme l'espèce entière en une différente (anagénèse). Pas de délimitation claire entre espèces jusqu'à séparation nette (cladogénèse)."
+},
+{
+    question: "Qu'est-ce que la théorie des équilibres ponctués (Gould et Eldredge, 1972) ?",
+    options: [
+        "Évolution constante vitesse régulière sans interruption dans histoire vie",
+        "Absence totale évolution dans histoire vie Terre depuis origines",
+        "Évolution uniquement accumulation petites variations continues sans rupture",
+        "Longues périodes équilibre ('stase') ponctuées par brefs sauts évolutifs soudains (bouleversements environnementaux)"
+    ],
+    correct: 3,
+    explanation: "Équilibres ponctués (Gould et Eldredge, 1972) : l'évolution comprend de longues périodes d'équilibre ('stase') ponctuées par de brèves périodes de sauts évolutifs 'soudains' (spéciation ou extinctions lors de bouleversements environnementaux)."
+}
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
+
