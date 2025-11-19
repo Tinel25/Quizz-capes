@@ -1,0 +1,1136 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enseigner l'évolution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>OEB</h1>
+            <p>Enseigner l'évolution</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+          {
+    question: "Selon Theodosius Dobzhansky, pourquoi la théorie de l'évolution est-elle centrale en biologie ?",
+    options: [
+        "« Rien n'a de sens en biologie, si ce n'est à la lumière de l'évolution » met en lien tous les savoirs en biologie complètement",
+        "Théorie évolution uniquement importante histoire naturelle sans application pratique moderne actuelle aucune discipline reliée",
+        "Évolution seulement concept théorique abstrait sans lien avec autres disciplines biologiques actuelles contemporaines",
+        "Théorie évolution uniquement utile pour classification taxonomique espèces vivantes fossiles uniquement sans autre"
+    ],
+    correct: 0,
+    explanation: "Selon Theodosius Dobzhansky : « Rien n'a de sens en biologie, si ce n'est à la lumière de l'évolution. » La théorie de l'évolution met en lien tous les savoirs en biologie."
+},
+{
+    question: "Quelles sont les implications pratiques de la théorie de l'évolution en santé humaine ?",
+    options: [
+        "Uniquement pour vaccination populations sans autre application médicale pratique clinique quotidienne hôpitaux",
+        "Résistance antibiotiques, émergence nouvelles maladies, thérapies adaptatives alternance traitement cellules sensibles garder pool",
+        "Seulement pour diagnostic génétique maladies héréditaires sans traitement possible aucun intervention médicale",
+        "Exclusivement pour chirurgie reconstructrice esthétique sans autre domaine médical concerné pratique clinique"
+    ],
+    correct: 1,
+    explanation: "En santé humaine : résistance aux antibiotiques, émergence de nouvelles maladies, thérapies adaptatives (trouver équilibre entre dose de traitement et temps d'exposition, alterner périodes traitement pour garder pool cellules sensibles)."
+},
+{
+    question: "Comment les thérapies adaptatives utilisent-elles les principes évolutifs contre le cancer ?",
+    options: [
+        "Destruction toutes cellules tumorales immédiatement sans pause traitement élimination totale complète cancer tumeur malin",
+        "Utilisation uniquement chimiothérapie maximale constante sans interruption aucune période repos récupération patient malade",
+        "Alternance périodes traitement détruisant cellules tumorales mais gardant pool cellules sensibles freiner prolifération cancer tumeur",
+        "Absence totale traitement permettant système immunitaire combattre seul tumeur organisme malade défenses naturelles"
+    ],
+    correct: 2,
+    explanation: "Thérapies adaptatives : trouver équilibre entre dose de traitement et temps d'exposition. On alterne les périodes de traitement, on détruit les cellules tumorales mais pas toutes pour garder un pool de cellules sensibles pour freiner la prolifération."
+},
+{
+    question: "Comment évite-t-on l'émergence de résistances aux OGMs Bt chez les insectes ravageurs ?",
+    options: [
+        "Augmentation constante dose toxine Bt dans plantes génétiquement modifiées agricoles cultivées champs",
+        "Utilisation simultanée pesticides chimiques traditionnels avec OGMs Bt cultures agricoles toutes exploitations",
+        "Abandon total OGMs Bt retour agriculture traditionnelle sans modification génétique organismes",
+        "Alternance cycles agriculture empêchant sélection lignées résistantes chrysomèle devenue résistante problème"
+    ],
+    correct: 3,
+    explanation: "Pour éviter émergence de résistances aux OGMs Bt : la chrysomèle est devenue résistante. Solution = alternance des cycles d'agriculture pour éviter la sélection continue de lignées résistantes."
+},
+{
+    question: "Qu'est-ce que le vortex d'extinction et comment en sortir pour conserver la biodiversité ?",
+    options: [
+        "Boucle rétroaction positive entre démographie génétique nécessitant sauvetages évolutifs aspect évolutif conservation biodiversité",
+        "Boucle rétroaction négative entre abondance ressources diversité génétique populations isolées géographiquement montagnes",
+        "Processus extinction brutale instantanée sans possibilité intervention conservation biologique possible aucune espèce",
+        "Phénomène uniquement populations marines profondes sans application terrestre conservation biodiversité écosystèmes"
+    ],
+    correct: 0,
+    explanation: "Vortex d'extinction : boucle de rétroaction positive entre démographie et génétique. Pour sortir de ce vortex, il faut faire des sauvetages évolutifs. Pour conserver la biodiversité, il faut prendre en compte l'aspect évolutif."
+},
+{
+    question: "Quels sont les deux principes de base de Darwin qui restent valides dans le néo-darwinisme ?",
+    options: [
+        "Fixité espèces création simultanée toutes formes vivantes sans modification temporelle aucune évolution",
+        "Descendance avec modification héritable sélection naturelle environnement néo-darwinisme socle biologie évolutive moderne",
+        "Génération spontanée organismes vivants transformation espèces dirigée but final précis déterminé",
+        "Hérédité caractères acquis usage non-usage organes échelle temps vie individu organisme"
+    ],
+    correct: 1,
+    explanation: "Les découvertes du XXème siècle ont enrichi la théorie de Darwin, mais ses deux principes de base restent valides : descendance avec modification et sélection naturelle. Le darwinisme dans sa version moderne (néo-darwinisme) reste le socle de la biologie évolutive."
+},
+{
+    question: "Quelle décision judiciaire américaine importante concernant l'évolution a eu lieu en 1968 ?",
+    options: [
+        "Cour Suprême interdit totalement mention religion écoles publiques toutes disciplines enseignées États-Unis",
+        "Cour Suprême impose enseignement évolution uniquement universités sans écoles secondaires publiques américaines",
+        "Cour Suprême juge interdiction enseigner évolution anticonstitutionnelle affaire Epperson vs Arkansas États-Unis",
+        "Cour Suprême autorise enseignement créationnisme obligatoire écoles publiques américaines toutes disciplines"
+    ],
+    correct: 2,
+    explanation: "1968 : La Cour Suprême des États-Unis juge l'interdiction d'enseigner l'évolution anticonstitutionnelle dans l'affaire Epperson vs Arkansas."
+},
+{
+    question: "Quelle décision judiciaire concernant la science créationniste a été rendue en 1987 aux États-Unis ?",
+    options: [
+        "Obligation enseignement simultané évolution créationnisme dans toutes écoles publiques américaines États-Unis",
+        "Interdiction totale mention théorie évolution Darwin toutes écoles publiques États-Unis américaines",
+        "Autorisation enseignement dessein intelligent uniquement universités privées religieuses confessionnelles américaines",
+        "Cour Suprême juge obligation enseigner « science créationniste » même titre évolution anticonstitutionnelle"
+    ],
+    correct: 3,
+    explanation: "1987 : La Cour Suprême juge l'obligation d'enseigner la « science créationniste » au même titre que l'évolution anticonstitutionnelle."
+},
+{
+    question: "Qu'est-ce que le mouvement du dessein intelligent apparu dans les années 1990 aux États-Unis ?",
+    options: [
+        "Forme créationnisme ne faisant pas référence Bible se présentant comme théorie scientifique alternative évolution biologistes",
+        "Mouvement scientifique légitime accepté communauté chercheurs biologistes évolutionnistes internationaux reconnus monde entier",
+        "Théorie strictement religieuse assumée sans prétention scientifique uniquement institutions confessionnelles religieuses églises",
+        "Courant philosophique uniquement sans revendication enseignement sciences écoles publiques laïques américaines États-Unis"
+    ],
+    correct: 0,
+    explanation: "Années 1990 : Naissance du mouvement du dessein intelligent, une forme de créationnisme ne faisant pas référence à la Bible et se présentant comme une théorie scientifique."
+},
+{
+    question: "Quelle décision a été prise lors du procès de Denver en 2005 concernant le dessein intelligent ?",
+    options: [
+        "Autorisation enseignement dessein intelligent toutes écoles publiques États-Unis officiellement reconnu légitime scientifique",
+        "Enseignement dessein intelligent comme alternative évolution jugé anticonstitutionnel écoles publiques américaines États-Unis",
+        "Interdiction totale mention évolution Darwin remplacée dessein intelligent écoles publiques américaines toutes disciplines",
+        "Obligation présenter évolution dessein intelligent égalité temps cours biologie écoles publiques américaines"
+    ],
+    correct: 1,
+    explanation: "2005 : Procès à Denver, l'enseignement du dessein intelligent comme alternative à l'évolution est jugé anticonstitutionnel."
+},
+{
+    question: "Quelle est la situation du créationnisme aux États-Unis en 2018 selon le Pew Research Center ?",
+    options: [
+        "Seulement 5% américains maintenaient croyances créationnistes strictes sans évolution humaine aucune singe ancêtre",
+        "Totalité américains rejetaient créationnisme acceptant uniquement théorie évolution scientifique moderne Darwin biologistes",
+        "31% américains considéraient humain toujours existé forme actuelle, 27% évolution guidée Dieu enquête 2018",
+        "95% américains acceptaient pleinement évolution darwinienne sans intervention divine quelconque processus création"
+    ],
+    correct: 2,
+    explanation: "Aux États-Unis en 2018, 31% des américains considéraient que l'être humain avait toujours existé dans sa forme actuelle, et 27% que l'être humain avait évolué, mais que cette évolution était guidée par Dieu (enquête Pew Research Center)."
+},
+{
+    question: "Quelle est la situation en France en 2022 concernant le créationnisme chez les jeunes selon l'IFOP ?",
+    options: [
+        "Majorité écrasante jeunes rejetaient totalement créationnisme acceptant seulement évolution scientifique Darwin biologistes",
+        "Un jeune sur quatre adhérait idée humains créés par force spirituelle non fruit évolution espèces enquête IFOP 2022",
+        "Totalité jeunes français acceptaient évolution sans réserve créationniste aucune influence religieuse spirituelle divine",
+        "Seulement 2% jeunes français maintenaient positions créationnistes strictes sans évolution humaine Darwin singe"
+    ],
+    correct: 1,
+    explanation: "En France en 2022, un jeune sur quatre disait adhérer à l'idée selon laquelle « Les êtres humains ne sont pas le fruit d'une longue évolution d'autres espèces comme les singes mais ont été créés par une force spirituelle (ex : Dieu). » (enquête IFOP)."
+},
+{
+    question: "Qu'est-ce que l'eugénisme de Galton qui a récupéré les idées darwiniennes au 19ème siècle ?",
+    options: [
+        "Politique sociale égalitaire visant réduire inégalités sociales sans dimension génétique raciste hiérarchie races humaines",
+        "Théorie médicale uniquement prévention maladies génétiques sans dimension politique idéologique raciste hiérarchie",
+        "Eugénisme « positif » puis extermination « lignées inférieures » nazis récupération extrême droite darwinisme raciste",
+        "Programme scientifique légitime amélioration génétique humaine accepté communauté scientifique internationale biologistes"
+    ],
+    correct: 2,
+    explanation: "L'eugénisme de Galton : récupération du darwinisme par l'extrême droite, de l'eugénisme « positif » à l'extermination des « lignées inférieures » par les nazis."
+},
+{
+    question: "Qu'est-ce que le darwinisme social de Spencer critiqué dans le cours sur l'évolution ?",
+    options: [
+        "Programme social progressiste visant réduction inégalités basé solidarité entraide mutuelle coopération groupes humains",
+        "Politique éducative amélioration conditions vie populations défavorisées socialement économiquement pauvres classes",
+        "Théorie scientifique légitime application principes évolutifs société humaine acceptée biologistes évolutionnistes chercheurs",
+        "Doctrine ultra-libéraliste mal nommée comme « loi plus fort » récupération politique darwinisme extrême droite idéologie"
+    ],
+    correct: 3,
+    explanation: "Le (mal nommé) darwinisme social de Spencer : doctrine ultra-libéraliste (comme la « loi du plus fort »). Récupération politique du darwinisme."
+},
+{
+    question: "Quelle controverse a suscité l'essai « La survie des médiocres » du philosophe D. Milo en 2024 ?",
+    options: [
+        "Publication philosophe D. Milo buzz médiatique étayé aucun article scientifique confondant darwinisme darwinisme social idéologie",
+        "Ouvrage scientifique rigoureux accepté unanimement communauté biologistes évolutionnistes chercheurs internationaux monde entier",
+        "Essai sociologique documenté millions références scientifiques accepté toute communauté chercheurs biologistes évolutionnistes",
+        "Livre vulgarisation scientifique précis pédagogique recommandé tous enseignants chercheurs biologie évolutionnistes Darwin"
+    ],
+    correct: 0,
+    explanation: "En 2024, la publication de l'essai « La survie des médiocres » par le philosophe D. Milo a fait le buzz. Les médias ont fait l'éloge de cet essai, qui n'est pourtant étayé par aucun article scientifique et confond darwinisme et darwinisme social."
+},
+{
+    question: "Qu'est-ce que le lyssenkisme en Union Soviétique sous Staline et ses conséquences scientifiques ?",
+    options: [
+        "Politique agricole uniquement économique sans dimension idéologique scientifique particulière aucune influence génétique mendélienne",
+        "Génétique mendélienne considérée « science bourgeoise » Staline, Vavilov emprisonné, Lyssenko promeut génétique mitchourinienne lamarckienne mutations contrôlées",
+        "Programme scientifique rigoureux amélioration agriculture basé génétique mendélienne moderne acceptée communauté biologistes",
+        "Révolution scientifique légitime acceptée communauté internationale biologistes généticiens chercheurs monde entier"
+    ],
+    correct: 1,
+    explanation: "Lyssenkisme : la génétique mendélienne est considérée comme une « science bourgeoise » par Staline. Vavilov emprisonné puis mort. T. Lyssenko promeut la génétique mitchourinienne (mutations contrôlées par l'agriculture), une variante du lamarckisme. Par extension, le lyssenkisme désigne une science corrompue par l'idéologie."
+},
+{
+    question: "Quelle idée difficile à admettre l'évolution révèle-t-elle sur l'existence humaine selon le cours ?",
+    options: [
+        "Humanité destinée inévitable évolution dirigée vers but final précis prédéterminé cosmos univers création",
+        "Homme sommet final évolution perfection ultime atteinte processus évolutif terminé fini complet abouti",
+        "Existence Homme est contingente aurait pu ne jamais exister réveille angoisses existentielles profondes humanité",
+        "Existence humaine nécessaire absolument centre univers création spéciale unique divine volonté"
+    ],
+    correct: 2,
+    explanation: "Plusieurs points difficiles à admettre, même en l'absence de convictions religieuses et ou politiques : l'existence de l'Homme est contingente, c'est à dire que l'Homme aurait aussi bien pu ne jamais exister : réveille nos angoisses existentielles."
+},
+{
+    question: "Quelle confusion fréquente existe sur le terme 'théorie scientifique' dans le langage commun ?",
+    options: [
+        "Confusion justifiée car théorie signifie réellement absence preuves empiriques solides validation expérimentale aucune",
+        "Confusion croyant théorie=hypothèse non prouvée, mais théorie scientifique=cadre explicatif étayé nombreuses preuves observations",
+        "Terme théorie correctement compris signifiant spéculation sans fondement empirique observations mesures expériences",
+        "Théorie scientifique effectivement équivalent simple supposition sans validation expérimentale aucune observation"
+    ],
+    correct: 1,
+    explanation: "Confusion entre 'théorie' au sens commun et 'théorie scientifique'. Une théorie est un cadre explicatif, testable et même réfutable. L'évolution est bel et bien une théorie, mais cela ne signifie pas que nous n'en avons aucune preuve."
+},
+{
+    question: "Quelles sont les deux natures des preuves de l'évolution présentées dans le cours ?",
+    options: [
+        "Exclusivement preuves théoriques mathématiques sans observations biologiques réelles terrain expériences laboratoire fossiles",
+        "Uniquement preuves religieuses textes sacrés sans observations scientifiques empiriques objectives mesures",
+        "Seulement preuves philosophiques spéculatives sans observations concrètes mesurables quantifiables expériences",
+        "Preuves historiques fossiles transitions paléontologie preuves expérimentales observations laboratoire terrain évolution populations organismes"
+    ],
+    correct: 3,
+    explanation: "Les preuves de l'évolution sont de deux natures : preuves historiques (fossiles de transition, paléontologie) et preuves expérimentales (observations de l'évolution en laboratoire et sur le terrain)."
+},
+{
+    question: "Que montrent les fossiles de transition comme l'archéoptéryx sur le processus évolutif ?",
+    options: [
+        "Évolution fonctionne pas ajoutant parties individuelles formées structure préexistante nombreux fossiles transitions documentés paléontologie",
+        "Absence totale formes intermédiaires prouvant création instantanée espèces sans évolution progressive graduelle",
+        "Fraudes scientifiques invalidant totalement théorie évolution Darwin ancestralité commune descendance modification",
+        "Uniquement variations mineures intra-espèces sans transition majeure groupes taxonomiques ordres classes"
+    ],
+    correct: 0,
+    explanation: "Il existe de nombreux fossiles de transition (ex : l'archéoptéryx). L'évolution ne fonctionne pas en ajoutant des parties individuelles déjà formées à une structure préexistante."
+},
+{
+    question: "Comment répondre à l'argument créationniste sur les mutations et la perte d'information génétique ?",
+    options: [
+        "Mutations effectivement uniquement destructrices sans possibilité apparition nouvelles structures fonctionnelles complexes organismes",
+        "Créationnistes raison affirmant mutations impossibles expliquer complexité organismes vivants structures",
+        "Argument créationniste totalement correct mutations jamais bénéfiques seulement délétères organisme vivant",
+        "Argument « mutations majoritairement délétères perte information génétique » FAUX mutations ponctuelles chromosomiques duplications créent nouveaux gènes structures"
+    ],
+    correct: 3,
+    explanation: "Argument créationniste : « mutations majoritairement délétères, entraînent perte d'information génétique, ne peuvent expliquer nouvelles structures ». C'est FAUX ! Les mutations (ponctuelles, chromosomiques dont duplications de gènes) peuvent entraîner l'apparition de nouveaux gènes et de nouvelles structures."
+},
+{
+    question: "Quelle est la différence entre abiogénèse et évolution selon le cours d'enseignement ?",
+    options: [
+        "Abiogénèse évolution sont deux questions différentes progrès significatifs abiogénèse molécules organiques complexes conditions",
+        "Abiogénèse évolution exactement même processus biologique identique sans distinction aucune séparation",
+        "Abiogénèse totalement impossible scientifiquement prouve nécessairement explication surnaturelle divine création",
+        "Évolution nécessite absolument résolution abiogénèse sinon théorie invalidée complètement sans fondement"
+    ],
+    correct: 0,
+    explanation: "L'abiogénèse (=l'origine de la vie) et l'évolution sont deux questions différentes ! Des progrès significatifs ont été réalisés sur cette question ces dernières années ; par exemple, des scientifiques ont montré que des molécules organiques complexes pouvaient se former spontanément dans certaines conditions."
+},
+{
+    question: "Quelles stratégies de communication utilisent les créationnistes pour promouvoir leurs idées ?",
+    options: [
+        "Débat ouvert respectueux acceptant totalement validité scientifique théorie évolution darwinienne biologistes chercheurs",
+        "Utiliser champ lexical visuel science suggérer créationnisme théorie scientifique déformer position adversaire sophisme homme paille rhétorique",
+        "Présentation honnête transparente positions créationnistes sans manipulation rhétorique linguistique trompeuse",
+        "Argumentation exclusivement religieuse assumée sans prétention scientifique légitimité empirique observations"
+    ],
+    correct: 1,
+    explanation: "Stratégies de communication créationnistes : utiliser le champ lexical (et le visuel!) de la science pour suggérer que le créationnisme est une théorie scientifique. Déformer la position de l'adversaire pour la rendre indéfendable (sophisme de l'homme de paille)."
+},
+{
+    question: "Quelle est la place de la théorie de l'évolution dans les programmes scolaires français actuels ?",
+    options: [
+        "Évolution sujet optionnel secondaire programmes scolaires sans importance centrale biologie sciences vie terre",
+        "Théorie évolution uniquement enseignée niveau universitaire sans mention écoles secondaires collèges lycées",
+        "Théorie évolution trouve origine idées Darwin multiples preuves seule théorie scientifique valide « fil rouge » programmes scolaires sciences vie terre",
+        "Programmes scolaires présentent évolution créationnisme égalité temps enseignement sciences naturelles biologie"
+    ],
+    correct: 2,
+    explanation: "La théorie de l'évolution, qui trouve son origine dans les idées de Darwin et n'a cessé de se développer depuis, repose sur de multiples preuves. Elle occupe une place centrale dans les programmes scolaires; c'est le « fil rouge » des sciences de la vie."
+},
+{
+    question: "Pourquoi des étudiants formés à la biologie évolutive ne la comprennent-ils pas mieux après leur formation ?",
+    options: [
+        "Parce qu'on prend pas temps déconstruire idées reçues simplification excessive concepts complexes pas lien disciplines échelles intégration savoirs nécessaire",
+        "Parce que étudiants manquent totalement intelligence capacité compréhension concepts biologiques simples basiques",
+        "Parce que théorie évolution effectivement incompréhensible trop complexe pour être enseignée correctement étudiants",
+        "Parce que formation biologique générale suffisante sans nécessité enseignement spécifique évolution darwinisme"
+    ],
+    correct: 0,
+    explanation: "Une étude américaine a montré que des étudiants ayant été formés à la biologie évolutive ne la comprenaient pas mieux après qu'avant. Raisons : on ne prend pas le temps de déconstruire leurs idées reçues d'abord (simplification excessive), on ne fait pas assez le lien entre les différentes disciplines & échelles."
+},
+{
+    question: "Quelle idée reçue n°1 concerne la finalité et l'intentionnalité dans l'évolution biologique ?",
+    options: [
+        "Évolution effectivement dirigée vers but précis complexification croissante progrès perfectionnement organismes",
+        "Caractères évoluent effectivement « pour » remplir fonction donnée adaptation intentionnelle environnement",
+        "Idée reçue finalisme « évolution a but complexification mutations répondent pression environnementale » FAUX évolution pas but mutations aléatoires hasard",
+        "Sélection naturelle agit effectivement intention améliorer espèces vers perfection optimale finale"
+    ],
+    correct: 2,
+    explanation: "Idée reçue n°1 : Finalisme. L'évolution n'a pas de but, elle ne va pas vers plus de complexité et les caractères n'évoluent pas « pour » remplir une fonction donnée, de même que les mutations ne se produisent pas en réponse à une pression environnementale donnée."
+},
+{
+    question: "Qu'est-ce que le biais cognitif de négligence de la taille de l'échantillon en évolution ?",
+    options: [
+        "Biais justifié car taille échantillon effectivement sans importance statistique probabilités évènements rares",
+        "On considère improbable hasard origine mutation avantageuse propagation mais nombreuses mutations pas propagées négligence taille échantillon biais cognitif",
+        "Biais inexistant raisonnement humain parfaitement rationnel sans erreur évaluation probabilités",
+        "Taille échantillon correctement évaluée spontanément humains sans formation statistique mathématique"
+    ],
+    correct: 1,
+    explanation: "Négligence de la taille de l'échantillon : on considère très improbable que le hasard soit à l'origine d'une mutation aussi avantageuse que celle-ci (propagation), mais il y a eu de très nombreuses mutations qui elles ne se sont pas propagées (pas avantageuses). Très important pour l'enseignant de prendre en compte ces biais cognitifs."
+},
+{
+    question: "Quelle idée reçue n°5 concerne l'optimalité des caractères façonnés par la sélection naturelle ?",
+    options: [
+        "Sélection effectivement façonne caractères manière optimale sans compromis contraintes historiques hasard",
+        "Idée reçue « sélection optimale » FAUX compromis évolutifs trade-offs contraintes historiques bricolage évolutif rôle hasard mutations aléatoires",
+        "Caractères toujours parfaitement adaptés sans compromis entre fonctions différentes même caractère",
+        "Évolution produit effectivement perfection absolue caractères sans contrainte limitation historique"
+    ],
+    correct: 1,
+    explanation: "Idée reçue n°5 : La sélection façonne les caractères de manière optimale. C'est négliger : les compromis évolutifs (trade-offs), les contraintes historiques (bricolage évolutif), du rôle du hasard (mutations surviennent au hasard)."
+},
+{
+    question: "Quelle idée reçue n°6 concerne la 'loi du plus fort' en sélection naturelle ?",
+    options: [
+        "Sélection naturelle effectivement équivalent loi plus fort survie individus puissants dominants",
+        "Plus fort physiquement laisse toujours plus descendants conception correcte sélection naturelle",
+        "Idée reçue « sélection=loi plus fort » FAUX succès reproducteur différentiel pas force combat physique domination hiérarchie sociale uniquement",
+        "Sélection favorise exclusivement individus dominants agressifs sans autre critère adaptation reproduction"
+    ],
+    correct: 2,
+    explanation: "Idée reçue n°6 : La sélection naturelle, c'est la loi du plus fort. FAUX ! La sélection naturelle = succès reproducteur différentiel. Ce n'est pas forcément le 'plus fort' qui laisse le plus de descendants."
+},
+{
+    question: "À quel niveau la sélection naturelle agit-elle principalement selon la théorie moderne de l'évolution ?",
+    options: [
+        "Sélection agit niveau gène favorisant transmission propre réplication même délétère populations maintien espèces groupes sociaux",
+        "Sélection agit exclusivement niveau espèce pour bien groupe entier population communauté",
+        "Sélection agit uniquement niveau population sans considération génétique individuelle organisme",
+        "Sélection agit seulement niveau écosystème maximisant diversité totale biodiversité communautés"
+    ],
+    correct: 0,
+    explanation: "La sélection naturelle agit au niveau du gène. Les gènes favorisent leur propre transmission. Mais là encore, ils peuvent être délétères pour le maintien des populations."
+},
+{
+    question: "Pourquoi l'hypothèse de la sélection de groupe pour expliquer l'altruisme a-t-elle été réfutée par la modélisation ?",
+    options: [
+        "Hypothèse sélection groupe réfutée modélisation sélection intragroupe presque toujours plus forte sélection intergroupe compétition individus dominante",
+        "Sélection groupe effectivement mécanisme principal évolution altruisme validé expérimentalement terrain",
+        "Modélisations montrent sélection intergroupe toujours dominante sur sélection intragroupe compétition",
+        "Altruisme effectivement expliqué uniquement sélection groupe sans autre mécanisme évolutif"
+    ],
+    correct: 0,
+    explanation: "Hypothèse de la sélection de groupe ? Hypothèse réfutée par la modélisation : la sélection intragroupe est presque toujours plus forte que la sélection intergroupe."
+},
+{
+    question: "Qu'est-ce que la stratégie du tit-for-tat en théorie des jeux et pourquoi est-elle évolutivement stable ?",
+    options: [
+        "Stratégie aléatoire sans règle coopération défection décidées hasard chaque interaction sociale organisme",
+        "Stratégie tit-for-tat coopération mutuelle réciprocité évolutivement stable théorie jeux dilemme prisonnier altruisme réciproque coopération conditionnelle",
+        "Stratégie altruisme inconditionnel toujours coopérer sans réciprocité attendue partenaires sociaux",
+        "Stratégie trahison systématique jamais coopérer maximiser gains individuels court terme égoïsme"
+    ],
+    correct: 1,
+    explanation: "La théorie des jeux et le dilemme du prisonnier. La théorie des jeux ne peut pas expliquer l'existence d'altruisme inconditionnel. L'altruisme inconditionnel n'est pas une stratégie évolutivement stable…mais la stratégie du tit-for-tat oui (coopération mutuelle)."
+},
+{
+    question: "Qu'est-ce que l'équation de Hamilton pour la sélection de parentèle et l'altruisme chez les insectes sociaux ?",
+    options: [
+        "Équation mathématique uniquement théorique sans validation empirique observations terrain insectes sociaux",
+        "Formule prouvant altruisme jamais avantageux évolutivement quelle que soit situation parenté",
+        "Équation démontrant sélection groupe uniquement mécanisme évolution altruisme coopération sociale",
+        "Équation Hamilton r*B > C sélection parentèle r=coefficient parenté B=bénéfice receveur C=coût émetteur apparentement coopération gène égoïste"
+    ],
+    correct: 3,
+    explanation: "Hypothèse de la sélection de parentèle ? Équation de Hamilton : r*B > C. r=coefficient de parenté, B=bénéfice pour le receveur, C=coût pour l'émetteur. Apparentement des individus qui coopèrent. Ici l'altruisme se comprend dans le cadre de la théorie du gène égoïste."
+},
+{
+    question: "Pourquoi la reproduction sexuée est-elle paradoxale d'un point de vue évolutif malgré son coût ?",
+    options: [
+        "Sexe coût important transmission gènes seulement 50% génome transmis recombinaison casse combinaisons allèles avantageuses malgré coût maintenu populations",
+        "Sexe toujours avantageux sans paradoxe évolutif transmission intégrale génome descendants tous",
+        "Reproduction sexuée effectivement optimale tous points vue sans coût désavantage organisme",
+        "Asexualité jamais avantageuse reproduction sexuée uniquement stratégie viable évolution organismes"
+    ],
+    correct: 0,
+    explanation: "Pourquoi le sexe ? Le sexe a un coût important en termes de transmission des gènes (seulement 50% du génome transmis). La recombinaison casse les combinaisons d'allèles avantageuses."
+},
+{
+    question: "Que montre l'exemple des lézards de Pod Mrcaru sur la vitesse de l'évolution observable ?",
+    options: [
+        "Changements comportementaux morphologiques anatomiques valves caecales apparues 36 ans seulement évolution rapide observable échelle temps humaine courte période",
+        "Évolution toujours très lente nécessitant millions années sans changement rapide possible observable",
+        "Lézards montrent absence totale évolution malgré changement environnement habitat nouveau",
+        "Exemple prouve fixité espèces impossibilité évolution observable échelle temps humaine"
+    ],
+    correct: 0,
+    explanation: "L'exemple des lézards de Pod Mrcaru : changements comportementaux (régime alimentaire et structure sociale), morphologiques (taille et forme du crâne) et anatomiques (apparition d'un nouvel organe, présence de valves caecales absente dans la population source) en l'espace de 36 ans seulement."
+},
+{
+    question: "Quelle idée reçue n°9 concerne l'adaptation des espèces au changement climatique anthropique actuel ?",
+    options: [
+        "Toutes espèces s'adapteront certainement rapidement changement climatique sans problème extinction biodiversité",
+        "Idée reçue « évolution rapide donc espèces s'adapteront » FAUX certaines acclimateront adapteront mais imprévisible 1000 espèces éteintes UICN menacées disparition extinction biodiversité",
+        "Évolution assez rapide garantir adaptation toutes espèces réchauffement climatique anthropique",
+        "Aucune espèce capable s'adapter changement climatique extinction totale biodiversité inévitable"
+    ],
+    correct: 1,
+    explanation: "Idée reçue n°9 : Si l'évolution est rapide, pas de quoi s'alarmer, les espèces s'adapteront. FAUX ! Certaines espèces vont pouvoir s'acclimater (réponse plastique) et d'autres s'adapter...mais on ne peut pas prédire combien ni lesquelles. D'après l'UICN : ~ 1000 espèces éteintes (ou éteintes à l'état sauvage) à l'heure actuelle."
+},
+{
+    question: "Quel est le lien entre génotypes et phénotypes étudié en génétique formelle mendélienne ?",
+    options: [
+        "Génétique formelle étudie lien génotypes phénotypes individus transmission gènes traits parents descendants lois Mendel ségrégation indépendance caractères",
+        "Génétique formelle uniquement structure allélique populations sans niveau individuel organisme",
+        "Génétique formelle exclusivement écologie évolutive adaptation populations environnement pressions",
+        "Génétique formelle seulement macroévolution spéciation diversification clades phylogénie arbres"
+    ],
+    correct: 0,
+    explanation: "Génétique formelle : Quel est le lien entre génotypes et phénotypes des individus ? Comment les gènes et les traits des parents sont-ils transmis à leurs descendants ?"
+},
+{
+    question: "Que permet d'étudier la génétique des populations au niveau des fréquences alléliques et génotypiques ?",
+    options: [
+        "Génétique populations structure allélique génotypique phénotypique populations variations générations forces évolutives mutation sélection dérive migration Hardy-Weinberg équilibre",
+        "Génétique populations uniquement lien génotype phénotype individus sans dimension populationnelle",
+        "Génétique populations exclusivement diversification espèces macroévolution phylogénie clades arbres",
+        "Génétique populations seulement adaptation individuelle durant vie sans transmission héréditaire"
+    ],
+    correct: 0,
+    explanation: "Génétique des populations : Quelle est la structure allélique, génotypique et phénotypique des populations? Comment cette structure varie t-elle au fil des générations ? Domaine des forces évolutives."
+},
+{
+    question: "Qu'est-ce que le principe de Hardy-Weinberg représente en génétique des populations et évolution ?",
+    options: [
+        "Principe Hardy-Weinberg hypothèse nulle très grande population isolée locus neutre panmixie fréquences alléliques stables absence forces évolutives mutation sélection dérive migration",
+        "Principe Hardy-Weinberg loi universelle décrivant réalité toutes populations naturelles vivantes",
+        "Principe Hardy-Weinberg prouve évolution impossible populations naturelles vivantes terrestres aquatiques",
+        "Principe Hardy-Weinberg uniquement applicable populations humaines sans autres espèces animales"
+    ],
+    correct: 0,
+    explanation: "Le principe de Hardy-Weinberg, une hypothèse nulle. Dans une très grande population isolée, pour un locus neutre et non soumis à la mutation, s'il y a panmixie : les fréquences génotypiques peuvent être déduites des fréquences alléliques. À l'équilibre, les fréquences alléliques restent stables. En l'absence de forces évolutives, les fréquences alléliques ne varient pas."
+},
+{
+    question: "Quels sont les types de mutations ponctuelles et leurs effets sur les protéines codées ?",
+    options: [
+        "Mutations ponctuelles inexistantes ADN parfaitement stable sans erreur réplication stockage information génétique",
+        "Mutations ponctuelles toujours avantageuses augmentant fitness individus systématiquement organismes",
+        "Mutations ponctuelles uniquement létales jamais neutres toujours délétères organisme vivant",
+        "Mutations ponctuelles insertions délétions substitutions effets faux-sens non-sens neutres silencieuses régions non codantes variables aléatoires hasard réplication ADN"
+    ],
+    correct: 3,
+    explanation: "Mutations ponctuelles : insertions/délétions et/ou substitutions. Effets variables : faux-sens (changement acide aminé), non-sens (codon stop), neutres dont silencieuses (même acide aminé) et touchant régions non codantes."
+},
+{
+    question: "Qu'est-ce que la polyploïdisation et son importance évolutive chez les angiospermes végétaux ?",
+    options: [
+        "Polyploïdisation formation génome polyploïde plus deux jeux chromosomes complets cause majeure spéciation angiospermes autopolyploïdisation même origine allopolyploïdisation origines différentes hybridation",
+        "Polyploïdisation uniquement anomalie létale sans importance évolutive aucune espèce organisme",
+        "Polyploïdisation exclusivement animaux vertébrés sans occurrence plantes végétaux angiospermes",
+        "Polyploïdisation processus inexistant génomes toujours exactement diploïdes stables sans"
+    ],
+    correct: 0,
+    explanation: "Polyploïdisation = formation d'un génome polyploïde, constitué de plus de deux jeux complets de chromosomes. Est une cause majeure de spéciation chez les angiospermes. Autopolyploïdisation (même origine) et Allopolyploïdisation (origines différentes)."
+},
+{
+    question: "Quels sont les mécanismes de recombinaison créant nouvelles combinaisons d'allèles lors de la reproduction sexuée ?",
+    options: [
+        "Recombinaison brassage interchromosomique anaphase I brassage intrachromosomique crossing-over prophase I fécondation fusion gamètes transferts horizontaux gènes bactéries eucaryotes mécanismes diversité",
+        "Recombinaison uniquement brassage interchromosomique sans crossing-over fécondation aucun autre",
+        "Recombinaison inexistante allèles toujours transmis intacts sans mélange descendance reproduction",
+        "Recombinaison uniquement transferts horizontaux sans brassages chromosomiques méiose fécondation"
+    ],
+    correct: 0,
+    explanation: "La recombinaison crée nouvelles combinaisons d'allèles. Lors de la méiose : brassage interchromosomique (répartition aléatoire chromosomes homologues anaphase I), brassage intrachromosomique (crossing-over prophase I). Lors de la fécondation : fusion gamètes. Transferts horizontaux de gènes."
+},
+{
+    question: "Comment la sélection naturelle agit-elle sur les génotypes par survie et fécondité différentielles ?",
+    options: [
+        "Sélection naturelle survie différentielle fécondité différentielle entre génotypes tri déterministe mutations avantageuses désavantageuses reproduction succès reproducteur environnement adaptation locale populations",
+        "Sélection naturelle agit identiquement tous génotypes sans différence survie reproduction organismes",
+        "Sélection naturelle uniquement hasard sans aspect déterministe prévisible aucun direction",
+        "Sélection naturelle exclusivement survie sans considération fécondité reproduction différentielle succès"
+    ],
+    correct: 0,
+    explanation: "La sélection naturelle : survie différentielle entre génotypes et fécondité différentielle entre génotypes. Tri déterministe des mutations."
+},
+{
+    question: "Qu'est-ce que l'adaptation locale en écologie évolutive et comment se manifeste-t-elle dans les populations ?",
+    options: [
+        "Adaptation locale si chaque environnement valeur sélective génotype local supérieure valeur sélective autres génotypes populations différenciées pressions sélection différentes environnements hétérogènes adaptation",
+        "Adaptation locale génotype unique optimal tous environnements sans différenciation populations organismes",
+        "Adaptation locale impossible populations toujours uniformes génétiquement tous environnements habitats",
+        "Adaptation locale seulement migrations continues empêchant différenciation génétique populations flux"
+    ],
+    correct: 0,
+    explanation: "Adaptation locale : dans chaque environnement, si la valeur sélective du génotype local > valeur sélective autre(s) génotype(s), il y a adaptation locale. Il n'est théoriquement pas nécessaire que la valeur sélective de chaque génotype soit plus importante dans son environnement d'origine."
+},
+{
+    question: "Qu'est-ce que la macroévolution et que teste-t-elle concernant les traits prédisposant à l'extinction ?",
+    options: [
+        "Macroévolution évolution au-dessus niveau espèce teste traits prédisposant extinction ex lézards Caraïbes grande taille associée risque extinction élevé distributions tailles fossiles vivants menacés",
+        "Macroévolution uniquement évolution niveau espèce sans niveau supérieur clades phylogénie arbres",
+        "Macroévolution exclusivement microévolution populations sans diversification espèces nouvelles phylogénie",
+        "Macroévolution concept invalide scientifiquement sans fondement empirique observations fossiles paléontologie"
+    ],
+    correct: 0,
+    explanation: "Macroévolution = évolution au dessus du niveau de l'espèce. Y a-t-il des traits qui prédisposent à l'extinction? Exemple des lézards des Caraïbes : une grande taille semble être associée à un plus grand risque d'extinction."
+},
+{
+    question: "Comment peut-on rendre l'enseignement de l'évolution plus concret motivant pour les élèves selon le cours ?",
+    options: [
+        "Évolution laisse traces séquences ADN traits phénotypiques photos observables manipulables travail enquête reconstitution scénario évolutif motivant élèves indices observations mesures expériences manipulation",
+        "Évolution uniquement concept abstrait non observable impossible rendre concret élèves collège",
+        "Enseignement évolution nécessite seulement cours magistraux sans manipulation observation concrète terrain",
+        "Impossibilité observer traces évolution enseignement doit rester purement théorique abstrait mathématique"
+    ],
+    correct: 0,
+    explanation: "L'évolution est souvent perçue comme un phénomène abstrait, car non observable et non manipulable. Mais l'évolution laisse des traces (séquences d'ADN, traits phénotypiques, photos, enregistrements…) qui elles peuvent être observées et manipulées! Il s'agit de reconstituer un scénario évolutif à partir d'un ensemble d'indices : cela s'apparente à un travail d'enquête, ce qui est motivant pour les élèves."
+},
+{
+    question: "Comment peut-on modéliser l'évolution en classe pour étudier les processus évolutifs ?",
+    options: [
+        "Uniquement modèles mathématiques complexes sans modèles analogiques accessibles élèves collège lycée",
+        "Évolution peut être modélisée modèles analogiques numériques objet étude évolution processus expériences évolution expérimentale directe laboratoire terrain populations organismes modèles observation manipulation",
+        "Évolution impossible modéliser uniquement observable terrain naturel sans modélisation possible classe",
+        "Modélisation évolution invalide scientifiquement sans pertinence pédagogique enseignement classe secondaire"
+    ],
+    correct: 1,
+    explanation: "L'évolution peut être modélisée, à l'aide de modèles analogiques ou numériques. Objet d'étude = l'évolution en tant que processus. L'évolution peut enfin être étudiée directement, à l'aide d'expériences d'évolution expérimentale."
+},
+{
+    question: "Quelles ressources pédagogiques sont recommandées pour diversifier l'enseignement de l'évolution en classe ?",
+    options: [
+        "Seulement documentaires anciens années 1950 sans actualisation connaissances récentes recherches scientifiques",
+        "Exclusivement cours magistraux sans support visuel interactif multimédia aucun ressource",
+        "Diversifier supports articles scientifiques vulgarisation photos dessins schémas graphiques vidéos applications interactives bandes dessinées contemporains littérature récente exemples actuels recherche biologie évolutive",
+        "Uniquement manuels scolaires traditionnels sans diversification supports pédagogiques variés multimédia"
+    ],
+    correct: 2,
+    explanation: "Diversifier les supports en cours : extraits d'articles scientifiques ou d'articles de vulgarisation, photos, dessins, schémas, graphiques, vidéos, applications interactives, bandes dessinées. Travailler sur des exemples issus de la littérature scientifique récente."
+},
+{
+    question: "Quelles sources sont recommandées pour trouver des exemples récents d'évolution pour l'enseignement en classe ?",
+    options: [
+        "Uniquement encyclopédies anciennes 19ème siècle sans actualisation connaissances modernes recherches contemporaines",
+        "Exclusivement blogs personnels non vérifiés sans validation scientifique académique peer-review",
+        "Seulement réseaux sociaux sans source scientifique fiable validée peer-review comité lecture",
+        "Ouvrage « Du labo à la classe » Académie Montpellier sites Planet-Vie journaux vulgarisation scientifique articles validés chercheurs biologistes évolutionnistes universitaires laboratoires recherche publications"
+    ],
+    correct: 3,
+    explanation: "Travailler sur des exemples issus de la littérature scientifique récente : l'ouvrage « Du labo à la classe » (Académie de Montpellier et Université de Montpellier), les sites dédiés aux enseignants en SVT tels que Planet-Vie, les journaux de vulgarisation scientifique (mais attention, tous ne se valent pas)."
+},
+{
+    question: "Comment peut-on enseigner la démarche scientifique en s'appuyant sur l'évolution et l'épistémologie selon le cours ?",
+    options: [
+        "Démarche scientifique sans lien avec évolution enseignées séparément sans intégration disciplines",
+        "Uniquement mémorisation faits sans compréhension démarche scientifique méthodologie recherche hypothèses",
+        "Évolution inadaptée enseigner démarche scientifique trop controversée complexe élèves secondaire",
+        "Enseigner épistémologie clarifier science/pas science définir théorie hypothèse démarches inductives déductives biais cognitifs changements échelles reproduction imparfaite tri déterministe aléatoire forces évolutives"
+    ],
+    correct: 3,
+    explanation: "Enseigner la démarche scientifique en s'appuyant sur l'évolution. Ces difficultés peuvent être surmontées en : enseignant aux élèves des notions d'épistémologie (clarifier ce qui relève de la science ou pas, définir théorie scientifique, hypothèse, enseigner démarches inductives et déductives), en leur faisant prendre conscience des biais cognitifs."
+},
+{
+    question: "Comment surmonter les difficultés d'enseignement de l'évolution selon les recommandations du cours pédagogique ?",
+    options: [
+        "Notions épistémologie conscience biais cognitifs insister changements échelles évolution repose reproduction imparfaite tri déterministe aléatoire exploiter ressources pédagogiques multiples diversifiées contemporaines validées scientifiquement chercheurs biologistes évolutionnistes",
+        "Éviter complètement sujet évolution trop controversé difficile enseigner élèves collège",
+        "Enseigner seulement aspects non controversés sans aborder mécanismes évolutifs complexes forces",
+        "Imposer dogmatiquement théorie sans discussion débat épistémologique méthodologique scientifique critique"
+    ],
+    correct: 0,
+    explanation: "Surmonter les difficultés : notions d'épistémologie, prendre conscience des biais cognitifs (finalisme, anthropocentrisme, négligence taille échantillon), insister sur changements d'échelles, quelle que soit l'échelle l'évolution repose sur : reproduction imparfaite, tri déterministe et tri aléatoire, exploiter toutes les ressources pédagogiques."
+}
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
+
