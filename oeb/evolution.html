@@ -1,1 +1,1072 @@
 
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution humaine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>OEB</h1>
+            <p>Evolution humaine</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+           {
+    question: "Comment Linné a-t-il classé l'humain dans sa taxonomie originale de 1735 ?",
+    options: [
+        "Dans groupe 'anthropomorphe' avec singes paresseux chez Quadripèdes (vision scalaire échelle)",
+        "Dans catégorie séparée uniquement humains sans aucun lien avec autres animaux",
+        "Dans groupe mammifères marins avec dauphins baleines partageant intelligence élevée",
+        "Dans ordre primates avec lémuriens prosimiens sans distinction particulière aucune"
+    ],
+    correct: 0,
+    explanation: "Dans sa taxonomie de 1735, Linné a placé l'humain chez les Quadripèdes dans un groupe 'anthropomorphe' avec les singes et les paresseux, avec une vision scalaire (en échelle) de l'évolution."
+},
+{
+    question: "Quelles étaient les 4 variétés d'Homo décrites par Linné ?",
+    options: [
+        "Sapiens sapiens, Neanderthalensis, Erectus, Habilis selon répartition géographique mondiale",
+        "Europaeus albus, Americanus rubescens, Asiaticus fuscus, Africanus niger (classification raciste continents)",
+        "Mongoloides, Caucasoides, Negroides, Australoides selon morphologie crânienne uniquement mesurée",
+        "Occidentalis, Orientalis, Meridionalis, Borealis selon orientation cardinale tous continents"
+    ],
+    correct: 1,
+    explanation: "Linné décrivait 4 variétés d'Homo selon les continents : Europaeus albus (européen blanc), Americanus rubescens (américain rouge), Asiaticus fuscus (asiatique fauve), et Africanus niger (africain noir). Classification biaisée et raciste."
+},
+{
+    question: "Quel est le problème de la variabilité pour Linné dans son système ?",
+    options: [
+        "Variabilité acceptée facilement comme preuve évolution espèces dans temps géologique",
+        "Variabilité ignorée complètement dans toutes observations naturalistes terrain périodes",
+        "Variabilité vue comme problème raisonnement car essentialiste (pas différence dans espèces)",
+        "Variabilité considérée unique moteur création nouvelles espèces vivantes environnement"
+    ],
+    correct: 2,
+    explanation: "Pour Linné, essentialiste et fixiste, la variabilité était vue comme un problème dans son raisonnement car il ne concevait aucune différence au sein des espèces. Paradoxalement, Darwin en fera un élément essentiel pour expliquer la sélection."
+},
+{
+    question: "Quelle est la classification actuelle de l'humain au niveau de la sous-tribu ?",
+    options: [
+        "Sous-tribu Panina comprenant uniquement chimpanzés bonobos espèces apparentées proches",
+        "Sous-tribu Gorillina comprenant gorilles toutes espèces grands primates africains",
+        "Sous-tribu Pongina comprenant orang-outans autres grands singes asiatiques uniquement",
+        "Sous-tribu Hominina comprenant genre Homo plus lignée humaine fossile non Homo"
+    ],
+    correct: 3,
+    explanation: "La sous-tribu Hominina comprend le genre Homo avec les espèces éteintes, plus toute la lignée humaine fossile qui ne sont pas dans le genre Homo."
+},
+{
+    question: "Qu'est-ce qui forme le groupe monophylétique des Hominoidae ?",
+    options: [
+        "Grands Singes : humains, chimpanzés, gorilles, orang-outans, gibbons (disparition queue coccyx)",
+        "Seulement primates africains excluant totalement espèces asiatiques grands singes",
+        "Tous primates incluant lémuriens prosimiens sans distinction particulière groupes",
+        "Uniquement genre Homo actuel fossiles sans autres grands singes apparentés"
+    ],
+    correct: 0,
+    explanation: "Les Hominoidae (Grands Singes) comprennent les humains (homo actuel et fossiles), toute la lignée des chimpanzés, gorilles, orang-outans et gibbons, avec disparition de la queue et apparition du coccyx."
+},
+{
+    question: "Quelle est la différence génétique entre l'humain et ses plus proches cousins vivants ?",
+    options: [
+        "5% différence avec gorilles cousins vivants plus proches selon séquençage ADN",
+        "1% différence avec Chimpanzés Bonobos cousins vivants plus proches actuellement",
+        "10% différence avec orang-outans cousins vivants plus proches génétiquement",
+        "0,5% différence avec gibbons cousins vivants plus proches phylogénétiquement"
+    ],
+    correct: 1,
+    explanation: "Nous avons 1% de différence génétique avec les Chimpanzés et les Bonobos, qui sont nos cousins vivants les plus proches actuellement."
+},
+{
+    question: "Combien de paires de chromosomes possède l'humain ?",
+    options: [
+        "24 paires chromosomes comme tous grands singes actuels vivants exactement",
+        "22 paires chromosomes moins que autres primates proches parents génétiquement",
+        "25 paires chromosomes plus que chimpanzés gorilles orang-outans actuels",
+        "23 paires chromosomes (fusion chromosomes 2A 2B chimpanzé formant chromosome 2)"
+    ],
+    correct: 3,
+    explanation: "L'humain possède 23 paires de chromosomes. Les chromosomes 2A et 2B du chimpanzé ont été fusionnés chez l'humain pour former le chromosome 2."
+},
+{
+    question: "Quel pourcentage de notre ADN (SNP) explique nos différences individuelles ?",
+    options: [
+        "0,1% paires nucléotides varient expliquant différences traits entre individus humains",
+        "5% paires nucléotides varient créant diversité génétique populations humaines",
+        "1% paires nucléotides varient causant variations morphologiques observées",
+        "10% paires nucléotides varient expliquant diversité phénotypique humaine"
+    ],
+    correct: 0,
+    explanation: "Sur 3 milliards de paires de nucléotides, seules 0,1% varient, expliquant nos différences de traits individuels entre humains."
+},
+{
+    question: "Quelle est la caractéristique métabolique distinctive de l'humain ?",
+    options: [
+        "Métabolisme identique chimpanzés sans différence significative notable mesurable",
+        "Métabolisme plus lent que autres primates économisant énergie disponible",
+        "Masse musculaire maximale minimisant réserves graisseuses inutiles survie",
+        "Masse graisseuse plus grande (réserve énergie), dépense énergétique importante (cerveau consomme)"
+    ],
+    correct: 3,
+    explanation: "L'humain est caractérisé par une plus grande masse graisseuse (réserve d'énergie) avec une dépense énergétique plus importante à cause de notre cerveau qui consomme beaucoup d'énergie."
+},
+{
+    question: "Quelles sont les adaptations de la colonne vertébrale humaine à la bipédie ?",
+    options: [
+        "Colonne courbée 4 courbures atlas coccyx permettant amortissement gravité contraintes bipédie",
+        "Colonne vertébrale droite rigide sans courbures amortissement chocs marche",
+        "Colonne vertébrale identique chimpanzés sans modification particulière structure",
+        "Colonne vertébrale courte compacte réduisant flexibilité mobilité ensemble"
+    ],
+    correct: 0,
+    explanation: "La colonne vertébrale humaine est courbée avec 4 courbures de l'atlas au coccyx, permettant l'amortissement de la gravité et des contraintes liées à la bipédie."
+},
+{
+    question: "Quelles sont les caractéristiques des pieds humains adaptés à la bipédie ?",
+    options: [
+        "Pieds longs étroits sans arche particulière structure osseuse spécialisée",
+        "Pieds plats sans voûte rigides sans absorption chocs marche bipède",
+        "Pieds voûtés arche longitudinale transversale souplesse absorption chocs gros orteil aligné non opposable",
+        "Pieds avec gros orteil opposable préhension branches arboricole ancestral"
+    ],
+    correct: 2,
+    explanation: "Les pieds humains sont voûtés avec une arche longitudinale et une arche transversale, permettant souplesse et absorption des chocs. Le gros orteil reste aligné (non opposable)."
+},
+{
+    question: "Qu'est-ce que la graisse brune chez le nouveau-né humain ?",
+    options: [
+        "Graisse permettant flottaison nouveau-né milieu aquatique liquide amniotique",
+        "Graisse zone utilisant beaucoup énergie premiers jours réchauffer cœur (thermorégulation naissance température)",
+        "Graisse stockage long terme énergie nourrisson premiers mois vie",
+        "Graisse protectrice organes internes contre traumatismes physiques externes"
+    ],
+    correct: 1,
+    explanation: "La graisse brune est une zone qui utilise beaucoup d'énergie dans les premiers jours pour réchauffer le cœur. La naissance fait passer le nouveau-né de 37°C à 25°C, nécessitant une thermorégulation intense."
+},
+{
+    question: "Quelle est la dentition caractéristique de l'humain omnivore ?",
+    options: [
+        "Dentition carnivore avec canines développées dents tranchantes découper viande",
+        "Dentition herbivore avec molaires plates larges broyer végétaux uniquement",
+        "Dentition monophyodonte permanente sans remplacement dents durant vie entière",
+        "Dentition diphyodonte (2 générations), brachyodonte (courtes), bunodontes molaires (cuspides arrondies broyeur cochon)"
+    ],
+    correct: 3,
+    explanation: "L'humain a une dentition diphyodonte (2 générations de dents), brachyodonte (dents courtes) et bunodontes pour les molaires (cuspides arrondies et sous-développées) = broyeur. Similaire au cochon."
+},
+{
+    question: "Quelle est la capacité crânienne moyenne de l'humain actuel ?",
+    options: [
+        "2000-2500g capacité crânienne largement supérieure tous autres primates existants",
+        "600-700g capacité crânienne comparable autres grands singes actuels vivants",
+        "800-900g capacité crânienne similaire Homo erectus ancêtres fossiles humains",
+        "1250-1450g capacité crânienne permettant intelligence résolution problèmes complexes environnement"
+    ],
+    correct: 3,
+    explanation: "L'humain a une capacité crânienne de 1250-1450g, liée à notre intelligence (capacité à résoudre les problèmes) et à nos connexions neuronales développées."
+},
+{
+    question: "Quelle est la meilleure corrélation avec l'intelligence selon le cours ?",
+    options: [
+        "Taille cerveau divisée par surface corps animal étudié mesuré",
+        "Nombre neurones cortex × Rapidité conduction = Capacité traitement information complexe",
+        "Volume cérébral total multiplié par poids corps individu mesuré",
+        "Masse cerveau additionnée longueur neurones totale système nerveux central"
+    ],
+    correct: 1,
+    explanation: "La meilleure corrélation avec l'intelligence est : Nombre de neurones dans le cortex × Rapidité de conduction = Capacité de traitement de l'information."
+},
+{
+    question: "Quels sont les organes impliqués dans la production du langage humain ?",
+    options: [
+        "Uniquement cerveau sans modification anatomique organes production sons articulés",
+        "Uniquement cordes vocales produisant vibrations sons articulés langage humain",
+        "Cavité nasale, larynx/pharynx (plus bas large), langue, cordes vocales (vibrations sonores)",
+        "Seulement bouche lèvres sans intervention cavité nasale pharynx larynx"
+    ],
+    correct: 2,
+    explanation: "Pour parler, on utilise notre nez (cavité nasale), le larynx/pharynx (plus bas et plus large), la langue dans la cavité buccale, et les cordes vocales pour émettre les vibrations sonores."
+},
+{
+    question: "Quelles aires cérébrales sont nécessaires pour le langage articulé ?",
+    options: [
+        "Aire Broca (production langage articulé contrôle), Aire Wernicke (compréhension langage parlé)",
+        "Aire visuelle primaire occipitale uniquement sans autre zone cérébrale impliquée",
+        "Aire motrice primaire frontale uniquement mouvements bouche lèvres articulateurs",
+        "Aire somatosensorielle pariétale uniquement sensations tactiles orofaciales bouche"
+    ],
+    correct: 0,
+    explanation: "Pour produire un langage, on a besoin du contrôle nerveux de l'aire de Broca (production). Pour la compréhension, c'est l'aire de Wernicke qui intervient."
+},
+{
+    question: "Qu'est-ce que la double articulation du langage humain ?",
+    options: [
+        "Double articulation mandibulaire permettant mastication déglutition simultanées bouche",
+        "Double articulation cordes vocales produisant harmoniques sonores complexes variées",
+        "Morphèmes 'mots' (unités sens signification) et Phonèmes 'sons' (unités distinctives sans sens)",
+        "Articulation consonnes voyelles séparément dans production tous sons langage"
+    ],
+    correct: 2,
+    explanation: "Le langage humain a une double articulation : unités de première articulation = morphèmes/mots (unités minimales de signification), et unités de seconde articulation = phonèmes/sons (unités minimales distinctives sans sens)."
+},
+{
+    question: "Quand le langage serait-il apparu et pourquoi est-ce un avantage ?",
+    options: [
+        "Langage apparu Homo erectus avantage sélectif important (coévolution taille cerveau complexité langage)",
+        "Langage apparu Australopithecus très anciennement 4 millions années ancêtres",
+        "Langage apparu Homo sapiens uniquement il y a 300 000 ans Afrique",
+        "Langage apparu Homo neanderthalensis seulement Europe période glaciaire froide"
+    ],
+    correct: 0,
+    explanation: "L'apparition des capacités de langage serait arrivée chez Homo erectus, constituant un avantage sélectif important. Coévolution entre la taille du cerveau et la complexité du langage : plus le cerveau était gros, plus le langage complexe permettait de survivre."
+},
+{
+    question: "Quelle contrainte limite l'augmentation de la taille du cerveau humain ?",
+    options: [
+        "Contrainte énergétique uniquement cerveau consommant trop énergie métabolique disponible",
+        "Contrainte génétique impossibilité mutations augmentant taille cerveau davantage évolution",
+        "Contrainte immunologique rejet tissus nerveux trop volumineux organisme système",
+        "Contrainte bipédie limitation passage tête nouveau-né bassin (accouchement difficile parturition)"
+    ],
+    correct: 3,
+    explanation: "La contrainte majeure est que nous sommes bipèdes, ce qui limite la taille du bassin. Il y a donc une limitation au passage de la tête du nouveau-né dans le bassin lors de l'accouchement. L'humain compense par des circonvolutions cérébrales plus importantes."
+},
+{
+    question: "Quel gène intervient dans l'auto-domestication présumée de l'humain ?",
+    options: [
+        "Gène FOXP2 uniquement langage articulé sans autre fonction développement organisme",
+        "Gène HOX responsable uniquement segmentation corps durant toute embryogenèse développement",
+        "Gène BAZ1B intervenant formation crête neurale visage cerveau (traits néoténie docilité auto-domestication)",
+        "Gène PAX6 contrôlant exclusivement développement yeux sans autre rôle organisme"
+    ],
+    correct: 2,
+    explanation: "Le gène BAZ1B intervient dans la formation de la crête neurale et du visage, ainsi que du cerveau. Il est souvent modifié lors de la domestication. Modifications importantes chez espèces domestiquées et humain (traits néoténies = juvéniles, docilité)."
+},
+{
+    question: "Quelle est la tendance démographique actuelle de la population humaine ?",
+    options: [
+        "Croissance exponentielle puis transition démographique (baisse natalité) variable selon localisation continents",
+        "Croissance exponentielle continue tous continents sans ralentissement observable aucun",
+        "Décroissance généralisée toutes régions monde sans exception aucune population",
+        "Stabilité parfaite nombre individus depuis révolution industrielle 19ème siècle"
+    ],
+    correct: 0,
+    explanation: "La population humaine a connu une croissance exponentielle. L'espérance de vie augmente, baisse de la mortalité puis baisse de la natalité = transition démographique (variable selon localisation). Continents en croissance : Asie et Afrique."
+},
+{
+    question: "Quelle hypothèse Darwin avait-il émise sur l'origine géographique de l'humain ?",
+    options: [
+        "Darwin pensait origine asiatique humain près territoires gibbons singes",
+        "Darwin croyait origine européenne humain berceau civilisation occidentale développée",
+        "Darwin estimait origine américaine humain nouveau monde découvert récemment",
+        "Darwin supposait origine africaine humain (espèces vivantes proches lieu extinction diversité)"
+    ],
+    correct: 3,
+    explanation: "Darwin avait émis l'hypothèse de l'origine africaine de l'humain. Il supposait que les espèces vivantes étaient proches du lieu où l'espèce s'est éteinte, et observait plus de diversité humaine en Afrique."
+},
+{
+    question: "Quelle vision erronée Haeckel avait-il de l'évolution humaine ?",
+    options: [
+        "Vision saltationiste évolution par grandes mutations soudaines brutales sans transition",
+        "Vision buissonnante évolution avec multiples branches parallèles contemporaines diversité",
+        "Vision créationniste stricte sans lien évolutif entre espèces vivantes actuelles",
+        "Vision continuum échelle vivant Homme européen sommet (raciste), cherchait chaînon manquant singe-homme"
+    ],
+    correct: 3,
+    explanation: "Haeckel avait une idée de continuum (échelle) avec l'Homme européen en haut. Il plaçait les phénotypes africains comme la limite et cherchait le 'chaînon manquant', le Pithecanthropus alalus. Vision raciste et erronée."
+},
+{
+    question: "Quel fossile a confirmé l'hypothèse erronée de l'origine asiatique ?",
+    options: [
+        "Homme Java Pithecanthropus (Homo) erectus découvert Dubois 1894 Indonésie Pléistocène",
+        "Homme Neandertal découvert vallée Neander Allemagne 19ème siècle Europe",
+        "Enfant Taung Australopithecus africanus découvert 1925 Afrique Sud fossile",
+        "Homme Piltdown découvert Angleterre fraude scientifique majeure acceptée communauté"
+    ],
+    correct: 0,
+    explanation: "Eugène Dubois a trouvé l'Homme de Java, Pithecanthropus (Homo) erectus en 1894 en Indonésie (Pléistocène moyen, 0,13-0,78 Ma), ce qui a conforté temporairement l'hypothèse de l'origine asiatique."
+},
+{
+    question: "Qu'était l'Homme de Piltdown découvert en 1908 en Angleterre ?",
+    options: [
+        "Fossile authentique prouvant origine européenne genre Homo moderne sapiens",
+        "Fossile Homo erectus européen contemporain Homme Java asiatique Pléistocène",
+        "Fraude scientifique (crâne humain mandibule singe) acceptée jusqu'aux années 50 datation",
+        "Fossile Neanderthalien primitif ancêtre direct Homo sapiens européen actuel"
+    ],
+    correct: 2,
+    explanation: "L'Homme de Piltdown (Eoanthropus dawsoni, 1908) était une fraude : le crâne était humain mais la mandibule était celle d'un singe. Pourtant acceptée par la communauté scientifique jusqu'au début des années 50 (datation fluor)."
+},
+{
+    question: "Quel fossile a confirmé l'origine africaine de l'Homme dans les années 1920 ?",
+    options: [
+        "Homme Flores découvert Indonésie montrant origine insulaire humains Homo",
+        "Homme Cro-Magnon découvert France prouvant origine européenne espèce Homo",
+        "Homme Pékin découvert Chine confirmant hypothèse asiatique définitivement",
+        "Enfant Taung Australopithecus africanus 1925 Afrique Sud (2,3-2,8 Ma) Pliocène Pléistocène"
+    ],
+    correct: 3,
+    explanation: "L'enfant de Taung, Australopithecus africanus, découvert en 1925 en Afrique du Sud (fin Pliocène - début Pléistocène, 2,3-2,8 Ma) a commencé à orienter vers l'origine africaine, confirmée avec d'autres fossiles comme Mrs. Ples en 1947."
+},
+{
+    question: "Comment estime-t-on la séparation de la lignée humaine (environ 8 Ma) ?",
+    options: [
+        "Seulement par analyse morphologique comparative squelettes fossiles primates ancêtres",
+        "Uniquement par datation radiométrique fossiles trouvés terrains sédimentaires géologiques",
+        "Par horloge moléculaire ADN fréquence mutations reconstituant probabilité phénotypes ancêtre commun",
+        "Exclusivement par stratigraphie couches géologiques contenant fossiles ancêtres primates"
+    ],
+    correct: 2,
+    explanation: "On utilise l'horloge moléculaire dans notre ADN avec la fréquence de mutation. On utilise les données moléculaires pour reconstituer une probabilité de phénotypes pour trouver l'ancêtre commun (séparation lignée ~8 Ma)."
+},
+{
+    question: "Quel est le plus ancien spécimen connu de la lignée hominine ?",
+    options: [
+        "Australopithecus afarensis 'Lucy' découverte Éthiopie 3,2 millions années fossile",
+        "Sahelanthropus tchadensis 'Toumaï' découvert Tchad 7 millions années (Miocène supérieur ancien)",
+        "Ardipithecus ramidus découvert Éthiopie 4,4 millions années ancêtre fossile",
+        "Orrorin tugenensis découvert Kenya 5,9 millions années fossile Miocène"
+    ],
+    correct: 1,
+    explanation: "Les plus vieux spécimens de la lignée hominine ont été trouvés au Tchad : Sahelanthropus tchadensis 'Toumaï', découvert en 2001, datant du Miocène supérieur (7 Ma)."
+},
+{
+    question: "Comment identifier la bipédie chez les fossiles d'hominines ?",
+    options: [
+        "Par position foramen magnum (trou occipital) : centré bipède, arrière quadrupède chimpanzé",
+        "Par taille cerveau corrélée directement capacité marche bipède obligatoire",
+        "Par longueur fémurs rapport humérus proportions membres squelette fossile",
+        "Par forme crâne uniquement sans regarder squelette post-crânien complet"
+    ],
+    correct: 0,
+    explanation: "Il faut regarder le trou occipital (foramen magnum) pour avoir des informations sur la bipédie. L'humain présente un foramen magnum centré (insertion moelle épinière verticale) alors que chez un chimpanzé c'est vers l'arrière."
+},
+{
+    question: "Quel fossile montre des caractères humains ET 'singes' primitifs mélangés ?",
+    options: [
+        "Australopithecus afarensis uniquement caractères singes sans caractères humains dérivés",
+        "Homo erectus uniquement caractères humains dérivés sans caractères primitifs ancestraux",
+        "Ardipithecus ramidus 4,4 Ma (canines petites, foramen antérieur MAIS gros orteil opposable arboricole)",
+        "Homo sapiens uniquement caractères modernes sans trace caractères ancestraux primitifs"
+    ],
+    correct: 2,
+    explanation: "Ardipithecus ramidus (4,4 Ma) présente des caractères humains (canines petites émoussées, foramen magnum antérieur) et caractères 'singes' primitifs (gros orteil opposable, pas d'arche longitudinale pied, longueurs similaires membres, bassin inférieur type singe)."
+},
+{
+    question: "Quels sont les genres trouvés dans la lignée humaine buissonnante ?",
+    options: [
+        "Sahelanthropus†, Orrorin†, Ardipithecus†, Kenyanthropus†, Australopithecus†, Paranthropus†, Homo (évolution non linéaire)",
+        "Pan (chimpanzés), Gorilla, Pongo (orang-outans) inclus lignée humaine directe",
+        "Uniquement genre Homo sans autre genre fossile lignée humaine directe",
+        "Seulement Australopithecus† et Homo tous autres genres inventés erreur"
+    ],
+    correct: 0,
+    explanation: "On trouve de nombreux fossiles formant une lignée buissonnante : Sahelanthropus†, Orrorin†, Ardipithecus†, Kenyanthropus(?)†, Australopithecus†, Paranthropus†, et Homo. Évolution non linéaire."
+},
+{
+    question: "Quels sont les caractères partagés entre Australopithèques et Homo ?",
+    options: [
+        "Uniquement volume crânien identique sans autre caractère commun notable partagé",
+        "Seulement longs bras doigts incurvés arboricolie sans caractères bipédie aucun",
+        "Foramen magnum centré, bipédie, canines réduites, bassin court large, pieds arqués non opposable",
+        "Exclusivement dimorphisme sexuel marqué sans autre similarité anatomique squelettique"
+    ],
+    correct: 2,
+    explanation: "Caractères partagés Australopithèques/Homo : foramen magnum centré, bipédie (imparfaite), canines réduites émoussées, moins de dimorphisme sexuel canines, cage thoracique tonneau, courbure lombaire, bassin court large, angle obliquité fémorale, pieds arqués sans pouce opposable."
+},
+{
+    question: "Quels caractères différencient les Australopithèques du genre Homo ?",
+    options: [
+        "Cerveau plus volumineux, bras plus courts, doigts droits uniquement différences",
+        "Dimorphisme sexuel plus marqué, cerveau 450cm³, longs bras, doigts orteils longs incurvés arboricoles",
+        "Uniquement différence taille corporelle sans autre caractère distinctif anatomique",
+        "Seulement forme crâne différente sans modification squelette post-crânien complet"
+    ],
+    correct: 1,
+    explanation: "Les Australopithèques diffèrent par : dimorphisme sexuel plus marqué, cerveau ~450cm³ (plus petit), longs bras, doigts et orteils longs et incurvés (locomotion arboricole). Caractères primitifs conservés n'altérant pas la bipédie."
+},
+{
+    question: "Qu'est-ce qui caractérise les Paranthropes (australopithèques robustes) ?",
+    options: [
+        "Crête sagittale proéminente, muscles masticateurs puissants, molaires larges bunodontes (herbivore casser noix robuste)",
+        "Cerveau très volumineux, capacité crânienne supérieure genre Homo sapiens",
+        "Crâne gracile petit, muscles masticateurs faibles, molaires fines carnivore",
+        "Absence totale crête sagittale, dentition frugivore spécialisée fruits uniquement"
+    ],
+    correct: 0,
+    explanation: "Les Paranthropes (2-0,6 Ma) ont une crête sagittale proéminente (comme gorilles), insertion de muscles masticateurs puissants, et des molaires larges bunodontes pour casser des noix (herbivore). Post-crânien identique Australopithèques. Branche éteinte."
+},
+{
+    question: "Qu'est-ce qui distingue le genre Homo des Australopithèques au niveau dentaire ?",
+    options: [
+        "Absence totale molaires, dentition spécialisée consommation graines uniquement végétaux",
+        "Molaires plus fines, mâchoire parabolique (VS parallèle Australopithecus chimpanzés lignes molaires)",
+        "Canines très développées, molaires carnassières découper viande uniquement carnivore",
+        "Molaires plus larges robustes, mâchoire rectangulaire forme unique caractéristique"
+    ],
+    correct: 1,
+    explanation: "Le genre Homo se distingue par des molaires plus fines (bunodontes) et une forme de mâchoire parabolique. Chez les chimpanzés et Australopithèques, la mâchoire est parallèle avec molaires en lignes."
+},
+{
+    question: "Quand apparaît le genre Homo et quelle est la controverse ?",
+    options: [
+        "Apparition certaine 500 000 ans uniquement Homo erectus sans fossiles plus anciens",
+        "Apparition certaine 1 million années sans controverse scientifique aucune débat",
+        "Homo sp. 2,8 Ma contesté (chevauchement Australopithecus), demi-mandibule unique fossile mâchoire parabolique",
+        "Apparition certaine 5 millions années bien avant Australopithecus ancêtres fossiles"
+    ],
+    correct: 2,
+    explanation: "Homo sp. (pas encore déterminé) remonte à 2,8 Ma, mais c'est contesté car on arrive dans l'âge d'Australopithecus. On n'a qu'une seule demi-mandibule. Les dents sont bunodontes, mâchoire parabolique (caractéristiques dérivées Homo)."
+},
+{
+    question: "Quelles sont les caractéristiques d'Homo habilis (2,3-1,5 Ma) ?",
+    options: [
+        "Cerveau petit 400cm³, molaires énormes, mâchoire parallèle primitive entièrement ancestrale",
+        "Absence bipédie, quadrupédie obligatoire, cerveau minuscule primitif ancestral complet",
+        "Molaires fines bunodontes, volume crânien 550-750cm³, pouce large, doigts longs incurvés arboricolie",
+        "Cerveau énorme 1200cm³, bipédie parfaite, membres proportions modernes actuelles"
+    ],
+    correct: 2,
+    explanation: "Homo habilis (2,3-1,5 Ma) : molaires fines bunodontes, lignes presque parallèles (primitif), bourrelet sus-orbitaire peu marqué, prognathisme maxillaire, augmentation volume crânien (550-750cm³). Pouce large (préhension), doigts longs incurvés (arboricolie). Longues jambes (bipédie)."
+},
+{
+    question: "Quelles sont les caractéristiques d'Homo erectus/ergaster ?",
+    options: [
+        "Présence uniquement Afrique sans dispersion autres continents jamais migration",
+        "Cerveau minuscule, absence totale langage outils, disparition immédiate rapide",
+        "Succès évolutif majeur 2-0,7 Ma, volume crânien 700-1300cm³, proto-langage bifaces transmission compétences",
+        "Échec évolutif rapide, extinction précoce sans descendance fossile aucune trace"
+    ],
+    correct: 2,
+    explanation: "H. erectus (H. ergaster = H. erectus primitif?) trouvé en Afrique et Asie entre 2-0,7 Ma. Succès évolutif majeur, nombreux fossiles. Volume crânien 700-1300cm³. Proto-langage nécessaire fabrication bifaces (transmettre compétences). Dimorphisme sexuel faible."
+},
+{
+    question: "Quels sont les caractères autapomorphes d'Homo neanderthalensis ?",
+    options: [
+        "Absence totale caractères propres espèce, identique Homo sapiens exactement",
+        "Uniquement différence taille corporelle sans caractères crâniens distinctifs aucun",
+        "Face plate courte, crâne arrondi sans chignon, petit nez étroit moderne",
+        "Face allongée prognathisme méso-facial, crâne allongé chignon occipital, orbites hautes, grand nez cavité"
+    ],
+    correct: 3,
+    explanation: "Caractères autapomorphes (propres à Neandertal) : face allongée avec prognathisme méso-facial (vers l'avant), crâne allongé avec chignon occipital, orbites hautes et arrondies, grand nez et vaste cavité nasale (protection froid, chauffage)."
+},
+{
+    question: "Quelle est l'hypothèse sur la disparition d'Homo neanderthalensis ?",
+    options: [
+        "Extermination violente par Homo sapiens guerres territoriales systématiques directes",
+        "Cause démographique : isolement, consanguinité, faible capacité reproductrice populations (pas complètement disparu ADN)",
+        "Mort maladie épidémique transmise Homo sapiens sans immunité défense",
+        "Extinction catastrophe naturelle volcanique glaciation brutale soudaine totale complète"
+    ],
+    correct: 1,
+    explanation: "Hypothèses de disparition de Neandertal : isolement, consanguinité, faible capacité reproductrice. Cause démographique principale. Pas complètement disparu : ADN néandertalien dans génome H. sapiens (sauf Afrique sub-saharienne). Hybridation et introgression."
+},
+{
+    question: "Quelle preuve d'hybridation existe entre Homo sapiens et Néandertaliens ?",
+    options: [
+        "ADN néandertalien dans génome Homo sapiens (sauf Afrique sub-saharienne) introgression gènes flux génétique",
+        "ADN néandertalien seulement populations africaines sans autres régions monde",
+        "ADN néandertalien uniquement populations européennes sans autres continents actuels",
+        "Absence totale ADN néandertalien populations humaines actuelles monde entier"
+    ],
+    correct: 0,
+    explanation: "On retrouve de l'ADN néandertalien dans le génome d'H. sapiens sauf dans l'Afrique sub-saharienne. Flux génétique continu entre Afrique et Europe = hybridation. Introgression (transfert du génome d'une espèce vers une autre). Hybrides mâles pas viables/stériles quand père néandertalien."
+},
+{
+    question: "Qu'est-ce que l'introgression d'Homo denisovensis aux populations tibétaines ?",
+    options: [
+        "Introgression uniquement chromosome Y sans autre matériel génétique transmis population",
+        "Introgression gène couleur peau Dénisoviens uniquement sans autre trait phénotypique",
+        "Absence totale introgression Dénisoviens populations humaines actuelles monde entier",
+        "Introgression allèle gène EPAS1 Dénisoviens→Tibétains meilleure adaptation altitude montagneuse (Loup→Mastiff similaire)"
+    ],
+    correct: 3,
+    explanation: "Introgression double au Tibet d'un allèle du gène EPAS1 corrélé à une meilleure adaptation à l'altitude, retrouvé chez Denisova. Dénisoviens→Tibétains. Histoire similaire : Loup gris Tibet→Mastiff tibétain (même phénomène)."
+},
+{
+    question: "Quand et où les plus anciens fossiles d'Homo sapiens ont-ils été trouvés ?",
+    options: [
+        "Plus anciens fossiles 100 000 ans Europe grottes France Espagne Paléolithique",
+        "Plus anciens fossiles 50 000 ans Australie arrivée premiers humains continent",
+        "Plus anciens fossiles 300 000 ans Maroc (Homo sapiens archaïque Djebel Irhoud bourrelet léger)",
+        "Plus anciens fossiles 500 000 ans Asie Chine grottes calcaires Homo"
+    ],
+    correct: 2,
+    explanation: "Les plus anciens fossiles d'Homo sapiens datent d'il y a 300 000 ans. Trace d'un H. sapiens archaïque au Maroc (Djebel Irhoud), avec quelques caractères primitifs comme le bourrelet légèrement présent."
+},
+{
+    question: "Qu'est-ce qui caractérise Homo sapiens par rapport aux autres Homo ?",
+    options: [
+        "Uniquement différence morphologique crâne sans caractères culturels comportementaux complexes",
+        "Langage complexe syntaxe temporalité, cerveau large, bipédie obligatoire, encéphalisation domestication feu empathie développée",
+        "Langage simple sans syntaxe, cerveau moyen, bipédie facultative primitive ancestrale",
+        "Absence totale langage articulé, cerveau petit, quadrupédie occasionnelle primitive"
+    ],
+    correct: 1,
+    explanation: "H. sapiens : langage complexe avec syntaxe, temporalité, modalités (fonction argumentative/narrative). Cerveau large, poids >60kg, petites dents, bipédie obligatoire. Encéphalisation permet comportement complexe. Bipédie améliorée, énergie pour cerveau. Chasse à l'endurance. Domestication feu (énergie, cuisson, protection). Empathie développée (sociaux)."
+}
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
+
