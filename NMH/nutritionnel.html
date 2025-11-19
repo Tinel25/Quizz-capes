@@ -1,1 +1,1369 @@
 
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Besoins Nutritionnels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>NMH</h1>
+            <p>Besoins Nutritionnels</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+    question: "Quel pourcentage des maladies cardiovasculaires est lié à des défauts de nutrition ?",
+    options: [
+        "50% des maladies cardiovasculaires sont liées à la nutrition",
+        "15% des maladies cardiovasculaires sont liées à la nutrition",
+        "25% des maladies cardiovasculaires sont liées à la nutrition",
+        "32% des maladies cardiovasculaires sont liées à la nutrition"
+    ],
+    correct: 3,
+    explanation: "32% des maladies cardiovasculaires sont liées à des défauts de nutrition."
+},
+{
+    question: "Qu'est-ce qu'un nutriment ?",
+    options: [
+        "Un ensemble de composés organiques et minéraux utilisés par l'organisme pour couvrir ses besoins",
+        "Uniquement les vitamines présentes dans les aliments consommés",
+        "Seulement les protéines nécessaires à la croissance musculaire",
+        "Les calories apportées exclusivement par les glucides alimentaires"
+    ],
+    correct: 0,
+    explanation: "Les nutriments sont l'ensemble des composés élémentaires organiques et minéraux, contenus dans les aliments, utilisés par l'organisme pour couvrir les besoins physiologiques."
+},
+{
+    question: "Combien existe-t-il de groupes de nutriments ?",
+    options: [
+        "Il existe 4 groupes principaux de nutriments",
+        "Il existe 8 groupes différents de nutriments",
+        "Il existe 6 groupes de nutriments",
+        "Il existe 10 groupes de nutriments"
+    ],
+    correct: 2,
+    explanation: "Il existe 6 groupes de nutriments : eau, sels minéraux, glucides, protides, lipides et vitamines."
+},
+{
+    question: "Pourquoi l'alcool n'est-il pas considéré comme un nutriment indispensable ?",
+    options: [
+        "Parce qu'il ne contient aucune calorie énergétique",
+        "Parce qu'il est un agent psychotrope et un facteur de maladies",
+        "Parce qu'il est impossible à métaboliser par l'organisme",
+        "Parce qu'il ne peut jamais être digéré correctement"
+    ],
+    correct: 1,
+    explanation: "L'alcool n'est pas considéré comme un nutriment indispensable car c'est un agent psychotrope et sa consommation, même modérée, reste un facteur de maladies et de surmortalité."
+},
+{
+    question: "Quels sont les trois rôles principaux des nutriments ?",
+    options: [
+        "Structuraux/plastiques, énergétiques et fonctionnels",
+        "Digestifs, respiratoires et circulatoires uniquement",
+        "Hormonaux, nerveux et immunitaires seulement",
+        "Thermiques, mécaniques et chimiques exclusivement"
+    ],
+    correct: 0,
+    explanation: "Les nutriments ont trois rôles principaux : structuraux ou plastiques, énergétiques, et fonctionnels."
+},
+{
+    question: "Quels nutriments sont considérés comme structuraux ou plastiques ?",
+    options: [
+        "Uniquement les glucides et l'alcool",
+        "Seulement les vitamines hydrosolubles",
+        "Exclusivement les minéraux et oligoéléments",
+        "L'eau, les sels minéraux, les protides et les lipides"
+    ],
+    correct: 3,
+    explanation: "Les nutriments structuraux ou plastiques sont l'eau, les sels minéraux, les protides et les lipides qui participent à l'élaboration de nouvelle matière vivante."
+},
+{
+    question: "À quoi servent les nutriments structuraux chez l'adulte ?",
+    options: [
+        "Au remplacement des cellules de l'épiderme, tissus osseux, sang et cicatrisation",
+        "Uniquement à la production d'énergie pour les muscles",
+        "Seulement à la régulation de la température corporelle",
+        "Exclusivement à la communication entre les cellules nerveuses"
+    ],
+    correct: 0,
+    explanation: "Chez l'adulte, les nutriments structuraux servent au remplacement des cellules de l'épiderme, tissus osseux, sang, cicatrisation, etc."
+},
+{
+    question: "Quels sont les quatre nutriments énergétiques ?",
+    options: [
+        "L'eau, les vitamines, les minéraux et les oligoéléments",
+        "Les glucides, les lipides, les protides et l'alcool",
+        "Seulement les glucides, les lipides et les protéines",
+        "Uniquement les glucides et les lipides sans les protéines"
+    ],
+    correct: 1,
+    explanation: "Les quatre nutriments énergétiques sont les glucides, les lipides, les protides et l'alcool (bien que ce dernier ne soit pas indispensable)."
+},
+{
+    question: "Quelle est la valeur énergétique d'1 gramme de glucides ?",
+    options: [
+        "1 gramme de glucides fournit 9 Kcal d'énergie",
+        "1 gramme de glucides fournit 7 Kcal d'énergie",
+        "1 gramme de glucides fournit 4 Kcal d'énergie",
+        "1 gramme de glucides fournit 2 Kcal d'énergie"
+    ],
+    correct: 2,
+    explanation: "1 gramme de glucides fournit 4 Kcal d'énergie, tout comme les protéines."
+},
+{
+    question: "Quelle est la valeur énergétique d'1 gramme de lipides ?",
+    options: [
+        "1 gramme de lipides fournit 4 Kcal d'énergie",
+        "1 gramme de lipides fournit 6 Kcal d'énergie",
+        "1 gramme de lipides fournit 2 Kcal d'énergie",
+        "1 gramme de lipides fournit 9 Kcal d'énergie"
+    ],
+    correct: 3,
+    explanation: "1 gramme de lipides fournit 9 Kcal d'énergie, soit plus du double des glucides et protéines."
+},
+{
+    question: "Sous quelle forme sont principalement stockés les glucides dans l'organisme ?",
+    options: [
+        "Sous forme de triglycérides dans le tissu adipeux",
+        "Sous forme de glycogène dans le foie et les muscles",
+        "Sous forme d'acides aminés dans les protéines musculaires",
+        "Sous forme d'ATP directement dans toutes les cellules"
+    ],
+    correct: 1,
+    explanation: "Les glucides sont stockés sous forme de glycogène dans le foie et les muscles."
+},
+{
+    question: "À quoi servent les nutriments fonctionnels ?",
+    options: [
+        "Ils participent au fonctionnement de l'organisme et à la communication cellulaire",
+        "Ils servent uniquement à fournir de l'énergie aux muscles",
+        "Ils sont exclusivement utilisés pour la croissance osseuse",
+        "Ils remplacent uniquement les cellules mortes de l'épiderme"
+    ],
+    correct: 0,
+    explanation: "Les nutriments fonctionnels participent au fonctionnement de l'organisme, notamment la communication cellulaire (ex: hormones), en petites quantités."
+},
+{
+    question: "Qu'est-ce qu'un nutriment essentiel ou indispensable ?",
+    options: [
+        "Un nutriment facilement synthétisable par l'organisme en grande quantité",
+        "Un nutriment nécessaire mais pouvant être totalement remplacé par un autre",
+        "Un nutriment nécessaire et ne pouvant pas être synthétisé par l'organisme",
+        "Un nutriment dont l'organisme n'a besoin qu'occasionnellement"
+    ],
+    correct: 2,
+    explanation: "Un nutriment essentiel est un élément nécessaire à la structure ou au fonctionnement de l'organisme et ne pouvant pas être synthétisé ou remplacé totalement par un autre."
+},
+{
+    question: "Quels sont les 8 acides aminés essentiels chez l'adulte ?",
+    options: [
+        "Leucine, isoleucine, phénylalanine, thréonine, tryptophane, lysine, valine, méthionine",
+        "Alanine, glycine, sérine, proline, asparagine, glutamine, cystéine, tyrosine",
+        "Arginine, histidine, aspartate, glutamate, asparagine, glutamine, taurine, carnitine",
+        "Valine, alanine, glycine, sérine, proline, tyrosine, cystéine, arginine"
+    ],
+    correct: 0,
+    explanation: "Les 8 acides aminés essentiels chez l'adulte sont : leucine, isoleucine, phénylalanine, thréonine, tryptophane, lysine, valine, méthionine (+ histidine chez le nourrisson)."
+},
+{
+    question: "Quels sont les deux acides gras essentiels ?",
+    options: [
+        "Les acides oléique et palmitique uniquement",
+        "Les acides stéarique et arachidonique seulement",
+        "Les acides linoléique et α-linolénique",
+        "Les acides myristique et laurique exclusivement"
+    ],
+    correct: 2,
+    explanation: "Les deux acides gras essentiels sont les acides linoléique et α-linolénique."
+},
+{
+    question: "Qu'est-ce qu'un nutriment semi-essentiel ou conditionnellement indispensable ?",
+    options: [
+        "Un nutriment jamais synthétisé par l'organisme en aucune circonstance",
+        "Un nutriment pouvant être synthétisé mais devant être apporté dans certaines situations",
+        "Un nutriment totalement non-essentiel pour l'organisme humain",
+        "Un nutriment exclusivement apporté par l'alimentation en permanence"
+    ],
+    correct: 1,
+    explanation: "Un nutriment semi-essentiel peut être synthétisé par l'organisme mais doit être apporté par l'alimentation dans certaines situations pour atteindre un état physiologique satisfaisant."
+},
+{
+    question: "Donnez un exemple de nutriment semi-essentiel.",
+    options: [
+        "La leucine qui est toujours essentielle",
+        "Le glucose qui est toujours non-essentiel",
+        "L'acide linoléique qui est toujours essentiel",
+        "Le tryptophane ou la vitamine PP lors de la grossesse"
+    ],
+    correct: 3,
+    explanation: "Des exemples de nutriments semi-essentiels sont le tryptophane, la vitamine PP lors de la grossesse, ou la cystéine chez l'enfant prématuré."
+},
+{
+    question: "Qu'est-ce qu'un nutriment non-essentiel ?",
+    options: [
+        "Un nutriment toxique pour l'organisme humain",
+        "Un nutriment ne servant à aucune fonction physiologique",
+        "Un nutriment pouvant être synthétisé par l'organisme",
+        "Un nutriment devant obligatoirement être apporté par l'alimentation"
+    ],
+    correct: 2,
+    explanation: "Un nutriment non-essentiel est un élément pouvant être synthétisé par l'organisme et n'ayant donc pas besoin d'être apporté obligatoirement par l'alimentation."
+},
+{
+    question: "Que représentent les besoins nutritionnels ?",
+    options: [
+        "La quantité maximale de nutriments pouvant être consommée sans danger",
+        "Uniquement les calories nécessaires pour maintenir le poids corporel",
+        "Seulement les vitamines et minéraux requis quotidiennement",
+        "La quantité nécessaire pour maintenir les fonctions physiologiques et un état de santé normaux"
+    ],
+    correct: 3,
+    explanation: "Les besoins nutritionnels correspondent à la quantité nécessaire pour maintenir les fonctions physiologiques et un état de santé normaux, et faire face à certaines périodes de la vie."
+},
+{
+    question: "Quels facteurs font varier les besoins nutritionnels d'un individu à l'autre ?",
+    options: [
+        "Constitution génétique, vitesse de croissance, activité, environnement, interactions entre nutriments",
+        "Uniquement la couleur des yeux et la taille des cheveux",
+        "Seulement le groupe sanguin et le type de peau",
+        "Exclusivement la température extérieure et l'heure de la journée"
+    ],
+    correct: 0,
+    explanation: "Les besoins varient selon la constitution génétique, la vitesse de croissance, l'activité, l'environnement, les interactions entre nutriments, etc."
+},
+{
+    question: "Qu'est-ce que le Besoin Nutritionnel Moyen (BNM) ?",
+    options: [
+        "Le besoin maximal observé dans une population donnée",
+        "Le besoin minimum pour éviter les carences graves",
+        "Le besoin identique pour tous les individus sans exception",
+        "Le besoin moyen dans une population de même sexe et d'âge donné"
+    ],
+    correct: 3,
+    explanation: "Le BNM est le besoin moyen dans la population, estimé à partir de données individuelles pour un groupe de même sexe et d'âge définis."
+},
+{
+    question: "Qu'est-ce que la Référence Nutritionnelle pour une Population (RNP) ?",
+    options: [
+        "L'apport qui couvre le besoin de seulement 50% de la population",
+        "L'apport couvrant le besoin de 97,5% de la population",
+        "L'apport minimal permettant d'éviter la mort par carence",
+        "L'apport maximum pouvant être consommé sans toxicité"
+    ],
+    correct: 1,
+    explanation: "Le RNP est l'apport couvrant le besoin de 97,5% de la population, calculé à partir du BNM (anciennement ANC)."
+},
+{
+    question: "Comment calcule-t-on le RNP à partir du BNM ?",
+    options: [
+        "RNP = BNM - 2 écarts types pour sécuriser les apports",
+        "RNP = BNM / 2 pour éviter les excès alimentaires",
+        "RNP = BNM × 3 pour garantir un apport suffisant",
+        "RNP = BNM + 2 écarts types pour couvrir 97,5% de la population"
+    ],
+    correct: 3,
+    explanation: "On ajoute à la moyenne (BNM) deux écarts types (2ET) pour obtenir le RNP qui couvre les besoins de 97,5% de la population."
+},
+{
+    question: "De quoi dépend le RNP ?",
+    options: [
+        "Uniquement de la saison et du climat extérieur",
+        "Seulement de la profession et du niveau d'études",
+        "Du sexe, de l'activité physique et de l'âge",
+        "Exclusivement du groupe sanguin de l'individu"
+    ],
+    correct: 2,
+    explanation: "Le RNP dépend du sexe (supérieur chez l'homme), de l'activité physique et de l'âge."
+},
+{
+    question: "Que sont les besoins nutritionnels minimaux ?",
+    options: [
+        "La quantité permettant de maintenir certaines fonctions prioritaires au dépend d'autres",
+        "La quantité optimale pour une santé parfaite et durable",
+        "La quantité maximale pouvant être absorbée par l'intestin",
+        "La quantité nécessaire pour atteindre un poids idéal"
+    ],
+    correct: 0,
+    explanation: "Les besoins nutritionnels minimaux sont la quantité permettant de maintenir certaines fonctions physiologiques prioritaires, au dépend d'autres fonctions ou réserves."
+},
+{
+    question: "Que risque-t-on si les besoins nutritionnels minimaux ne sont pas couverts ?",
+    options: [
+        "Aucun risque car l'organisme s'adapte toujours parfaitement",
+        "Seulement une légère fatigue temporaire sans conséquence",
+        "Un risque de carence, de signes cliniques élevés voire la mort",
+        "Uniquement une perte de poids modérée et réversible"
+    ],
+    correct: 2,
+    explanation: "Si les besoins minimaux ne sont pas couverts, il y a un risque de carence et de signes cliniques élevés, voire la mort de l'individu."
+},
+{
+    question: "Que sont les Apports Journaliers Recommandés (AJR) ?",
+    options: [
+        "Des valeurs tenant compte de l'âge, du sexe et de l'activité",
+        "Des valeurs uniques pour l'étiquetage européen ne tenant pas compte de l'âge ni du sexe",
+        "Des apports minimaux pour éviter les carences sévères",
+        "Des recommandations personnalisées pour chaque individu"
+    ],
+    correct: 1,
+    explanation: "Les AJR sont des valeurs uniques pour chaque nutriment ne prenant pas en compte l'âge ni le sexe, utilisées pour l'étiquetage européen."
+},
+{
+    question: "Quelle est la différence entre RNP et AJR ?",
+    options: [
+        "Il n'y a aucune différence, ce sont des synonymes exacts",
+        "Le RNP est plus précis avec des sous-populations homogènes, l'AJR est une valeur unique",
+        "L'AJR est toujours plus élevé que le RNP pour tous les nutriments",
+        "Le RNP concerne uniquement les minéraux et l'AJR les vitamines"
+    ],
+    correct: 1,
+    explanation: "Le RNP est plus précis, défini pour des sous-populations aux besoins homogènes (âge, sexe), tandis que l'AJR est une valeur unique pour l'étiquetage."
+},
+{
+    question: "Quelle est la ration alimentaire énergétique journalière pour un homme adulte avec une activité physique moyenne ?",
+    options: [
+        "Entre 1500 et 1800 Kcal par jour",
+        "Entre 3500 et 4000 Kcal par jour",
+        "Entre 2400 et 2500 Kcal par jour",
+        "Entre 1000 et 1200 Kcal par jour"
+    ],
+    correct: 2,
+    explanation: "La ration alimentaire pour un homme adulte avec une activité physique moyenne est de 2400-2500 Kcal/jour (10 000 Kjoules)."
+},
+{
+    question: "Quelle proportion de l'énergie totale doit provenir des glucides ?",
+    options: [
+        "10-15% de l'énergie totale provient des glucides",
+        "30-35% de l'énergie totale provient des glucides",
+        "70-80% de l'énergie totale provient des glucides",
+        "50-55% de l'énergie totale provient des glucides"
+    ],
+    correct: 3,
+    explanation: "50-55% de l'énergie totale doit provenir des glucides, ce qui représente la part la plus importante."
+},
+{
+    question: "Quelle proportion de l'énergie totale doit provenir des lipides ?",
+    options: [
+        "50-55% de l'énergie totale provient des lipides",
+        "10-15% de l'énergie totale provient des lipides",
+        "30-35% de l'énergie totale provient des lipides",
+        "60-70% de l'énergie totale provient des lipides"
+    ],
+    correct: 2,
+    explanation: "30-35% de l'énergie totale doit provenir des lipides dans une alimentation équilibrée."
+},
+{
+    question: "Quelle proportion de l'énergie totale doit provenir des protéines ?",
+    options: [
+        "40-50% de l'énergie totale provient des protéines",
+        "10-15% de l'énergie totale provient des protéines",
+        "30-35% de l'énergie totale provient des protéines",
+        "2-5% seulement de l'énergie provient des protéines"
+    ],
+    correct: 1,
+    explanation: "10-15% de l'énergie totale doit provenir des protéines dans une alimentation équilibrée."
+},
+{
+    question: "Que sont les macronutriments ?",
+    options: [
+        "Les vitamines, minéraux et oligoéléments en petites quantités",
+        "Uniquement l'eau et les fibres alimentaires",
+        "Les glucides, lipides et protides fournissant l'énergie nécessaire",
+        "Seulement les acides aminés et acides gras essentiels"
+    ],
+    correct: 2,
+    explanation: "Les macronutriments sont les glucides, lipides et protides qui fournissent l'énergie nécessaire au fonctionnement de l'organisme."
+},
+{
+    question: "Que sont les micronutriments ?",
+    options: [
+        "Les glucides, lipides et protéines uniquement",
+        "L'eau et la cellulose exclusivement",
+        "Les minéraux, oligoéléments et vitamines",
+        "Seulement les calories apportées par l'alimentation"
+    ],
+    correct: 2,
+    explanation: "Les micronutriments sont les minéraux, oligoéléments et vitamines, nécessaires en petites quantités mais essentiels au fonctionnement."
+},
+{
+    question: "Comment calcule-t-on l'Indice de Masse Corporelle (IMC) ?",
+    options: [
+        "IMC = Poids (kg) × Taille (m) au carré",
+        "IMC = Taille (m) / Poids (kg) au carré",
+        "IMC = Poids (kg) / Taille (m) au carré",
+        "IMC = [Poids (kg) + Taille (m)] / 2"
+    ],
+    correct: 2,
+    explanation: "L'IMC se calcule par la formule : IMC = Poids (kg) / Taille² (m²)."
+},
+{
+    question: "Quelle est la valeur moyenne d'IMC chez l'homme ?",
+    options: [
+        "IMC moyen de 18 chez l'homme adulte",
+        "IMC moyen de 25 chez l'homme adulte",
+        "IMC moyen de 30 chez l'homme adulte",
+        "IMC moyen de 22 chez l'homme adulte"
+    ],
+    correct: 3,
+    explanation: "La valeur moyenne d'IMC chez l'homme est de 22 (intervalle de correction : -2, +3)."
+},
+{
+    question: "Quelle est la valeur moyenne d'IMC chez la femme ?",
+    options: [
+        "IMC moyen de 20,8 chez la femme adulte",
+        "IMC moyen de 25 chez la femme adulte",
+        "IMC moyen de 18 chez la femme adulte",
+        "IMC moyen de 28 chez la femme adulte"
+    ],
+    correct: 0,
+    explanation: "La valeur moyenne d'IMC chez la femme est de 20,8 (intervalle de correction : -2, +3)."
+},
+{
+    question: "À partir de quelle valeur d'IMC parle-t-on d'obésité chez l'homme ?",
+    options: [
+        "IMC supérieur à 25 indique une obésité chez l'homme",
+        "IMC supérieur à 35 indique une obésité chez l'homme",
+        "IMC supérieur à 40 indique une obésité chez l'homme",
+        "IMC supérieur à 30 indique une obésité chez l'homme"
+    ],
+    correct: 3,
+    explanation: "On parle d'obésité chez l'homme lorsque l'IMC est supérieur à 30."
+},
+{
+    question: "À partir de quelle valeur d'IMC parle-t-on d'obésité chez la femme ?",
+    options: [
+        "IMC supérieur à 25 indique une obésité chez la femme",
+        "IMC supérieur à 28,6 indique une obésité chez la femme",
+        "IMC supérieur à 35 indique une obésité chez la femme",
+        "IMC supérieur à 22 indique une obésité chez la femme"
+    ],
+    correct: 1,
+    explanation: "On parle d'obésité chez la femme lorsque l'IMC est supérieur à 28,6."
+},
+{
+    question: "Quelle est la formule de Lorentz pour calculer le poids chez l'homme ?",
+    options: [
+        "P = T - 100 - (T - 150) / 4",
+        "P = T - 100 - (T - 150) / 2,5",
+        "P = T - 100 + (T - 150) / 4",
+        "P = T - 50 - (T - 150) / 4"
+    ],
+    correct: 0,
+    explanation: "La formule de Lorentz pour l'homme est : P = T - 100 - (T - 150) / 4."
+},
+{
+    question: "Quelle est la formule de Demole pour calculer le poids chez la femme ?",
+    options: [
+        "P = T - 100 - (T - 150) / 4",
+        "P = T - 100 - (T - 150) / 2,5",
+        "P = T - 100 + (T - 150) / 2,5",
+        "P = T - 50 - (T - 150) / 2,5"
+    ],
+    correct: 1,
+    explanation: "La formule de Demole pour la femme est : P = T - 100 - (T - 150) / 2,5."
+},
+{
+    question: "Jusqu'à quel âge les formules de calcul du métabolisme de base sont-elles valables chez l'homme ?",
+    options: [
+        "Jusqu'à 59 ans chez l'homme",
+        "Jusqu'à 79 ans chez l'homme",
+        "Jusqu'à 49 ans chez l'homme",
+        "Jusqu'à 69 ans chez l'homme"
+    ],
+    correct: 3,
+    explanation: "Les formules de calcul du métabolisme de base sont valables jusqu'à 69 ans chez l'homme."
+},
+{
+    question: "Jusqu'à quel âge les formules de calcul du métabolisme de base sont-elles valables chez la femme ?",
+    options: [
+        "Jusqu'à 69 ans chez la femme",
+        "Jusqu'à 49 ans chez la femme",
+        "Jusqu'à 79 ans chez la femme",
+        "Jusqu'à 59 ans chez la femme"
+    ],
+    correct: 3,
+    explanation: "Les formules de calcul du métabolisme de base sont valables jusqu'à 59 ans chez la femme (la ménopause change la composition de l'individu)."
+},
+{
+    question: "Comment évolue la taille moyenne au fil des générations ?",
+    options: [
+        "La taille moyenne reste parfaitement stable au fil des générations",
+        "La taille moyenne augmente au fil des générations",
+        "La taille moyenne diminue progressivement au fil des générations",
+        "La taille moyenne varie aléatoirement sans tendance particulière"
+    ],
+    correct: 1,
+    explanation: "On observe une augmentation de la taille moyenne au fil des générations, tant chez l'homme que chez la femme."
+},
+{
+    question: "Comment évolue le métabolisme de base avec l'âge ?",
+    options: [
+        "Le métabolisme augmente progressivement avec l'âge avancé",
+        "Le métabolisme reste constant tout au long de la vie",
+        "Le métabolisme diminue avec l'âge : besoins énergétiques moins importants",
+        "Le métabolisme double après 60 ans systématiquement"
+    ],
+    correct: 2,
+    explanation: "Le métabolisme de base diminue avec l'âge, ce qui signifie que les besoins énergétiques deviennent moins importants plus l'âge avance."
+},
+{
+    question: "Pourquoi le métabolisme est-il plus élevé chez l'homme que chez la femme ?",
+    options: [
+        "Parce que les hommes sont toujours plus grands que les femmes",
+        "Parce que la masse graisseuse est plus importante chez l'homme",
+        "Parce que la masse maigre est plus importante chez l'homme",
+        "Parce que les hommes consomment toujours plus de calories"
+    ],
+    correct: 2,
+    explanation: "Le métabolisme est plus élevé chez l'homme car la masse maigre est plus importante (masse graisseuse = 14% chez l'homme vs 29% chez la femme)."
+},
+{
+    question: "À partir de quel âge observe-t-on des différences de métabolisme entre filles et garçons ?",
+    options: [
+        "Dès la naissance entre filles et garçons",
+        "À partir de 5 ans environ entre filles et garçons",
+        "À partir de 11 ans environ (puberté) entre filles et garçons",
+        "Seulement après 20 ans entre femmes et hommes"
+    ],
+    correct: 2,
+    explanation: "À partir de 11 ans et après, on observe une persistance de l'évolution du métabolisme avec des différences entre filles et garçons, liées à la puberté."
+},
+{
+    question: "À partir de quel âge les besoins énergétiques se stabilisent-ils chez la fille ?",
+    options: [
+        "À partir de 10 ans chez la fille",
+        "À partir de 20 ans chez la fille",
+        "À partir de 15 ans chez la fille",
+        "À partir de 25 ans chez la fille"
+    ],
+    correct: 2,
+    explanation: "Chez la fille, les besoins et apports énergétiques sont stables à partir de 15 ans (pas chez le garçon où ils continuent d'évoluer)."
+},
+{
+    question: "Qu'est-ce que l'Action Dynamique Spécifique (ADS) ?",
+    options: [
+        "L'augmentation du métabolisme liée uniquement à l'activité physique intense",
+        "La dépense énergétique spécifique liée à l'utilisation cellulaire de chaque nutriment",
+        "La diminution du métabolisme pendant le sommeil profond nocturne",
+        "L'énergie dépensée exclusivement pour maintenir la température corporelle"
+    ],
+    correct: 1,
+    explanation: "L'ADS est la dépense énergétique spécifique liée à l'utilisation cellulaire de chaque catégorie de nutriment, variable selon le nutriment."
+},
+{
+    question: "Quelle proportion de l'apport énergétique ingéré représente le travail du tube digestif ?",
+    options: [
+        "Le travail du tube digestif représente 3% de l'apport énergétique",
+        "Le travail du tube digestif représente 15% de l'apport énergétique",
+        "Le travail du tube digestif représente 25% de l'apport énergétique",
+        "Le travail du tube digestif représente 50% de l'apport énergétique"
+    ],
+    correct: 0,
+    explanation: "Le travail du tube digestif représente 3% de l'apport énergétique ingéré lors de la digestion."
+},
+{
+    question: "De quoi dépendent principalement les besoins nutritionnels (3/4) ?",
+    options: [
+        "Des besoins en vitamines et minéraux uniquement",
+        "Des besoins en eau et en fibres alimentaires",
+        "Des besoins énergétiques principalement",
+        "Des besoins en acides aminés essentiels seulement"
+    ],
+    correct: 2,
+    explanation: "Les besoins nutritionnels dépendent pour les 3/4 des besoins énergétiques de l'organisme."
+},
+{
+    question: "Pourquoi un enfant a-t-il un besoin nutritionnel par unité de poids plus important qu'un adulte ?",
+    options: [
+        "Parce qu'il est en phase de croissance et de développement",
+        "Parce qu'il consomme moins d'énergie au repos",
+        "Parce que son métabolisme de base est plus faible",
+        "Parce qu'il a moins d'activité physique quotidienne"
+    ],
+    correct: 0,
+    explanation: "Un enfant présente un besoin nutritionnel par unité de poids plus important car il est en phase de croissance et de développement actifs."
+},
+{
+    question: "Qu'est-ce que la méthode empirique d'évaluation des besoins nutritionnels ?",
+    options: [
+        "L'évaluation de la consommation spontanée de groupes apparemment en bonne santé",
+        "La mesure précise du métabolisme de base en laboratoire",
+        "L'utilisation d'un régime synthétique contrôlé en nutriments",
+        "La mesure par calorimétrie indirecte de la dépense énergétique"
+    ],
+    correct: 0,
+    explanation: "La méthode empirique évalue la consommation spontanée de groupes de sujets apparemment en bonne santé."
+},
+{
+    question: "Quelle est une limite de la méthode empirique ?",
+    options: [
+        "Elle est trop précise et nécessite un équipement coûteux",
+        "Elle ne définit pas réellement le besoin mais peut servir de base",
+        "Elle nécessite obligatoirement un régime synthétique strict",
+        "Elle ne peut être appliquée qu'aux enfants en croissance"
+    ],
+    correct: 1,
+    explanation: "La méthode empirique ne définit pas réellement le besoin mais peut servir de base à l'estimation des apports recommandés."
+},
+{
+    question: "Qu'est-ce que la méthode de déplétion/réplétion ?",
+    options: [
+        "Une méthode basée uniquement sur l'observation de populations",
+        "Une méthode permettant de déterminer le besoin individuel par régime synthétique",
+        "Une méthode de mesure de la température corporelle uniquement",
+        "Une méthode d'évaluation empirique de la consommation spontanée"
+    ],
+    correct: 1,
+    explanation: "La méthode de déplétion/réplétion permet de déterminer le besoin individuel, par exemple en utilisant un régime synthétique et en analysant les effets sur la croissance."
+},
+{
+    question: "Qu'est-ce que la rétention azotée ?",
+    options: [
+        "L'accumulation de produits azotés dans le sang résultant de la dégradation des protéines",
+        "La synthèse exclusive de nouvelles protéines musculaires",
+        "L'élimination rapide de tous les déchets azotés par les reins",
+        "Le stockage de l'azote atmosphérique dans les poumons"
+    ],
+    correct: 0,
+    explanation: "La rétention azotée fait référence à l'accumulation de produits azotés dans le sang résultant de la dégradation des protéines."
+},
+{
+    question: "Qu'est-ce que la calorimétrie indirecte ?",
+    options: [
+        "L'évaluation du contenu énergétique des nutriments libéré par oxydation",
+        "La mesure directe de la température corporelle uniquement",
+        "Le calcul du poids idéal selon la taille de l'individu",
+        "La détermination de l'IMC par des formules mathématiques"
+    ],
+    correct: 0,
+    explanation: "La calorimétrie indirecte (thermochimie) évalue le contenu en énergie chimique des nutriments libéré par oxydation de substrats alimentaires en présence d'O2."
+},
+{
+    question: "Qu'est-ce que le Coefficient d'Utilisation Digestif (CUD) ?",
+    options: [
+        "Le rapport entre ce qui passe la barrière intestinale et ce qui est ingéré",
+        "Le rapport entre le poids et la taille de l'individu",
+        "Le rapport entre les glucides et les lipides consommés",
+        "Le rapport entre l'énergie dépensée et l'énergie consommée"
+    ],
+    correct: 0,
+    explanation: "Le CUD mesure le rapport entre ce qui passe la barrière intestinale (ingéré - excrété) et ce qui est ingéré, soit la digestibilité apparente."
+},
+{
+    question: "Comment calcule-t-on la valeur énergétique d'un aliment (Vx) ?",
+    options: [
+        "Vx = Cx + CUD (somme des deux valeurs)",
+        "Vx = Cx / CUD (division par le coefficient)",
+        "Vx = Cx - CUD (soustraction des deux valeurs)",
+        "Vx = Cx × CUD (produit des deux valeurs)"
+    ],
+    correct: 3,
+    explanation: "La valeur énergétique d'un aliment est calculée par : Vx = Cx × CUD, où Cx est la chaleur de combustion d'1g de nutriment."
+},
+{
+    question: "Qu'indique un CUD de 80% pour un aliment ?",
+    options: [
+        "80% de l'aliment a été éliminé dans les fèces",
+        "80% de l'aliment a été utilisé par l'organisme",
+        "L'aliment contient 80% d'eau inutilisable",
+        "Seulement 20% de l'aliment est réellement nutritif"
+    ],
+    correct: 1,
+    explanation: "Un CUD de 80% signifie qu'une digestibilité de 0,80, donc 80% de l'aliment a été utilisé (absorbé) par l'organisme."
+},
+{
+    question: "Quelle est la différence entre digestibilité apparente (CUD) et digestibilité réelle (Dr) ?",
+    options: [
+        "La digestibilité réelle est plus élevée car elle exclut les fèces endogènes",
+        "La digestibilité apparente est toujours supérieure à la digestibilité réelle",
+        "Il n'y a aucune différence, ce sont exactement les mêmes valeurs",
+        "La digestibilité réelle ne tient pas compte de ce qui est ingéré"
+    ],
+    correct: 0,
+    explanation: "La digestibilité réelle est plus élevée car elle exclut les fèces endogènes (cellules mortes, enzymes, bactéries) qui ne font pas partie de l'aliment."
+},
+{
+    question: "Qu'est-ce que le métabolisme basal (MB) ?",
+    options: [
+        "Le métabolisme pendant une activité physique intense et soutenue",
+        "Le métabolisme mesuré chez un sujet au repos, à jeun depuis 12-14h",
+        "Le métabolisme pendant le sommeil profond nocturne uniquement",
+        "Le métabolisme mesuré pendant la digestion d'un repas"
+    ],
+    correct: 1,
+    explanation: "Le métabolisme basal est déterminé chez un sujet au repos, couché au calme, à jeun depuis 12 à 14 heures, vers 10h du matin."
+},
+{
+    question: "De combien diminue le métabolisme basal pendant le sommeil ?",
+    options: [
+        "Le MB diminue d'environ 50% pendant le sommeil",
+        "Le MB augmente de 10% pendant le sommeil",
+        "Le MB reste strictement identique pendant le sommeil",
+        "Le MB diminue d'environ 10% pendant le sommeil"
+    ],
+    correct: 3,
+    explanation: "Au cours du sommeil, le métabolisme basal diminue d'environ 10%."
+},
+{
+    question: "De combien peut diminuer le métabolisme basal lors d'un jeûne prolongé ?",
+    options: [
+        "Le MB diminue jusqu'à 10% lors d'un jeûne prolongé",
+        "Le MB augmente de 40% lors d'un jeûne prolongé",
+        "Le MB reste constant lors d'un jeûne prolongé",
+        "Le MB diminue jusqu'à 40% lors d'un jeûne prolongé"
+    ],
+    correct: 3,
+    explanation: "Au cours d'un jeûne prolongé, le métabolisme basal peut diminuer jusqu'à 40%."
+},
+{
+    question: "Quelle proportion de la dépense énergétique totale représente le métabolisme de base ?",
+    options: [
+        "Le MB représente 20-30% de la dépense énergétique totale",
+        "Le MB représente 90-95% de la dépense énergétique totale",
+        "Le MB représente 40-50% de la dépense énergétique totale",
+        "Le MB représente 60-70% de la dépense énergétique totale"
+    ],
+    correct: 3,
+    explanation: "Le métabolisme de base représente 60-70% de la dépense énergétique totale d'un individu."
+},
+{
+    question: "À quoi s'ajoute le métabolisme de base pour calculer la dépense énergétique totale ?",
+    options: [
+        "Uniquement la thermorégulation corporelle constante",
+        "Seulement le travail intellectuel et la concentration",
+        "La déperdition liée au travail musculaire, digestion et maintien de la température",
+        "Exclusivement l'énergie nécessaire à la respiration pulmonaire"
+    ],
+    correct: 2,
+    explanation: "À la dépense énergétique de base s'ajoute la déperdition liée au travail musculaire, à la digestion et au maintien de la température corporelle."
+},
+{
+    question: "Pourquoi les besoins énergétiques sont-ils plus faibles chez la femme que chez l'homme adulte ?",
+    options: [
+        "Parce que les femmes ont toujours une activité physique moindre",
+        "Parce que la masse graisseuse est plus importante chez la femme",
+        "Parce que les femmes consomment moins de nourriture quotidiennement",
+        "Parce que le métabolisme féminin est génétiquement défaillant"
+    ],
+    correct: 1,
+    explanation: "Les besoins énergétiques sont plus faibles chez la femme car la masse graisseuse est plus importante (29% vs 14% chez l'homme) et la masse maigre moindre."
+},
+{
+    question: "Pourquoi le métabolisme basal diminue-t-il après 25 ans ?",
+    options: [
+        "À cause d'un ralentissement des fonctions et d'une réduction de la masse maigre",
+        "Parce que l'activité physique augmente systématiquement après cet âge",
+        "Parce que l'alimentation devient naturellement plus calorique",
+        "À cause d'une augmentation progressive de la masse musculaire"
+    ],
+    correct: 0,
+    explanation: "Le MB diminue après 25 ans en raison d'un ralentissement des fonctions et d'une réduction de la masse maigre, entraînant une réduction de 25% à 70 ans."
+},
+{
+    question: "Pourquoi l'ingestion d'aliments entraîne-t-elle une augmentation du métabolisme ?",
+    options: [
+        "Uniquement à cause du plaisir gustatif ressenti lors du repas",
+        "À cause du travail du tube digestif (3%) et de l'ADS spécifique à chaque nutriment",
+        "Parce que l'organisme doit combattre les toxines alimentaires",
+        "Seulement parce que la température corporelle augmente systématiquement"
+    ],
+    correct: 1,
+    explanation: "L'ingestion d'aliments augmente le métabolisme à cause du travail du tube digestif (3%) et de l'Action Dynamique Spécifique (ADS) de chaque nutriment."
+},
+{
+    question: "Qu'est-ce qu'un homéotherme ?",
+    options: [
+        "Un organisme dont la température varie avec l'environnement",
+        "Un organisme dont la température corporelle est strictement régulée",
+        "Un organisme qui ne produit jamais de chaleur corporelle",
+        "Un organisme incapable de réguler sa température interne"
+    ],
+    correct: 1,
+    explanation: "L'Homme est un homéotherme : sa température corporelle est strictement régulée malgré de larges variations de température ambiante."
+},
+{
+    question: "Pourquoi n'y a-t-il pas de différence de dépense énergétique entre les sexes pour les travaux ménagers ?",
+    options: [
+        "Parce que ces travaux sont physiologiquement identiques quel que soit le sexe",
+        "Parce que les femmes font toujours plus de travaux ménagers",
+        "Parce que les hommes ont une efficacité musculaire supérieure",
+        "Parce que ces travaux ne dépensent aucune énergie mesurable"
+    ],
+    correct: 0,
+    explanation: "Pour les travaux ménagers, il n'y a pas de différence entre les sexes car la dépense énergétique liée à ces activités est comparable physiologiquement."
+},
+{
+    question: "Qu'est-ce que le quotient respiratoire (QR) ?",
+    options: [
+        "Le rapport entre le volume d'O2 inspiré et le volume total pulmonaire",
+        "Le rapport entre le CO2 produit et l'O2 consommé lors du métabolisme",
+        "Le rapport entre la fréquence respiratoire et la fréquence cardiaque",
+        "Le rapport entre l'air inspiré et l'air expiré totalement"
+    ],
+    correct: 1,
+    explanation: "Le quotient respiratoire (QR) est le rapport entre le volume de CO2 produit et le volume d'O2 consommé lors du métabolisme des nutriments."
+}
+
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
+
