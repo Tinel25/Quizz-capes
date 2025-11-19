@@ -1,1 +1,1457 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Sunduction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>🌍 Quiz Dynamique Terre Solide</h1>
+            <p>Subduction</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 80</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+      {
+    question: "Quelle est la nature de la limite entre la lithosphère et l'asthénosphère ?",
+    options: [
+        "Une limite chimique fixe entre deux compositions",
+        "Une limite de pression uniquement liée à la profondeur",
+        "Une limite magnétique créée par le champ terrestre",
+        "Une limite thermique fonction de l'âge de la lithosphère"
+    ],
+    correct: 3,
+    explanation: "La limite lithosphère-asthénosphère est une limite thermique qui varie en fonction de l'âge de la lithosphère océanique."
+},
+{
+    question: "Quelle est la composition du manteau lithosphérique ?",
+    options: [
+        "Du basalte principalement d'origine océanique",
+        "Des péridotites plus denses que l'asthénosphère",
+        "Du granite continental issu de la croûte",
+        "Des sédiments compactés par la pression"
+    ],
+    correct: 1,
+    explanation: "Le manteau lithosphérique est composé de péridotites et est plus dense que l'asthénosphère."
+},
+{
+    question: "Quelle est la différence principale entre le manteau lithosphérique et asthénosphérique ?",
+    options: [
+        "Leur température, tous deux composés de péridotites",
+        "Leur composition chimique complètement différente",
+        "L'asthénosphère est solide et la lithosphère liquide",
+        "Leur teneur en eau uniquement"
+    ],
+    correct: 0,
+    explanation: "Le manteau asthénosphérique et lithosphérique sont tous deux composés de péridotites, mais l'asthénosphère est plus chaude."
+},
+{
+    question: "Pourquoi ne trouve-t-on que des planchers océaniques datant du Jurassique au maximum ?",
+    options: [
+        "Parce que la Terre s'est formée au Jurassique",
+        "Parce que les océans plus anciens ont été érodés",
+        "Parce qu'il n'y avait pas d'océans avant le Jurassique",
+        "Parce que les planchers plus vieux ont plongé en subduction"
+    ],
+    correct: 3,
+    explanation: "Les planchers océaniques plus anciens que le Jurassique étaient trop vieux et denses, ils ont donc plongé en subduction."
+},
+{
+    question: "Qu'est-ce qu'une subduction ?",
+    options: [
+        "Une plaque lithosphérique qui plonge sous une autre plaque, rejoignant l'asthénosphère",
+        "Une plaque lithosphérique qui s'écarte d'une autre au niveau d'une dorsale océanique",
+        "Une collision frontale entre deux plaques continentales créant une chaîne de montagnes",
+        "Une faille transformante où deux plaques coulissent horizontalement l'une contre l'autre"
+    ],
+    correct: 0,
+    explanation: "La subduction est le processus par lequel une plaque lithosphérique plonge sous une autre plaque et rejoint l'asthénosphère."
+},
+{
+    question: "Quel est le pourcentage approximatif de subductions océaniques parmi toutes les subductions ?",
+    options: [
+        "Environ 25% des subductions mondiales",
+        "Environ 50% des subductions mondiales",
+        "Environ 90% des subductions mondiales",
+        "Environ 75% des subductions mondiales"
+    ],
+    correct: 3,
+    explanation: "La subduction océanique représente environ 75% des subductions, c'est le type le plus classique."
+},
+{
+    question: "De quoi dépendent les forces en présence dans les zones de subduction ?",
+    options: [
+        "Uniquement de la température du manteau asthénosphérique",
+        "De la vitesse de rotation de la Terre autour de son axe",
+        "Du poids du panneau plongeant, en fonction de sa densité",
+        "Uniquement de l'âge de la lithosphère océanique"
+    ],
+    correct: 2,
+    explanation: "Les forces dans les zones de subduction dépendent du poids du panneau plongeant, qui est fonction de sa densité et donc de son âge."
+},
+{
+    question: "Quelle est la longueur cumulée des subductions océaniques à l'échelle mondiale ?",
+    options: [
+        "Environ 55 000 km de longueur cumulée",
+        "Environ 12 000 km de longueur cumulée",
+        "Environ 25 000 km de longueur cumulée",
+        "Environ 42 000 km de longueur cumulée"
+    ],
+    correct: 0,
+    explanation: "Les subductions océaniques représentent environ 55 000 km de longueur cumulée, dont 42 000 km autour du Pacifique."
+},
+{
+    question: "Quelle longueur de subductions océaniques se trouve autour du Pacifique ?",
+    options: [
+        "Environ 12 000 km autour du Pacifique",
+        "Environ 25 000 km autour du Pacifique",
+        "Environ 55 000 km autour du Pacifique",
+        "Environ 42 000 km autour du Pacifique"
+    ],
+    correct: 3,
+    explanation: "Sur les 55 000 km de subductions océaniques mondiales, environ 42 000 km se situent autour du Pacifique."
+},
+{
+    question: "Qu'est-ce qu'une subduction intra-océanique ?",
+    options: [
+        "Une subduction continentale uniquement entre deux continents",
+        "Une subduction d'une lithosphère océanique sous une autre lithosphère océanique",
+        "Une subduction arrêtée depuis plusieurs millions d'années",
+        "Une subduction océanique sous une lithosphère continentale épaisse"
+    ],
+    correct: 1,
+    explanation: "Une subduction intra-océanique est le processus où une lithosphère océanique plonge sous une autre lithosphère océanique."
+},
+{
+    question: "Qu'est-ce qu'une subduction continentale ?",
+    options: [
+        "Une subduction océanique uniquement sous un continent",
+        "Une subduction où la plaque plongeante porte du continent",
+        "Une subduction arrêtée à cause de la collision",
+        "Une subduction entre deux océans uniquement"
+    ],
+    correct: 1,
+    explanation: "Une subduction continentale est caractérisée par le fait que la plaque plongeante porte du continent."
+},
+{
+    question: "Qu'est-ce que l'obduction ?",
+    options: [
+        "Une collision frontale entre deux continents égaux",
+        "Un type de subduction continentale où l'océan passe au-dessus du continent",
+        "Une zone de rift actif séparant deux plaques",
+        "L'érosion des roches du continent en bordure océanique"
+    ],
+    correct: 1,
+    explanation: "L'obduction est un type de subduction continentale où l'océan passe au-dessus du continent."
+},
+{
+    question: "Quels sont les marqueurs actuels de subduction qu'on ne retrouve pas dans l'ancien ?",
+    options: [
+        "Le volcanisme calco-alcalin de l'arc",
+        "Les roches métamorphiques HP-BT uniquement",
+        "Les séismes liés à la déformation",
+        "Les fosses océaniques et leur remplissage"
+    ],
+    correct: 2,
+    explanation: "Les séismes sont des marqueurs actuels/actifs de subduction qu'on ne peut pas retrouver dans l'ancien, contrairement aux roches, au métamorphisme ou au volcanisme."
+},
+{
+    question: "Quelle est la profondeur moyenne des fosses océaniques ?",
+    options: [
+        "3 à 4 km en moyenne de profondeur",
+        "1 à 2 km en moyenne de profondeur",
+        "7 à 8 km en moyenne de profondeur",
+        "10 à 11 km en moyenne de profondeur"
+    ],
+    correct: 0,
+    explanation: "Les fosses océaniques ont une profondeur moyenne de 3 à 4 km, avec des exceptions comme la fosse des Mariannes qui atteint 11 km."
+},
+{
+    question: "Quelle est la profondeur maximale de la fosse des Mariannes ?",
+    options: [
+        "4 km de profondeur maximale",
+        "7 km de profondeur maximale",
+        "9 km de profondeur maximale",
+        "11 km de profondeur maximale"
+    ],
+    correct: 3,
+    explanation: "La fosse des Mariannes est la fosse la plus profonde au monde, atteignant environ 11 km de profondeur."
+},
+{
+    question: "Quel type de volcanisme est caractéristique des zones de subduction ?",
+    options: [
+        "Volcanisme basaltique effusif avec des coulées fluides",
+        "Volcanisme calco-alcalin explosif avec des laves visqueuses",
+        "Aucun volcanisme dans les zones de subduction",
+        "Volcanisme uniquement sous-marin sans émersion"
+    ],
+    correct: 1,
+    explanation: "Les zones de subduction sont caractérisées par un volcanisme calco-alcalin explosif avec des laves visqueuses riches en silice."
+},
+{
+    question: "Qu'est-ce qu'un arc volcanique ?",
+    options: [
+        "Une dorsale océanique en forme d'arc",
+        "Une chaîne de volcans alignés parallèlement à la fosse",
+        "Un cratère circulaire d'impact météoritique ancien",
+        "Une faille transformante courbe entre deux plaques"
+    ],
+    correct: 1,
+    explanation: "Un arc volcanique est une chaîne de volcans qui se développe parallèlement à la fosse océanique, à environ 100-200 km de celle-ci."
+},
+{
+    question: "Quel type de métamorphisme caractérise les zones de subduction ?",
+    options: [
+        "Métamorphisme de contact uniquement haute température",
+        "Métamorphisme régional basse pression uniquement",
+        "Métamorphisme haute pression-basse température (HP-BT)",
+        "Métamorphisme hydrothermal sans changement de pression"
+    ],
+    correct: 2,
+    explanation: "Le métamorphisme HP-BT (haute pression - basse température) caractérise les zones de subduction avec formation de schistes bleus et d'éclogites."
+},
+{
+    question: "Qu'est-ce qu'un gradient franciscain ?",
+    options: [
+        "Un gradient où la pression augmente plus vite que la température",
+        "Un gradient où la température augmente plus vite que la pression",
+        "Un gradient uniquement de température sans variation de pression",
+        "Un gradient uniquement de pression sans variation de température"
+    ],
+    correct: 0,
+    explanation: "Le gradient franciscain caractérise le métamorphisme HP-BT où la pression augmente plus vite que la température lors de la subduction."
+},
+{
+    question: "Quel minéral caractéristique trouve-t-on dans les schistes bleus ?",
+    options: [
+        "Le quartz uniquement comme minéral principal",
+        "L'olivine typique des péridotites mantelliques",
+        "Le feldspath potassique des granites continentaux",
+        "La glaucophane/glauconite caractéristique du faciès HP-BT"
+    ],
+    correct: 3,
+    explanation: "Les schistes bleus du faciès HP-BT contiennent de la glaucophane (ou glauconite), minéral caractéristique de ce type de métamorphisme."
+},
+{
+    question: "Que représente une anomalie gravimétrique positive au niveau d'un arc volcanique ?",
+    options: [
+        "Une remontée de magma très léger en profondeur",
+        "Une absence totale de matière en profondeur",
+        "La présence d'un empilement de deux plaques (corps plus dense)",
+        "La présence d'un corps moins dense en dessous"
+    ],
+    correct: 2,
+    explanation: "L'anomalie gravimétrique positive au niveau de l'arc indique un excès de gravité dû à un corps plus dense en dessous, lié à l'empilement des deux plaques."
+},
+{
+    question: "Que représente une anomalie gravimétrique négative au niveau des fosses ?",
+    options: [
+        "Un excès de matière dense en profondeur",
+        "Une zone de fort magnétisme terrestre",
+        "Un déficit de gravité lié à l'enfoncement de la lithosphère",
+        "Une remontée du manteau asthénosphérique chaud"
+    ],
+    correct: 2,
+    explanation: "Au niveau des fosses, on observe une anomalie gravimétrique négative correspondant à un déficit de gravité."
+},
+{
+    question: "Que permet d'observer la tomographie sismique dans les zones de subduction ?",
+    options: [
+        "Uniquement la surface du fond océanique",
+        "Le panneau plongeant en profondeur grâce aux variations de vitesse",
+        "Uniquement les volcans en surface",
+        "La composition chimique exacte des roches"
+    ],
+    correct: 1,
+    explanation: "La tomographie sismique permet d'observer le panneau plongeant en profondeur grâce aux variations de vitesse des ondes sismiques."
+},
+{
+    question: "Comment peut-on déduire une limite de plaque à partir de la sismicité ?",
+    options: [
+        "Par la couleur des roches en surface",
+        "Par l'altitude du relief et sa topographie",
+        "Par la végétation présente sur le terrain",
+        "Par la répartition géographique des séismes"
+    ],
+    correct: 3,
+    explanation: "La répartition géographique des séismes permet de déduire la position et la géométrie des limites de plaques, comme en Nouvelle-Zélande."
+},
+{
+    question: "Où se situent principalement les séismes dans une zone de subduction profonde ?",
+    options: [
+        "Dans l'asthénosphère ductile uniquement",
+        "Dans la plaque plongeante",
+        "Dans la plaque chevauchante uniquement",
+        "Au niveau de la surface uniquement"
+    ],
+    correct: 1,
+    explanation: "La plupart des séismes profonds se situent dans la plaque plongeante, liés à sa déformation lors de la flexion."
+},
+{
+    question: "Pourquoi la plupart des séismes profonds ne sont-ils pas liés au frottement entre les plaques ?",
+    options: [
+        "Parce que la température est trop basse en profondeur",
+        "Parce qu'il n'y a pas de contact entre les plaques",
+        "Parce que les plaques ne bougent pas du tout",
+        "Parce que dans l'asthénosphère on est dans une zone ductile"
+    ],
+    correct: 3,
+    explanation: "Dans l'asthénosphère, le comportement est ductile, donc les séismes ne sont pas causés par le frottement mais par la déformation interne de la plaque plongeante."
+},
+{
+    question: "Qu'est-ce que la zone sismogénique ?",
+    options: [
+        "La zone de glissement dans la croûte fragile (5-20 km) où se produisent les séismes les plus violents",
+        "La zone ductile profonde où il n'y a jamais de séismes",
+        "La zone superficielle sans aucune activité sismique",
+        "La zone volcanique de l'arc magmatique uniquement"
+    ],
+    correct: 0,
+    explanation: "La zone sismogénique est la zone de glissement dans la croûte fragile (5-20 km) où se produisent les séismes les plus violents en compression."
+},
+{
+    question: "Où se situent les séismes les plus violents dans une zone de subduction ?",
+    options: [
+        "Dans la zone de décollement profonde et ductile",
+        "Dans la zone sismogénique entre 5 et 20 km de profondeur",
+        "Au niveau de la dorsale océanique lointaine",
+        "Dans l'asthénosphère ductile sous 100 km"
+    ],
+    correct: 1,
+    explanation: "Les séismes les plus violents se produisent dans la zone sismogénique, entre environ 5 et 20 km de profondeur, où le glissement se fait dans la croûte fragile en compression."
+},
+{
+    question: "Qu'est-ce qui cause les séismes dans le panneau plongeant en profondeur ?",
+    options: [
+        "Le frottement entre les deux plaques dans l'asthénosphère",
+        "La courbure de la plaque créant des fractures en extrados et intrados",
+        "L'activité volcanique en profondeur sous l'arc",
+        "La fusion partielle du manteau asthénosphérique"
+    ],
+    correct: 1,
+    explanation: "Les séismes dans le panneau plongeant sont causés par sa courbure qui crée des fractures en extrados (extension) et en intrados (compression), puis lors de son dépliage."
+},
+{
+    question: "Quels sont les deux grands types classiques de zones de subduction ?",
+    options: [
+        "Type Alpes et type Himalaya",
+        "Type Chili et type Marianne",
+        "Type Atlantique et type Pacifique",
+        "Type Japon et type Pérou"
+    ],
+    correct: 1,
+    explanation: "Les deux grands types classiques de zones de subduction sont le type Chili (panneau jeune, faible pendage) et le type Marianne (panneau ancien, fort pendage)."
+},
+{
+    question: "Comment commence un bassin arrière-arc ?",
+    options: [
+        "Comme une dorsale océanique classique",
+        "Comme une collision continentale en compression",
+        "Comme un bassin intra-arc subissant une extension",
+        "Comme une fosse océanique profonde"
+    ],
+    correct: 2,
+    explanation: "Le bassin arrière-arc commence sa vie comme bassin intra-arc et va subir une extension due à la dynamique de la subduction."
+},
+{
+    question: "Que se passe-t-il lorsque le bassin arrière-arc s'ouvre ?",
+    options: [
+        "La subduction s'arrête complètement et définitivement",
+        "Le volcanisme cesse totalement dans toute la zone",
+        "Une dorsale se forme et les arcs volcaniques rémanents deviennent inactifs",
+        "La plaque cesse de plonger en profondeur"
+    ],
+    correct: 2,
+    explanation: "Lorsque le bassin arrière-arc s'ouvre, une dorsale se forme. Les arcs volcaniques rémanents se retrouvent de l'autre côté et deviennent inactifs."
+},
+{
+    question: "Où se situe l'arc volcanique actif dans un système de type Marianne ?",
+    options: [
+        "Au dessus de la subduction, donc toujours en activité",
+        "Derrière le bassin arrière-arc, inactif aujourd'hui",
+        "Dans la fosse océanique elle-même",
+        "Sur la plaque plongeante en profondeur"
+    ],
+    correct: 0,
+    explanation: "L'arc volcanique actif est situé au-dessus de la zone de subduction, donc il reste toujours en activité."
+},
+{
+    question: "Pourquoi y a-t-il peu de séismes violents dans les subductions de type Marianne ?",
+    options: [
+        "Parce que les plaques sont trop épaisses pour se déformer",
+        "Parce que les plaques ne bougent pas du tout",
+        "Parce qu'il y a une zone de faible couplage mécanique entre les deux plaques",
+        "Parce que la subduction est arrêtée depuis longtemps"
+    ],
+    correct: 2,
+    explanation: "Les subductions de type Marianne présentent très peu de séismes violents car il y a une zone de faible couplage mécanique entre les deux plaques (croûtes)."
+},
+{
+    question: "Pourquoi toutes les plaques ont-elles une composante de mouvement vers l'Ouest ?",
+    options: [
+        "À cause de la rotation de la Terre uniquement",
+        "À cause du champ magnétique terrestre",
+        "À cause d'un flux dans l'asthénosphère de l'Ouest vers l'Est",
+        "À cause des marées océaniques"
+    ],
+    correct: 2,
+    explanation: "Toutes les plaques ont une composante vers l'Ouest car il y aurait un flux dans l'asthénosphère orienté de l'Ouest vers l'Est."
+},
+{
+    question: "Quelles sont les principales caractéristiques du type de subduction Chili ?",
+    options: [
+        "Panneau jeune, pendage faible, fort couplage mécanique, compression",
+        "Panneau ancien, fosse profonde, fort pendage",
+        "Absence totale de volcanisme calco-alcalin",
+        "Panneau très ancien, très fort pendage vertical"
+    ],
+    correct: 0,
+    explanation: "La subduction de type Chili présente une plaque océanique jeune et plus légère avec un pendage faible et un fort couplage mécanique, créant une compression importante."
+},
+{
+    question: "Quel est le régime tectonique dominant dans les subductions de type Chili ?",
+    options: [
+        "Extension généralisée dans toute la zone",
+        "Décrochement horizontal uniquement entre les plaques",
+        "Aucune déformation tectonique observable",
+        "Compression (fort couplage mécanique)"
+    ],
+    correct: 3,
+    explanation: "Le système de type Chili est en compression avec un fort couplage mécanique entre les plaques."
+},
+{
+    question: "Pourquoi la plaque Nazca subit-elle une plus grande compression ?",
+    options: [
+        "Parce qu'elle est très vieille et dense",
+        "Parce qu'elle ne bouge pas du tout",
+        "Parce qu'elle est poussée vers le haut par le flux asthénosphérique",
+        "Parce qu'elle est très fine et fragile"
+    ],
+    correct: 2,
+    explanation: "La plaque Nazca est poussée vers le haut par le flux asthénosphérique, ce qui entraîne une plus grande compression et facilite le plongement de la plaque (hypothèse)."
+},
+{
+    question: "À quelle profondeur du panneau plongeant se développe l'arc volcanique ?",
+    options: [
+        "À environ 50 km de profondeur du panneau",
+        "À environ 200 km de profondeur du panneau",
+        "À environ 700 km de profondeur du panneau",
+        "À environ 100 km de profondeur du panneau"
+    ],
+    correct: 3,
+    explanation: "L'arc volcanique se développe lorsque le panneau plongeant (slab) atteint environ 100 km de profondeur, où l'hydratation et la fusion produisent les magmas calco-alcalins."
+},
+{
+    question: "Qu'est-ce qui donne les propriétés calco-alcalines aux magmas de subduction ?",
+    options: [
+        "L'hydratation du manteau chevauchant par les fluides de la plaque plongeante",
+        "La fusion directe de la croûte océanique basaltique",
+        "La remontée de magma mantellique pur sans eau",
+        "La compression mécanique des roches en profondeur"
+    ],
+    correct: 0,
+    explanation: "Les propriétés calco-alcalines sont dues à l'hydratation du manteau de la plaque chevauchante par les fluides libérés par la plaque plongeante."
+},
+{
+    question: "Qu'est-ce que le domaine avant-arc ?",
+    options: [
+        "Le domaine situé au niveau de la fosse océanique",
+        "Le domaine situé entre la fosse océanique et l'arc volcanique",
+        "Le domaine situé derrière l'arc volcanique (côté plaque chevauchante)",
+        "Le domaine sous la plaque plongeante en profondeur"
+    ],
+    correct: 1,
+    explanation: "Le domaine avant-arc est la zone située entre la fosse océanique et l'arc volcanique."
+},
+{
+    question: "Qu'est-ce que le domaine arrière-arc ?",
+    options: [
+        "Le domaine situé au niveau de la fosse",
+        "Le domaine sous la plaque plongeante",
+        "Le domaine au niveau de la dorsale océanique lointaine",
+        "Le domaine situé derrière l'arc volcanique (côté plaque chevauchante)"
+    ],
+    correct: 3,
+    explanation: "Le domaine arrière-arc est la zone située derrière l'arc volcanique, du côté de la plaque chevauchante."
+},
+{
+    question: "Quel type de lithosphère forme l'archipel du Japon ?",
+    options: [
+        "Lithosphère océanique uniquement sans continent",
+        "Lithosphère continentale portant un arc calco-alcalin",
+        "Lithosphère mixte sans volcanisme actif",
+        "Lithosphère en rifting extensif actuellement"
+    ],
+    correct: 1,
+    explanation: "Le Japon est constitué d'une croûte continentale qui porte un arc calco-alcalin avec des volcans comme le Fujiyama."
+},
+{
+    question: "Quel est l'âge de la plaque Philippine qui entre en subduction sous le Japon (fosse de Nankai) ?",
+    options: [
+        "2-1 Ma (Quaternaire récent)",
+        "80 Ma (Crétacé supérieur ancien)",
+        "140 Ma (Crétacé inférieur très ancien)",
+        "24-12 Ma (Miocène relativement jeune)"
+    ],
+    correct: 3,
+    explanation: "La plaque Philippine qui plonge sous le sud du Japon (fosse de Nankai) est jeune, datant de 24 à 12 millions d'années."
+},
+{
+    question: "Quel est le pendage de la subduction de la fosse de Nankai ?",
+    options: [
+        "Pendage faible (panneau jeune type Chili)",
+        "Pendage très fort (subduction verticale ancienne)",
+        "Pendage moyen (intermédiaire entre types)",
+        "Aucun pendage (subduction horizontale complète)"
+    ],
+    correct: 0,
+    explanation: "La subduction de Nankai présente un pendage faible car la plaque Philippine est jeune, similaire au type Chili."
+},
+{
+    question: "Quelle est la vitesse des ondes sismiques dans l'eau lors d'une réflexion sismique ?",
+    options: [
+        "1,5 km/s dans l'eau de mer",
+        "3,0 km/s dans l'eau de mer",
+        "5,0 km/s dans l'eau de mer",
+        "8,0 km/s dans l'eau de mer"
+    ],
+    correct: 0,
+    explanation: "La vitesse des ondes sismiques dans l'eau est de 1,5 km/s, ce qui est inférieur à la vitesse dans les roches."
+},
+{
+    question: "Comment est la vitesse des ondes sismiques dans la roche par rapport à l'eau ?",
+    options: [
+        "Identique à celle de l'eau de mer",
+        "Extrêmement variable et supérieure à celle de l'eau",
+        "Inférieure à celle de l'eau de mer",
+        "Nulle (pas de propagation dans la roche)"
+    ],
+    correct: 1,
+    explanation: "La vitesse des ondes dans la roche est extrêmement variable mais toujours supérieure à celle dans l'eau (1,5 km/s)."
+},
+{
+    question: "À quoi correspond la première réflexion sur un profil sismique marin ?",
+    options: [
+        "Au socle rocheux profond sous les sédiments",
+        "À l'interface eau-fond marin (sédiments)",
+        "À une faille profonde dans la croûte",
+        "À la chambre magmatique sous l'arc"
+    ],
+    correct: 1,
+    explanation: "La première réflection correspond à l'interface eau-fond marin (sédiments), qui est un fort contraste d'impédance."
+},
+{
+    question: "Comment peut-on interpréter des discontinuités dans un profil sismique ?",
+    options: [
+        "Uniquement comme des variations de température en profondeur",
+        "Uniquement comme des variations de salinité de l'eau",
+        "Comme des zones sans roches ni matériau",
+        "Comme des failles potentielles permettant de cartographier structurellement le fond marin"
+    ],
+    correct: 3,
+    explanation: "Des discontinuités dans le profil peuvent être interprétées comme des failles, permettant de cartographier structurellement le fond marin."
+},
+{
+    question: "Comment peut-on corriger un profil temps en profondeur ?",
+    options: [
+        "C'est impossible de faire cette correction",
+        "Uniquement avec des satellites d'observation spatiale",
+        "En ayant des données géologiques comme des forages",
+        "En mesurant uniquement la gravité locale"
+    ],
+    correct: 2,
+    explanation: "On peut corriger un profil temps en profil profondeur si on dispose de données géologiques, par exemple provenant de forages."
+},
+{
+    question: "Quelle est la profondeur d'eau calculée pour un TWT de 6,5 secondes ?",
+    options: [
+        "Environ 3,25 km de profondeur d'eau",
+        "Environ 6,5 km de profondeur d'eau",
+        "Environ 9,75 km de profondeur d'eau",
+        "Environ 4,87 km de profondeur d'eau"
+    ],
+    correct: 3,
+    explanation: "Avec un TWT de 6,5s et une vitesse de 1,5 km/s : 6,5 × 1,5 = 9,75 km (aller-retour), soit 4,87 km de profondeur d'eau."
+},
+{
+    question: "Que révèlent les couches sédimentaires déformées à l'Ouest de la fosse de Nankai ?",
+    options: [
+        "Qu'il n'y a aucune tectonique active dans cette zone",
+        "Qu'elles datent du Précambrien très ancien",
+        "Une déformation récente, peut-être même active actuellement",
+        "Qu'il n'y a jamais eu de sédimentation"
+    ],
+    correct: 2,
+    explanation: "Les couches sédimentaires déformées à l'Ouest indiquent une déformation récente et potentiellement encore active."
+},
+{
+    question: "Que signifient des réflecteurs lités horizontaux ?",
+    options: [
+        "Une zone volcanique avec des coulées superposées",
+        "Une zone de faille active en décrochement",
+        "L'absence de roches dans cette zone",
+        "Des couches sédimentaires horizontales (alternances)"
+    ],
+    correct: 3,
+    explanation: "Des réflecteurs lités horizontaux indiquent des couches sédimentaires horizontales, souvent en alternances de différentes natures."
+},
+{
+    question: "Quelle épaisseur de sédiments trouve-t-on dans la fosse de Nankai ?",
+    options: [
+        "Environ 500 m d'épaisseur de sédiments",
+        "Environ 5 km d'épaisseur de sédiments",
+        "Environ 10 km d'épaisseur de sédiments",
+        "Environ 2 km d'épaisseur de sédiments"
+    ],
+    correct: 3,
+    explanation: "Dans la fosse de Nankai, on trouve une épaisseur d'environ 2 km de sédiments."
+},
+{
+    question: "Que sont les réflections chaotiques en profondeur sous les sédiments de la fosse ?",
+    options: [
+        "Des sédiments déformés par la tectonique récente",
+        "Des chambres magmatiques sous l'arc volcanique",
+        "De l'eau uniquement sans aucune roche",
+        "Probablement le plancher océanique basaltique (lithosphère ignée)"
+    ],
+    correct: 3,
+    explanation: "Les réflections chaotiques en profondeur correspondent probablement au plancher océanique basaltique de la plaque Philippine (lithosphère océanique ignée)."
+},
+{
+    question: "Quel type de failles observe-t-on du côté Ouest de la fosse de Nankai (plaque Eurasie) ?",
+    options: [
+        "Des failles normales (extension) inactives aujourd'hui",
+        "Des failles décrochantes horizontales uniquement",
+        "Aucune faille visible dans cette zone",
+        "Des failles inverses (compression) actives"
+    ],
+    correct: 3,
+    explanation: "Du côté Ouest (plaque Eurasie), on observe des failles inverses en compression qui sont actives car les sédiments de surface sont aussi déformés."
+},
+{
+    question: "Sur quoi se greffent les failles inverses dans le prisme d'accrétion ?",
+    options: [
+        "Sur la surface topographique du fond marin",
+        "Sur le Moho (limite croûte-manteau)",
+        "Sur des chambres magmatiques en profondeur",
+        "Sur un niveau sub-horizontal avec sédiments lités (niveau de décollement)"
+    ],
+    correct: 3,
+    explanation: "Les failles inverses se greffent sur un niveau sub-horizontal avec des sédiments lités, formant le niveau de décollement."
+},
+{
+    question: "Qu'est-ce qu'un prisme d'accrétion ?",
+    options: [
+        "Une accumulation de magma sous l'arc volcanique",
+        "Une zone d'extension dans le bassin arrière-arc",
+        "Un pli formé par la flexure de la plaque océanique",
+        "Un empilement d'écailles sédimentaires accrétées par chevauchements"
+    ],
+    correct: 3,
+    explanation: "Le prisme d'accrétion est formé par l'empilement d'écailles sédimentaires entre des chevauchements, accrétées depuis la plaque plongeante sur la plaque chevauchante."
+},
+{
+    question: "Comment se forme le prisme d'accrétion ?",
+    options: [
+        "Par érosion de la plaque chevauchante uniquement",
+        "Par activité volcanique sous-marine intense",
+        "Par raclage et accrétion des sédiments de la plaque plongeante",
+        "Par fusion partielle du manteau lithosphérique"
+    ],
+    correct: 2,
+    explanation: "Le prisme d'accrétion se forme par raclage et accrétion des sédiments de la fosse océanique, qui sont empilés en écailles."
+},
+{
+    question: "Qu'est-ce que le niveau de décollement ?",
+    options: [
+        "Une zone de fusion partielle dans le manteau",
+        "Un niveau sub-horizontal lubrifié par des fluides séparant les sédiments accrétés de ceux qui entrent en subduction",
+        "La limite entre la croûte et le manteau (Moho)",
+        "La surface topographique du fond marin"
+    ],
+    correct: 1,
+    explanation: "Le niveau de décollement est un niveau sub-horizontal lubrifié par des fluides, séparant les sédiments accrétés de ceux qui entrent en subduction."
+},
+{
+    question: "Qu'est-ce que le chevauchement frontal ?",
+    options: [
+        "La faille la plus profonde du prisme d'accrétion",
+        "Une faille normale en extension à l'arrière de l'arc",
+        "Une faille inactive depuis des millions d'années",
+        "La première faille qui marque le début du prisme d'accrétion"
+    ],
+    correct: 3,
+    explanation: "Le chevauchement frontal est la première faille qui marque le début du prisme d'accrétion, où commence l'accrétion des sédiments."
+},
+{
+    question: "Le niveau de décollement est-il la limite entre les deux plaques ?",
+    options: [
+        "Non, c'est uniquement une structure dans la plaque supérieure",
+        "Non, c'est la surface de la fosse océanique",
+        "Non, c'est le Moho sous la croûte continentale",
+        "Oui, c'est la limite entre la plaque qui s'enfonce et la plaque avec le prisme"
+    ],
+    correct: 3,
+    explanation: "Le niveau de décollement est bien la limite de plaque entre la plaque Philippine qui s'enfonce et la plaque Eurasie avec le prisme d'accrétion."
+},
+{
+    question: "Que se passe-t-il lorsque le niveau de décollement devient sec ?",
+    options: [
+        "La subduction s'arrête complètement et définitivement",
+        "Le prisme s'effondre par gravité",
+        "Il n'y a aucun changement observable",
+        "Il y a rupture et donc une grande activité sismique"
+    ],
+    correct: 3,
+    explanation: "Lorsque le niveau de décollement devient sec (perd sa lubrification), on a la rupture et donc une grande activité sismique dans cette zone."
+},
+{
+    question: "Est-ce que tous les sédiments de la fosse sont accrétés au prisme ?",
+    options: [
+        "Oui, 100% des sédiments sont accrétés au prisme",
+        "Les sédiments sont complètement érodés avant d'arriver",
+        "Il n'y a aucun sédiment dans la fosse océanique",
+        "Non, une partie des sédiments passe en subduction"
+    ],
+    correct: 3,
+    explanation: "Une partie des sédiments de la fosse passe en subduction sous le niveau de décollement, tous ne sont pas accrétés au prisme."
+},
+{
+    question: "Qu'indique une série strato-croissante et grano-croissante dans les sédiments d'une fosse ?",
+    options: [
+        "Un éloignement progressif de la source sédimentaire",
+        "Une subsidence sans apport sédimentaire important",
+        "Une activité volcanique croissante dans le temps",
+        "Un rapprochement de la source avec sédiments plus épais et grossiers"
+    ],
+    correct: 3,
+    explanation: "Une série strato-croissante (couches de plus en plus épaisses) et grano-croissante (grains de plus en plus grossiers) indique un rapprochement de la source sédimentaire, avec un taux de sédimentation important."
+},
+{
+    question: "Que dépose-t-on loin du continent, vers la dorsale ?",
+    options: [
+        "Des galets grossiers transportés par les courants turbides",
+        "Des grès grossiers avec des particules sableuses importantes",
+        "Des blocs anguleux non transportés de grande taille",
+        "Des argiles fines transportées sur de longues distances"
+    ],
+    correct: 3,
+    explanation: "Loin du continent, vers la dorsale, on dépose des argiles fines car les particules fines sont transportées plus loin."
+},
+{
+    question: "Que dépose-t-on proche du continent ?",
+    options: [
+        "Des argiles uniquement très fines et homogènes",
+        "Du sable uniquement de granulométrie moyenne constante",
+        "Rien car pas de sédimentation proximale possible",
+        "Des grès fins et des grains grossiers près de la fosse"
+    ],
+    correct: 3,
+    explanation: "Proche du continent, on dépose des grès fins transportés par le courant, et on aura des grains grossiers près de la fosse."
+},
+{
+    question: "De quoi dépend la granulométrie des sédiments océaniques ?",
+    options: [
+        "Uniquement de la profondeur d'eau dans l'océan",
+        "Uniquement de la température de l'eau de mer",
+        "De la salinité uniquement de l'eau océanique",
+        "De l'éloignement de la source et non pas de la profondeur"
+    ],
+    correct: 3,
+    explanation: "La granulométrie dépend de l'éloignement de la source sédimentaire et non pas de la profondeur d'eau."
+},
+{
+    question: "Quel type de sédiments volcaniques dépose-t-on dans les fonds marins près des zones de subduction ?",
+    options: [
+        "Des coulées de lave basaltique uniquement fluides",
+        "Des blocs de granite d'origine continentale uniquement",
+        "Aucun sédiment volcanique dans ces zones marines",
+        "Des cendres volcaniques provenant de l'arc calco-alcalin"
+    ],
+    correct: 3,
+    explanation: "On dépose des cendres volcaniques provenant de l'arc volcanique dans les fonds marins des zones de subduction."
+},
+{
+    question: "Pourquoi la série sédimentaire est-elle dédoublée par le chevauchement frontal ?",
+    options: [
+        "Par érosion différentielle des couches sédimentaires",
+        "Par activité volcanique qui double les couches sédimentaires",
+        "Par dissolution chimique des roches carbonatées",
+        "Par le jeu de la faille qui répète la série de part et d'autre"
+    ],
+    correct: 3,
+    explanation: "La série est dédoublée par le chevauchement frontal qui répète la même succession sédimentaire de part et d'autre de la faille."
+},
+{
+    question: "Comment évolue la porosité des sédiments de part et d'autre du niveau de décollement ?",
+    options: [
+        "Elle reste constante dans toute la série sédimentaire",
+        "Elle augmente progressivement sous le décollement",
+        "Elle est nulle des deux côtés du décollement",
+        "Elle diminue progressivement au-dessus, puis chute brutalement sous le décollement"
+    ],
+    correct: 3,
+    explanation: "La porosité diminue progressivement en profondeur au-dessus du décollement par compaction (de 70% à 30%), puis on observe un saut car les sédiments sous le décollement sont protégés de la compaction par les fluides."
+},
+{
+    question: "Quelle est la porosité typique des niveaux sédimentaires superficiels ?",
+    options: [
+        "5-10% de porosité dans les niveaux superficiels",
+        "15-25% de porosité dans les niveaux superficiels",
+        "80-95% de porosité dans les niveaux superficiels",
+        "30-70% de porosité dans les niveaux superficiels"
+    ],
+    correct: 3,
+    explanation: "La porosité des niveaux superficiels varie de 30% à 70%, diminuant progressivement avec la profondeur par compaction."
+},
+{
+    question: "Pourquoi y a-t-il un saut de porosité au niveau du décollement ?",
+    options: [
+        "Parce que les roches sont plus denses au-dessus du décollement",
+        "Parce qu'il y a une activité magmatique sous le décollement",
+        "Parce que les températures sont trop élevées en profondeur",
+        "Parce que les sédiments sous le décollement sont protégés de la compaction par les fluides"
+    ],
+    correct: 3,
+    explanation: "Le saut de porosité est dû au fait que les sédiments sous le décollement sont sous-compactés car ils sont sur-saturés en fluides, protégés de la compaction normale."
+},
+{
+    question: "Comment les fluides du décollement alimentent-ils l'écosystème ?",
+    options: [
+        "Ils ne remontent jamais vers la surface",
+        "Ils détruisent tous les écosystèmes marins",
+        "Ils sont toxiques pour toute forme de vie",
+        "Une partie des fluides remonte et permet le développement d'écosystèmes"
+    ],
+    correct: 3,
+    explanation: "Une partie des fluides du niveau de décollement remontent vers la surface et permettent le développement d'écosystèmes particuliers (ex: sources hydrothermales froides)."
+},
+{
+    question: "Pourquoi le niveau de décollement est-il assismique ?",
+    options: [
+        "Parce qu'il est trop profond dans le manteau",
+        "Parce qu'il ne bouge jamais du tout",
+        "Parce qu'il est trop chaud pour se déformer",
+        "Parce qu'il est gorgé de fluides qui le lubrifient"
+    ],
+    correct: 3,
+    explanation: "Le niveau de décollement est assismique tant qu'il reste gorgé de fluides qui le lubrifient, permettant un glissement ductile."
+},
+{
+    question: "Qu'est-ce qui permet la croissance du prisme d'accrétion ?",
+    options: [
+        "L'érosion de la plaque chevauchante uniquement",
+        "L'activité volcanique sous l'arc magmatique",
+        "La subsidence uniquement de la fosse océanique",
+        "L'écaillage sous-crustal et l'accrétion frontale"
+    ],
+    correct: 3,
+    explanation: "La croissance du prisme d'accrétion se fait par écaillage sous-crustal (accrétion d'écailles sous le prisme) et par accrétion frontale (ajout de nouvelles écailles à l'avant)."
+},
+{
+    question: "Que provoque l'écaillage sous-crustal ?",
+    options: [
+        "L'amincissement du prisme d'accrétion par extension",
+        "La fusion partielle du prisme d'accrétion",
+        "Aucun effet visible sur le prisme d'accrétion",
+        "L'épaississement et le soulèvement du prisme d'accrétion"
+    ],
+    correct: 3,
+    explanation: "L'écaillage sous-crustal entraîne l'épaississement et le soulèvement du prisme d'accrétion."
+},
+{
+    question: "Que se passe-t-il quand on entre dans la zone sans séisme sous le prisme ?",
+    options: [
+        "La subduction s'arrête complètement et définitivement",
+        "Il n'y a plus aucune déformation tectonique",
+        "Le volcanisme cesse dans l'arc magmatique",
+        "On entre dans la zone de glissement sismogénique produisant de gros séismes"
+    ],
+    correct: 3,
+    explanation: "Quand il n'y a plus de petits séismes (zone assismique du décollement), on entre dans la zone de glissement fragile sismogénique qui engendre de gros séismes."
+},
+{
+    question: "Quel est l'âge de la plaque Pacifique qui entre en subduction dans la fosse du Japon ?",
+    options: [
+        "24-12 Ma (Miocène relativement jeune)",
+        "80 Ma (Crétacé supérieur déjà ancien)",
+        "2 Ma (Quaternaire très récent)",
+        "140 Ma (Crétacé inférieur) - plaque ancienne"
+    ],
+    correct: 3,
+    explanation: "La plaque Pacifique qui plonge sous la partie Nord du Japon est ancienne, datant de 140 Ma (Crétacé inférieur)."
+},
+{
+    question: "Quelle est la profondeur de la fosse du Japon où plonge la plaque Pacifique ?",
+    options: [
+        "Environ 3 km de profondeur sous le niveau marin",
+        "Environ 4,5 km de profondeur sous le niveau marin",
+        "Environ 11 km de profondeur sous le niveau marin",
+        "Environ 7,5 km de profondeur sous le niveau marin"
+    ],
+    correct: 3,
+    explanation: "La fosse du Japon, où plonge la plaque Pacifique ancienne, atteint environ 7,5 km de profondeur."
+}
+
+
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
+
