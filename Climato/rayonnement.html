@@ -1,1 +1,937 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Climato/Paléo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>Climato/Paléo</h1>
+            <p>Introduction</p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 70</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+          {
+    question: "Que devient le rayonnement solaire qui n'est pas renvoyé vers l'espace par l'albédo ?",
+    options: [
+        "Rayonnement piégé définitivement Terre sans retour espace accumulation énergie permanente système climatique température croissante continue illimitée",
+        "Rayonnement non renvoyé absorbé système après transformations diverses retourné espace forme rayonnement grandes longueurs ondes infrarouges équilibre",
+        "Énergie transformée uniquement chaleur sans émission rayonnement infrarouge espace équilibre impossible système climatique terrestre global changement",
+        "Rayonnement stocké profondeurs océans sols sans réémission atmosphère espace transformation énergie thermique chaleur permanente accumulation"
+    ],
+    correct: 1,
+    explanation: "Si le système est en équilibre, le reste de ces rayonnements, après transformations diverses, va être retourné vers l'espace sous forme de rayonnement de plus grandes longueurs d'ondes (IR). La même quantité reçue par le système va être réémise par le système."
+},
+{
+    question: "Quel pourcentage du rayonnement incident est absorbé par l'atmosphère lors de sa traversée ?",
+    options: [
+        "Seulement 10% rayonnement incident absorbé atmosphère dont 8% gaz 2% nuages contribution faible réchauffement atmosphérique traversée limitée",
+        "Absorption totale 50% rayonnement incident atmosphère dont 40% gaz 10% nuages chaleur importante réchauffement atmosphérique majeur",
+        "Environ 5% rayonnement absorbé atmosphère uniquement gaz sans contribution nuages réchauffement atmosphérique négligeable faible minime",
+        "Environ 23% énergie incidente absorbée dont 20% gaz 3% nuages énergie convertie chaleur contribue réchauffement atmosphère terrestre"
+    ],
+    correct: 3,
+    explanation: "23% de l'énergie incidente est absorbée dont 20% par les gaz et 3% par les nuages. Cette énergie va être convertie en chaleur et va contribuer au réchauffement de l'atmosphère."
+},
+{
+    question: "Quelle gamme de longueurs d'ondes parvient principalement au sol après traversée de l'atmosphère ?",
+    options: [
+        "Partie comprise entre 0,3 et 0,75 μm lumière visible parvient sol élimination UVs énergétiques partie infrarouges traversée atmosphérique",
+        "Uniquement infrarouges longues longueurs ondes supérieures 10 μm atteignent sol visible ultraviolets absorbés totalement atmosphère composants",
+        "Tous rayonnements ultraviolets visibles infrarouges parviennent sol sans absorption sélective atmosphère transparente toutes longueurs ondes",
+        "Seulement ultraviolets énergétiques atteignent surface visible infrarouge absorbés totalement gaz atmosphériques vapeur eau ozone"
+    ],
+    correct: 0,
+    explanation: "Cette traversée de l'atmosphère aboutit à l'élimination des UVs les plus énergétiques et une partie des IR. Seule parvient au sol, la partie comprise entre 0,3 et 0,75 μm, la lumière du visible."
+},
+{
+    question: "Pourquoi le ciel apparaît-il bleu selon le processus de diffusion ?",
+    options: [
+        "Diffusion atmosphérique dévie rayonnements sans changement longueur onde bleu violet plus diffusés autres couleurs spectre visible lumière",
+        "Absorption sélective rouge jaune atmosphère laisse passer uniquement bleu violet couleurs froides longueurs ondes courtes énergétiques",
+        "Réflexion nuages blancs mélange toutes couleurs perception bleue œil humain sensibilité maximale longueurs ondes courtes visibles",
+        "Émission gaz atmosphériques oxygène azote rayonnement bleu spécifique molécules diatomiques composition chimique atmosphère terrestre"
+    ],
+    correct: 0,
+    explanation: "Les gaz de l'atmosphère diffusent le rayonnement solaire, ce qui signifie qu'ils les dévient de leur trajectoire et les renvoient, sans changement de longueurs d'ondes, dans toutes les directions. Mais certaines sont plus diffusées que d'autres comme le bleu et le violet. Par conséquence, le ciel est bleu."
+},
+{
+    question: "Pourquoi voit-on le soleil rouge au coucher selon le cours ?",
+    options: [
+        "Distance parcourue rayonnement plus longue atmosphère absorption accrue bleu violet laisse passer rouge jaune filtrage lumière",
+        "Température soleil diminue coucher émission longueurs ondes rouges infrarouges chaleur dissipée atmosphère refroidissement apparent",
+        "Lumière plus filtrée traversée oblique atmosphère épaisseur importante diffusion sélective retire bleu violet reste rouge jaune",
+        "Réflexion nuages bas horizon diffuse préférentiellement rouge orange absorption complète couleurs froides bleues vertes atmosphère"
+    ],
+    correct: 2,
+    explanation: "Au coucher du soleil, on voit le soleil rouge car la lumière est plus filtrée lors de la traversée oblique de l'atmosphère, l'épaisseur traversée étant plus importante."
+},
+{
+    question: "Quel pourcentage du rayonnement incident parvient effectivement au sol après tous les processus atmosphériques ?",
+    options: [
+        "Environ 75% rayonnement incident atteint sol après absorption diffusion réflexion atmosphérique majorité énergie solaire disponible surface",
+        "Seulement 30% énergie parvient surface terrestre pertes importantes atmosphère nuages réflexion absorption diffusion rayonnement incident",
+        "Quasi totalité 90% rayonnement atteint sol atmosphère transparente faible absorption diffusion négligeable énergie solaire disponible",
+        "Environ 54% rayonnement arrivent sol après absorption réflexion diffusion atmosphère nuages obstacles parcours rayons solaires incidents"
+    ],
+    correct: 3,
+    explanation: "Il n'y a que 54% du rayonnement qui arrivent au sol après avoir subi l'absorption (23%), la diffusion (3% perdue) et la réflexion par les nuages (19%)."
+},
+{
+    question: "Quel pourcentage du rayonnement reste finalement pour chauffer la surface terrestre ?",
+    options: [
+        "Reste 47% rayonnement incident pour chauffer sol surface terrestre après réflexion surfaces claires glaces polaires zones désertiques 7%",
+        "Seulement 20% énergie disponible réchauffement surface pertes multiples atmosphère réflexion absorption nuages surfaces claires terrestres",
+        "Environ 60% rayonnement chauffe surface terrestre absorption majoritaire océans continents végétation énergie solaire disponible chauffage",
+        "Totalité 54% arrivant sol chauffe surface aucune réflexion surfaces terrestres absorption complète océans continents végétation"
+    ],
+    correct: 0,
+    explanation: "Il faut tenir compte de la réflexion des surfaces claires du globe (ex. glaces polaires et zones désertiques) qui renvoient 7%. Soit il ne reste que 47% du rayonnement incident pour chauffer le sol de la surface terrestre."
+},
+{
+    question: "Quelle est la valeur de l'albédo terrestre et que représente-t-elle en puissance ?",
+    options: [
+        "Albédo terrestre 0,50 soit 50% représente 170 W/m² rayonnement réfléchi espace comparé 340 W/m² reçus sommet atmosphère",
+        "Valeur albédo 0,12 identique Lune soit 12% réflexion correspond 40 W/m² renvoyés espace faible pouvoir réfléchissant",
+        "Albédo 0,77 similaire Vénus soit 77% représente 260 W/m² réfléchis espace pouvoir réfléchissant élevé atmosphère",
+        "Albédo terrestre 0,29 soit 29,4% correspond 100 W/m² comparé 340 W/m² reçus sommet atmosphère rayonnement renvoyé"
+    ],
+    correct: 3,
+    explanation: "L'albédo (29,4% soit 0,29) correspond à 100W/m² comparé aux 340W/m² reçus au sommet de l'atmosphère."
+},
+{
+    question: "Quel pourcentage de l'énergie incidente est utilisé pour les transferts de chaleur sensible par conduction et convection ?",
+    options: [
+        "Environ 15% énergie totale incidente consommée processus convection conduction réchauffement basses couches atmosphère contact surface",
+        "Transferts chaleur sensible représentent 6% énergie totale incidente processus convection conduction réchauffement atmosphère contact surface terrestre",
+        "Seulement 2% énergie utilisée conduction convection transferts chaleur sensible négligeables comparés autres processus énergétiques atmosphériques",
+        "Environ 25% énergie incidente dédiée chaleur sensible convection conduction réchauffement important atmosphère basses couches troposphère"
+    ],
+    correct: 1,
+    explanation: "Le réchauffement des plus basses couches de l'atmosphère, au contact de la surface, va s'échauffer davantage par conduction thermique puis par convection. C'est ce qu'on appelle un transfert de chaleur sensible. Cela représente 6% de l'énergie totale incidente."
+},
+{
+    question: "Quel pourcentage de l'énergie incidente est utilisé pour l'évaporation et l'évapotranspiration ?",
+    options: [
+        "Évaporation évapotranspiration utilisent 10% énergie incidente processus changement phase consommation faible énergie thermique disponible",
+        "Environ 40% énergie totale consommée évaporation évapotranspiration processus dominant utilisation énergie thermique surface terrestre",
+        "Évaporation concerne 25% énergie incidente utilisée changement phase physique chaleur latente enthalpie vapeur eau atmosphère",
+        "Seulement 5% énergie dédiée évaporation processus mineur comparé autres transferts énergétiques système climatique terrestre"
+    ],
+    correct: 2,
+    explanation: "L'évaporation concerne 25% de l'énergie incidente. Une part importante de cette énergie thermique va être utilisée pour ce processus de changement de phase qui consomme beaucoup d'énergie."
+},
+{
+    question: "Quelle est la longueur d'onde maximale du spectre d'émission de la Terre selon la loi de Wien ?",
+    options: [
+        "Longueur onde maximale 5 μm proche infrarouge émission surface terrestre température moyenne 15°C calcul loi Wien rayonnement",
+        "λ max environ 15 μm infrarouge lointain émission atmosphère température basse altitude moyenne rayonnement thermique terrestre",
+        "Environ 0,5 μm visible vert émission surface chaude température élevée tropiques océans continents rayonnement électromagnétique",
+        "λ max 10 μm domaine infrarouge émission terrestre température moyenne 15°C calcul loi Wien rayonnement thermique surface"
+    ],
+    correct: 3,
+    explanation: "Selon le calcul : λ=a/T = 2,898×10⁻⁵/(273,15+15) = 1,005×10⁻⁵ m = 10 μm (Domaine de l'infrarouge)."
+},
+{
+    question: "Quelle température apparente la Terre présente-t-elle vue depuis l'espace ?",
+    options: [
+        "Température apparente +15°C vue espace correspond température surface océans continents rayonnement émis troposphère basse",
+        "Depuis espace Terre apparaît -18°C température effective rayonnement émis altitude moyenne 5 km atmosphère satellites mesure",
+        "Environ 0°C température apparente équilibre glace eau rayonnement émis sommet atmosphère nuages hauts altitude troposphère",
+        "Température -50°C vue espace émission stratosphère froide altitude élevée rayonnement infrarouge mesuré satellites orbite"
+    ],
+    correct: 1,
+    explanation: "De l'espace la Terre apparaît à -18°C. Les satellites mesurent le rayonnement émis par l'atmosphère à une altitude moyenne d'environ 5 km, pas le rayonnement de surface qui est bloqué par l'atmosphère et les nuages."
+},
+{
+    question: "Qui a été le premier à souligner l'importance de l'effet de serre atmosphérique ?",
+    options: [
+        "John Tyndall premier scientifique déterminer vapeur eau CO2 responsables absorption rayonnement infrarouge effet serre atmosphérique",
+        "Arrhenius premier calculs quantifiés réchauffement gaz atmosphériques effet serre contribution dioxyde carbone température surface",
+        "Joseph Fourier premier souligner importance interposition atmosphère température augmentée chaleur lumière obstacle infrarouge chaleur obscure",
+        "Svante Arrhenius découverte effet serre relations CO2 température calculs pionniers réchauffement climatique gaz atmosphériques"
+    ],
+    correct: 2,
+    explanation: "Joseph Fourier a été un des premiers à souligner l'importance : 'la température est augmentée par l'interposition de l'atmosphère parce que la chaleur trouve moins d'obstacle pour pénétrer l'air, étant à l'état de lumière qu'elle n'en trouve pour repasser dans l'air lorsqu'elle est convertie en chaleur obscure (IR)'."
+},
+{
+    question: "Quel scientifique a déterminé que la vapeur d'eau et le CO2 absorbent les infrarouges ?",
+    options: [
+        "Joseph Fourier découvert absorption sélective vapeur eau dioxyde carbone rayonnement infrarouge propriétés optiques gaz atmosphériques",
+        "John Tyndall détermine vapeur eau CO2 responsables absorption rayonnement infrarouges mesures expérimentales laboratoire gaz atmosphère",
+        "Svante Arrhenius identifié rôle vapeur eau CO2 absorption infrarouge calculs quantitatifs effet serre réchauffement surface",
+        "Callendar premier établir lien CO2 vapeur eau absorption infrarouge observations climatiques température atmosphère globale"
+    ],
+    correct: 1,
+    explanation: "John Tyndall : il détermine que la vapeur d'eau et le CO2 sont responsables de l'absorption du rayonnement des IR grâce à ses mesures expérimentales."
+},
+{
+    question: "Quel pourcentage du rayonnement émis par la surface terrestre lui est renvoyé par l'atmosphère grâce à l'effet de serre ?",
+    options: [
+        "Environ 50% rayonnement surface renvoyé atmosphère effet serre modéré gaz traces contribution limitée réchauffement basses couches",
+        "Quasi totalité 95% rayonnement réémis vers surface atmosphère opaque infrarouges piégeage complet chaleur effet serre maximal",
+        "Seulement 30% rayonnement surface retourné atmosphère majorité échappe espace fenêtre atmosphérique large infrarouge traversant",
+        "Grande partie rayonnement émis surface 86% renvoyé atmosphère effet serre radioactif température troposphère surface élevée"
+    ],
+    correct: 3,
+    explanation: "Grâce à ce processus, la plus grande partie du rayonnement émis par la surface (86%) lui est renvoyé par l'atmosphère, ce qui augmente considérablement la température de surface."
+},
+{
+    question: "Quelle augmentation de température l'effet de serre naturel permet-il sur Terre ?",
+    options: [
+        "Augmentation 10°C seulement effet serre naturel température -8°C à +2°C contribution modérée gaz atmosphériques réchauffement limité",
+        "Effet serre naturel permet passer température -18°C à +15°C soit augmentation 33°C surface terrestre grâce gaz atmosphère",
+        "Réchauffement 50°C effet serre température -30°C à +20°C contribution majeure vapeur eau dioxyde carbone méthane trace",
+        "Effet serre élève température 20°C surface température -5°C à +15°C réchauffement significatif gaz effet serre naturels"
+    ],
+    correct: 1,
+    explanation: "On parle d'effet de serre naturel, qui permet de passer de -18°C à 15°C, soit une augmentation de 33°C grâce aux gaz à effet de serre présents naturellement dans l'atmosphère."
+},
+{
+    question: "Où se situe la fenêtre atmosphérique permettant aux infrarouges de s'échapper vers l'espace ?",
+    options: [
+        "Fenêtre entre 0,3 et 0,75 μm domaine visible permet rayonnement traverser atmosphère sans absorption gaz effet serre atmosphériques",
+        "Située entre 15 et 20 μm fenêtre large permet majorité infrarouges échapper atmosphère vers espace absorption faible gaz",
+        "Fenêtre atmosphérique située entre 8 et 12 μm longueurs ondes permet infrarouges passer atmosphère regagner espace sans absorption",
+        "Fenêtre atmosphérique 3 à 5 μm infrarouge proche permet rayonnement surface atteindre espace sans absorption vapeur eau"
+    ],
+    correct: 2,
+    explanation: "Il existe une fenêtre atmosphérique, de quelques longueurs d'ondes qui permet aux IR de passer jusqu'à l'atmosphère et regagner l'espace. Cette fenêtre se situe entre 8 et 12 μm."
+},
+{
+    question: "Pourquoi les gaz à effet de serre en faible concentration peuvent-ils avoir un effet important ?",
+    options: [
+        "Concentration faible augmente absorption infrarouge paradoxalement dilution molécules permet meilleure interaction rayonnement thermique surface terrestre",
+        "Gaz faible concentration effet important car resserrent fenêtre atmosphérique 8-12 μm absorption longueurs ondes échappaient auparavant espace",
+        "Gaz traces température élevée émission propre rayonnement infrarouge contribution chaleur atmosphère surface terrestre importante significative",
+        "Faible concentration permet dispersion atmosphère uniforme absorption totale rayonnement surface tous niveaux altitude troposphère stratosphère"
+    ],
+    correct: 1,
+    explanation: "Les gaz à effet de serre en concentration faible ont un effet important car ils resserrent cette fenêtre atmosphérique entre 8 et 12 μm, en absorbant dans des longueurs d'ondes qui permettaient aux IR de s'échapper."
+},
+{
+    question: "Quels sont les gaz les plus absorbants dans l'infrarouge malgré leur faible quantité ?",
+    options: [
+        "Vapeur eau H2O gaz plus absorbant malgré variabilité concentration atmosphère contribution majeure absorption infrarouge surface terrestre",
+        "Dioxyde carbone CO2 plus absorbant concentration croissante anthropique contribution principale effet serre contemporain actuel global",
+        "Méthane CH4 gaz naturel plus puissant absorption infrarouge concentration faible effet important durée vie atmosphère décennies",
+        "CFC chlorofluorocarbures plus absorbants même faible quantité pouvoir absorption infrarouge très élevé molécule gaz synthétique anthropique"
+    ],
+    correct: 3,
+    explanation: "Tous les gaz n'ont pas le même pouvoir absorbant. Les plus absorbants sont les CFC même s'ils sont en faible quantité dans l'atmosphère. Leur pouvoir d'absorption par molécule est extrêmement élevé."
+},
+{
+    question: "Pourquoi Mars, malgré une atmosphère riche en CO2, ne présente-t-elle pas d'effet de serre significatif ?",
+    options: [
+        "Distance soleil trop importante rayonnement incident faible CO2 inefficace température basse absorption infrarouge limitée atmosphère martienne",
+        "Composition chimique CO2 martien différente terre molécules absorption infrarouge réduite propriétés optiques altérées atmosphère",
+        "Atmosphère martienne très peu gaz atmosphère très fine malgré richesse CO2 ne réchauffe pas surface densité insuffisante",
+        "Vents violents Mars dispersent chaleur espace CO2 inefficace retenir rayonnement infrarouge circulation atmosphérique intense"
+    ],
+    correct: 2,
+    explanation: "L'atmosphère martienne possède très peu de gaz, donc l'atmosphère est très fine et ne réchauffe pas celle-ci malgré sa richesse en CO2. C'est la densité atmosphérique totale qui compte."
+},
+{
+    question: "Quelle est la température à la surface de Vénus et pourquoi est-elle si élevée ?",
+    options: [
+        "Vénus température 460°C surface effet serre extrême atmosphère 96% CO2 très dense malgré albédo élevé 81% réflexion rayonnement",
+        "Surface Vénus 200°C proximité soleil distance orbitale faible albédo bas absorption rayonnement solaire importante atmosphère ténue",
+        "Température Vénus 100°C effet serre modéré atmosphère fine CO2 dilué chaleur principalement distance soleil proximité astre",
+        "Vénus seulement 50°C surface albédo très élevé réflexion importante rayonnement solaire incident atmosphère transparente infrarouge"
+    ],
+    correct: 0,
+    explanation: "Vénus est beaucoup plus chaude (460°C) à cause de son effet de serre avec 96% de CO2 dans son atmosphère très dense, malgré un albédo de 81% qui réfléchit beaucoup de rayonnement."
+},
+{
+    question: "Quelle est la contribution respective de la vapeur d'eau et du CO2 à l'effet de serre terrestre ?",
+    options: [
+        "CO2 contribue 60% effet serre vapeur eau seulement 15% nuages 10% autres gaz 15% répartition contribution gaz atmosphériques",
+        "Vapeur eau contribue 50% effet serre CO2 entre 20-25% nuages 20% autres gaz 5% méthane ozone nitreux troposphérique",
+        "Contribution égale vapeur eau CO2 25% chacun nuages 30% autres gaz 20% répartition équilibrée effet serre naturel",
+        "Méthane principal contributeur 40% vapeur eau 30% CO2 20% nuages 10% gaz traces effet important atmosphère"
+    ],
+    correct: 1,
+    explanation: "D'un point de vue de la contribution de l'effet de serre, la vapeur d'eau contribue à 50%, les nuages à 20%, le CO2 entre 20 à 25%, il ne reste que 5% pour les autres gaz (méthane CH4, ozone troposphérique O3, oxyde nitreux N2O)."
+},
+{
+    question: "Pourquoi l'ozone troposphérique a-t-il un effet important sur l'effet de serre malgré sa faible concentration ?",
+    options: [
+        "Concentration élevée ozone basses couches absorption importante rayonnement infrarouge surface émission thermique troposphère basse altitude",
+        "Durée vie longue ozone troposphérique accumulation progressive atmosphère basses couches effet serre cumulatif concentration croissante",
+        "Ozone troposphérique concentration faible mais basses couches subir rayonnement infrarouge surface effet serre important altitude faible",
+        "Molécule ozone très absorbante infrarouge pouvoir réchauffant élevé composition chimique trois atomes oxygène liaison forte"
+    ],
+    correct: 2,
+    explanation: "L'ozone troposphérique est en concentration plus faible mais c'est dans ces basses couches qu'on va subir le rayonnement infrarouge, d'où son effet important sur l'effet de serre malgré sa faible concentration."
+},
+{
+    question: "Comment varie l'effet des nuages selon leurs caractéristiques ?",
+    options: [
+        "Nuages effet constant toutes altitudes saisons régions types équilibre parfait albédo effet serre contribution uniforme climat",
+        "Effet nuages négatif uniquement refroidissement surface albédo élevé réflexion rayonnement solaire aucune contribution effet serre",
+        "Équilibre nuages entre albédo et effet serre poids relatif varie saisons altitude région type nuage rétroaction complexe",
+        "Nuages réchauffent uniquement surface effet serre dominant albédo négligeable absorption infrarouge émission surface terrestre"
+    ],
+    correct: 2,
+    explanation: "Pour ce qui est des nuages, il y a un équilibre avec l'albédo et l'effet de serre, et le poids relatif entre ces deux effets va varier selon les saisons, l'altitude, la région et le type de nuage."
+},
+{
+    question: "Quel est le forçage radiatif anthropique total ajouté au système climatique ?",
+    options: [
+        "Forçage anthropique environ 2,5 W/m² ajouté système dont 2-2,2 W/m² CO2, 0,5-0,6 W/m² CH4, 0,2 W/m² N2O, 0,4 W/m² ozone",
+        "Environ 10 W/m² forçage radiatif anthropique total CO2 contribue 8 W/m² méthane 1,5 W/m² autres gaz 0,5 W/m² perturbation",
+        "Forçage anthropique seulement 0,5 W/m² total contribution faible activités humaines changement climatique négligeable comparé naturel",
+        "Environ 5 W/m² ajouté activités humaines CO2 3 W/m² méthane 1 W/m² protoxyde azote 0,5 W/m² ozone 0,5 W/m²"
+    ],
+    correct: 0,
+    explanation: "Ce qui est ajouté est d'environ 2,5 W/m²=forçage radiatif anthropique. 2 à 2,2 sont attribués au CO2, 0,5 à 0,6 sont attribués au CH4, 0,2 pour le N2O, l'ozone à 0,4 W/m²."
+},
+{
+    question: "Quels facteurs déterminent le pouvoir réchauffant des différents gaz à effet de serre ?",
+    options: [
+        "Uniquement concentration atmosphérique gaz détermine pouvoir réchauffant quantité molécules absorption totale rayonnement infrarouge surface",
+        "Température émission gaz facteur principal pouvoir réchauffant altitude répartition verticale atmosphère stratosphère troposphère basses couches",
+        "Coefficient absorption recouvrement bandes absorption autres gaz durée vie atmosphère répartition spatiale déterminent pouvoir réchauffant",
+        "Masse molaire molécules gaz densité atmosphérique pression partielle altitude déterminent effet réchauffant global rayonnement"
+    ],
+    correct: 2,
+    explanation: "Le pouvoir réchauffant de ces gaz dépend du coefficient d'absorption, du recouvrement des bandes d'absorption avec d'autres gaz, de la durée de vie dans l'atmosphère et de la répartition dans l'atmosphère."
+},
+{
+    question: "Quelle est la durée de vie respective du CO2, CH4 et H2O dans l'atmosphère ?",
+    options: [
+        "CO2 quelques siècles durée vie CH4 environ 10 ans atmosphère H2O quelques jours ozone quelques heures variabilité importante",
+        "Toutes molécules durée vie identique quelques semaines équilibre dynamique atmosphère émission absorption rapide gaz traces",
+        "CO2 permanent atmosphère CH4 durée vie siècles H2O plusieurs années ozone décennies stabilité différente gaz effet serre",
+        "CO2 quelques années CH4 permanence atmosphère H2O plusieurs mois ozone semaines durée vie variable gaz traces"
+    ],
+    correct: 0,
+    explanation: "La durée de vie dans l'atmosphère varie selon les gaz : CO2 quelques siècles, CH4 10 ans, H2O quelques jours et l'ozone quelques heures, ce qui influence leur effet cumulatif."
+},
+{
+    question: "Pourquoi l'absorption du rayonnement est-elle plus faible aux hautes latitudes qu'aux basses latitudes ?",
+    options: [
+        "Surfaces hautes latitudes recouvertes neige glace réfléchissent davantage rayonnement rayons angle incidence fort réflexion accrue albédo",
+        "Atmosphère plus épaisse hautes latitudes absorption augmentée rayonnement solaire filtrage important traversée oblique couches atmosphériques",
+        "Nuages plus nombreux pôles réflexion importante rayonnement incident absorption réduite surface couverte permanente nébulosité élevée",
+        "Distance soleil plus grande hautes latitudes rayonnement incident affaibli absorption réduite angle orbital terre elliptique"
+    ],
+    correct: 0,
+    explanation: "Une plus petite fraction du rayonnement solaire incident est absorbée aux hautes latitudes car les surfaces sont recouvertes de neige et glace qui réfléchissent plus, et les rayons arrivant avec un angle d'incidence plus fort se réfléchissent davantage."
+},
+{
+    question: "Quel est l'effet de l'obliquité terrestre (23,4°) sur l'insolation ?",
+    options: [
+        "Obliquité cause alternance hémisphères direction soleil déplacement maximum insolation 23,45°N à 23,45°S solstices variation hauteur solaire",
+        "Inclinaison stabilise température terrestre répartition égale rayonnement toutes latitudes saisons identiques insolation constante année",
+        "Obliquité augmente distance terre soleil périhélie aphélie variation insolation orbitale changements saisonniers température globale",
+        "Inclinaison réduit contrastes saisonniers homogénéise réception rayonnement toutes latitudes température uniforme surface terrestre"
+    ],
+    correct: 0,
+    explanation: "L'inclinaison de 23,4° de l'axe de rotation de la Terre a pour effet qu'elle alterne chacun des deux hémisphères dans la direction du Soleil. Ce déplacement se traduit par un déplacement du point recevant les rayons perpendiculairement de 23,45° Nord le 21 Juin à 23,45° Sud le 21 Décembre."
+},
+{
+    question: "Où se situe le maximum d'insolation lors des équinoxes ?",
+    options: [
+        "Maximum insolation équinoxes situé tropiques Cancer Capricorne rayonnement perpendiculaire durée jour maximale absorption optimale surface",
+        "Équinoxes maximum insolation pôles durée jour 24 heures compensation angle incidence rayonnement solaire oblique absorption",
+        "Maximum insolation équinoxes à équateur déclinaison nulle rayonnement perpendiculaire équilibre jour nuit absorption optimale surface",
+        "Latitudes moyennes 45° maximum insolation équinoxes angle incidence optimal durée jour équilibrée rayonnement absorbé maximal"
+    ],
+    correct: 2,
+    explanation: "Le maximum d'insolation se déplace sur la surface, le long de la déclinaison. Ce maximum se trouve aux équinoxes, à l'équateur, où le rayonnement est perpendiculaire et la durée du jour égale à la nuit."
+},
+{
+    question: "Où se situe le maximum de puissance solaire absorbée sur Terre ?",
+    options: [
+        "Maximum puissance absorbée océans basses latitudes domaine intertropical rayonnement incident fort absorption élevée surfaces océaniques température",
+        "Puissance maximum absorbée déserts tropicaux continents absence nuages surfaces claires absorption rayonnement solaire directe élevée sable",
+        "Maximum absorption hautes latitudes pôles durée jour été longue compensation angle incidence oblique rayonnement solaire période",
+        "Zones tempérées latitudes moyennes maximum absorption équilibre angle incidence durée jour optimal rayonnement absorbé modéré"
+    ],
+    correct: 0,
+    explanation: "La puissance solaire absorbée (240W/m²) est la plus forte dans les océans des basses latitudes (domaine intertropical) où l'absorption est maximale, et un minimum dans les hautes latitudes (pôles)."
+},
+{
+    question: "Pourquoi le maximum d'insolation tropicale est-il plus élevé que celui de l'équateur en été ?",
+    options: [
+        "Tropiques maximum insolation plus élevé car durée jour été plus longue nuit angle incidence favorable compensation déclinaison solaire",
+        "Atmosphère plus fine tropiques absorption réduite rayonnement traverse moins épaisseur air insolation surface maximale été",
+        "Albédo plus faible tropiques surfaces absorbent davantage rayonnement océans continents végétation dense absorption optimale lumière",
+        "Température air plus élevée tropiques amplification rayonnement effet serre local vapeur eau concentration maximale réchauffement"
+    ],
+    correct: 0,
+    explanation: "Le maximum d'insolation est plus élevé aux tropiques car la durée du jour, en été, est plus longue que celle de la nuit. À l'équateur, on a un déficit car les durées de la nuit et du jour sont égales."
+},
+{
+    question: "Comment se caractérise la puissance radiative nette en fonction des latitudes ?",
+    options: [
+        "Toutes latitudes équilibre radiatif parfait énergie reçue égale émise aucun déséquilibre transfert chaleur méridien inutile circulation",
+        "Basses latitudes proches équateur reçoivent davantage énergie réémise excédent hautes latitudes déficit émission supérieure réception transferts",
+        "Hautes latitudes excédent énergétique basses latitudes déficit transferts chaleur pôles vers équateur circulation atmosphérique océanique inverse",
+        "Puissance nette constante toutes latitudes absorption émission identiques répartition homogène rayonnement surface terrestre globale uniforme"
+    ],
+    correct: 1,
+    explanation: "En moyenne, dans les basses latitudes, proches de l'équateur, on reçoit davantage que ce qui est réémis (excédent). Au contraire, plus on va vers les hautes latitudes, plus la différence entre l'énergie émise et reçue est importante, avec un déficit dans les moyennes et hautes latitudes."
+}
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
