@@ -408,501 +408,412 @@
     </div>
 
     <script>
-        const questions = [
-    {
-        question: "Qu'est-ce que l'immunogénicité ?",
-        options: [
-            "La capacité d'un anticorps à se lier à un antigène",
-            "La capacité de l'antigène à induire une réaction immunitaire",
-            "La capacité du système immunitaire à reconnaître le soi",
-            "La capacité d'une cellule à produire des anticorps"
-        ],
-        correct: 1,
-        explanation: "L'immunogénicité est la capacité de l'antigène à induire une réaction immunitaire."
-    },
-    {
-        question: "Qu'est-ce qu'un épitope ?",
-        options: [
-            "Une molécule qui déclenche une réponse immunitaire",
-            "Un type de lymphocyte",
-            "La partie de l'antigène qui se lie à l'anticorps",
-            "Une protéine du CMH"
-        ],
-        correct: 2,
-        explanation: "L'épitope (ou déterminant antigénique) est la partie de l'antigène qui se lie à l'anticorps."
-    },
-    {
-        question: "Quelle est la caractéristique de la réponse humorale ?",
-        options: [
-            "Elle implique les lymphocytes T uniquement",
-            "Elle conduit à la production d'anticorps par les lymphocytes B",
-            "Elle nécessite toujours la présentation par le CMH",
-            "Elle ne reconnaît que les antigènes dénaturés"
-        ],
-        correct: 1,
-        explanation: "La réponse humorale conduit à la production d'anticorps. La reconnaissance se fait par des anticorps fixés aux lymphocytes B."
-    },
-    {
-        question: "Comment les antigènes sont-ils reconnus dans la réponse humorale ?",
-        options: [
-            "Sous forme dénaturée uniquement",
-            "Par l'intermédiaire du CMH obligatoirement",
-            "Sous forme native en solution",
-            "Uniquement après phagocytose"
-        ],
-        correct: 2,
-        explanation: "Dans la réponse humorale, les antigènes sont reconnus sous une forme native en solution par les BCR (B Cell Receptor)."
-    },
-    {
-        question: "Qu'est-ce qu'un épitope B ?",
-        options: [
-            "Un épitope dépendant des lymphocytes T",
-            "Un épitope thymodépendant nécessitant le CMH",
-            "Un épitope thymoindépendant libre dans la circulation sanguine",
-            "Un épitope uniquement présent sur les bactéries"
-        ],
-        correct: 2,
-        explanation: "L'épitope B est thymoindépendant, libre dans la circulation sanguine, et reconnu directement par les BCR portés par les lymphocytes B."
-    },
-    {
-        question: "Quelle est la caractéristique de la réponse cellulaire ?",
-        options: [
-            "Elle produit des anticorps directement",
-            "Elle conduit à la prolifération des lymphocytes T",
-            "Elle ne nécessite pas de présentation antigénique",
-            "Elle reconnaît uniquement les lipides"
-        ],
-        correct: 1,
-        explanation: "La réponse cellulaire conduit à la prolifération des lymphocytes T en réponse aux épitopes T."
-    },
-    {
-        question: "Comment l'antigène est-il présenté dans la réponse cellulaire ?",
-        options: [
-            "Directement par les anticorps",
-            "Par une molécule du CMH (complexe majeur d'histocompatibilité)",
-            "Par les lymphocytes B uniquement",
-            "Sans besoin de présentation"
-        ],
-        correct: 1,
-        explanation: "Dans la réponse cellulaire, la présentation de l'antigène se fait par une molécule du CMH, notamment le CMH de classe II porté par les cellules présentatrices d'antigène (CPA)."
-    },
-    {
-        question: "Quel récepteur reconnaît l'épitope T ?",
-        options: [
-            "Le BCR (B Cell Receptor)",
-            "Le TCR (T Cell Receptor)",
-            "Les anticorps libres",
-            "Le récepteur Fc"
-        ],
-        correct: 1,
-        explanation: "L'épitope T est reconnu par le TCR (T Cell Receptor) après présentation par le CMH."
-    },
-    {
-        question: "Quel principe régit la reconnaissance d'une molécule comme étrangère ?",
-        options: [
-            "La taille de la molécule uniquement",
-            "La notion de distance zoologique entre donneur et receveur",
-            "La présence de sucres uniquement",
-            "Le moment de l'injection"
-        ],
-        correct: 1,
-        explanation: "Plus on est loin du donneur sur le plan zoologique, plus la molécule est considérée comme étrangère et susceptible de déclencher une réponse immunitaire."
-    },
-    {
-        question: "Que se passe-t-il avec des maladies auto-immunes ?",
-        options: [
-            "L'animal ne réagit à aucun antigène",
-            "L'animal réagit uniquement aux antigènes bactériens",
-            "L'animal réagit à ses propres molécules",
-            "L'animal produit trop d'anticorps contre les virus"
-        ],
-        correct: 2,
-        explanation: "Dans les maladies auto-immunes, l'animal réagit à ses propres molécules."
-    },
-    {
-        question: "Quels compartiments corporels sont exclus du circuit lymphatique par des barrières ?",
-        options: [
-            "Le foie, les reins, le cœur",
-            "La chambre de l'œil, le cerveau, les testicules",
-            "Les poumons, l'estomac, l'intestin",
-            "La peau, les muscles, les os"
-        ],
-        correct: 1,
-        explanation: "La chambre de l'œil, le cerveau et les testicules sont exclus du circuit lymphatique par des barrières."
-    },
-    {
-        question: "Pourquoi les spermatozoïdes nécessitent-ils une protection immunologique ?",
-        options: [
-            "Car ils sont trop petits",
-            "Car ils sont élaborés très longtemps après l'apprentissage immunologique de l'individu",
-            "Car ils proviennent de l'extérieur",
-            "Car ils sont composés uniquement de lipides"
-        ],
-        correct: 1,
-        explanation: "Les spermatozoïdes apparaissent bien après la maturation immunitaire, d'où la nécessité d'une protection."
-    },
-    {
-        question: "Quelle est la limite inférieure de poids moléculaire pour qu'une protéine soit immunogène ?",
-        options: [
-            "1 kDa",
-            "5 kDa",
-            "10 kDa",
-            "20 kDa"
-        ],
-        correct: 2,
-        explanation: "Une molécule est d'autant plus immunogène que son poids moléculaire est élevé, avec une limite approximative de 10 kDa."
-    },
-    {
-        question: "Quel type d'acide aminé augmente l'immunogénicité des protéines ?",
-        options: [
-            "Les acides aminés aliphatiques",
-            "Les acides aminés soufrés uniquement",
-            "Les acides aminés aromatiques comme la tyrosine",
-            "Les acides aminés basiques uniquement"
-        ],
-        correct: 2,
-        explanation: "Les acides aminés aromatiques comme la tyrosine renforcent l'immunogénicité."
-    },
-    {
-        question: "Les lipides sont-ils naturellement immunogènes ?",
-        options: [
-            "Oui, tous les lipides sont immunogènes",
-            "Non, ils sont non immunogènes sauf s'ils sont associés à des lécithines ou des protéines",
-            "Seulement les lipides végétaux",
-            "Seulement les acides gras saturés"
-        ],
-        correct: 1,
-        explanation: "Les lipides sont non immunogènes sauf s'ils sont couplés à des protéines ou des lécithines."
-    },
-    {
-        question: "Qu'est-ce que le cardiolipide ?",
-        options: [
-            "Un lipide non immunogène simple",
-            "Une protéine cardiaque",
-            "L'antigène de Wasserman, immunogène complexe",
-            "Un sucre présent dans le cœur"
-        ],
-        correct: 2,
-        explanation: "Le cardiolipide (antigène de Wasserman) est un complexe immunogène composé de glycérol et d'acides gras."
-    },
-    {
-        question: "Les acides nucléiques sont-ils immunogènes ?",
-        options: [
-            "Oui, toujours",
-            "Non, jamais",
-            "Non, sauf s'ils sont couplés à des protéines",
-            "Seulement l'ARN"
-        ],
-        correct: 2,
-        explanation: "Les acides nucléiques sont non immunogènes sauf lorsqu'ils sont couplés à des protéines."
-    },
-    {
-        question: "Dans quel cas pathologique observe-t-on des auto-anticorps contre les acides nucléiques ?",
-        options: [
-            "Le diabète",
-            "Le lupus érythémateux",
-            "L'asthme",
-            "L'arthrite"
-        ],
-        correct: 1,
-        explanation: "Dans le lupus érythémateux, on observe des auto-anticorps dirigés contre les acides nucléiques."
-    },
-    {
-        question: "Les glycanes (polymères de glucose) sont-ils immunogènes ?",
-        options: [
-            "Oui, toujours",
-            "Non, car constitués d'un seul type d'ose",
-            "Seulement s'ils sont d'origine bactérienne",
-            "Seulement s'ils sont végétaux"
-        ],
-        correct: 1,
-        explanation: "Les glycanes composés d'un seul ose (ex. glycogène, amidon) sont non immunogènes."
-    },
-    {
-        question: "Qu'est-ce qui rend les dextranes immunogènes ?",
-        options: [
-            "Leur origine végétale",
-            "Leur petite taille",
-            "Leur structure branchée",
-            "Leur association à des protéines"
-        ],
-        correct: 2,
-        explanation: "Les dextranes sont immunogènes grâce à leur structure branchée."
-    },
-    {
-        question: "Quelle est l'immunogénicité des hétéroglycanes d'origine animale ?",
-        options: [
-            "Non immunogène",
-            "Faiblement immunogène",
-            "Immunogène",
-            "Fortement immunogène"
-        ],
-        correct: 2,
-        explanation: "Les hétéroglycanes animaux sont immunogènes."
-    },
-    {
-        question: "Quelle est l'immunogénicité des hétéroglycanes d'origine végétale ?",
-        options: [
-            "Non immunogène",
-            "Immunogène",
-            "Fortement immunogène",
-            "Variable selon la plante"
-        ],
-        correct: 0,
-        explanation: "Les hétéroglycanes végétaux sont non immunogènes."
-    },
-    {
-        question: "Quelle est l'immunogénicité des hétéroglycanes d'origine bactérienne ?",
-        options: [
-            "Non immunogène",
-            "Faiblement immunogène",
-            "Immunogène",
-            "Fortement immunogène"
-        ],
-        correct: 3,
-        explanation: "Les hétéroglycanes bactériens sont fortement immunogènes."
-    },
-    {
-        question: "Les homopolymères sont-ils immunogènes ?",
-        options: [
-            "Oui, toujours",
-            "Non, seuls les hétéropolymères le sont",
-            "Seulement s'ils sont branchés",
-            "Seulement s'ils sont linéaires"
-        ],
-        correct: 1,
-        explanation: "Les homopolymères (un seul acide aminé) sont non immunogènes."
-    },
-    {
-        question: "De quoi dépend l'importance de la réaction antigénique dans les antigènes synthétiques ?",
-        options: [
-            "Uniquement de la longueur de la chaîne",
-            "De l'ordre des acides aminés, de la distance les séparant, et de leur configuration optique",
-            "Uniquement de la configuration optique",
-            "Uniquement du type d'acides aminés"
-        ],
-        correct: 1,
-        explanation: "La réaction dépend de l'ordre, de la distance entre acides aminés et de la configuration L ou D."
-    },
-    {
-        question: "Le génotype de l'animal receveur influence-t-il la réponse immunitaire ?",
-        options: [
-            "Non",
-            "Oui, différentes souches répondent différemment",
-            "Seulement pour les virus",
-            "Seulement pour les bactéries"
-        ],
-        correct: 1,
-        explanation: "Le génotype conditionne la réponse immunitaire, comme l'a montré McDevitt."
-    },
-    {
-        question: "Où est localisé le gène contrôlant la capacité de réponse immunitaire ?",
-        options: [
-            "Sur le chromosome X",
-            "Dans la sous-région du CMH",
-            "Dans les lymphocytes B uniquement",
-            "Dans le thymus"
-        ],
-        correct: 1,
-        explanation: "Ce gène est localisé dans la sous-région du CMH."
-    },
-    {
-        question: "Qu'est-ce que la tolérance de basse zone ?",
-        options: [
-            "Une réponse immunitaire trop forte",
-            "Une activation insuffisante des lymphocytes",
-            "Une production excessive d'anticorps",
-            "Un état de porteur sain"
-        ],
-        correct: 1,
-        explanation: "Une faible dose d'immunogène entraîne une stimulation insuffisante."
-    },
-    {
-        question: "Qu'est-ce que la tolérance de haute zone ?",
-        options: [
-            "Activation maximale",
-            "Production massive d'anticorps",
-            "Dose trop forte induisant une non-réponse",
-            "Réponse modérée"
-        ],
-        correct: 2,
-        explanation: "Une dose excessive éteint la réponse immunitaire."
-    },
-    {
-        question: "Quel type d'anticorps est produit lors de la première rencontre avec un antigène ?",
-        options: [
-            "IgG",
-            "IgM",
-            "IgA",
-            "IgE"
-        ],
-        correct: 1,
-        explanation: "Les IgM apparaissent en premier."
-    },
-    {
-        question: "Quel type d'anticorps est produit lors de la deuxième rencontre avec un antigène ?",
-        options: [
-            "IgM",
-            "IgG",
-            "IgE",
-            "IgD"
-        ],
-        correct: 1,
-        explanation: "Les IgG sont produits lors de la réponse mémoire."
-    },
-    {
-        question: "Qu'est-ce que la tolérance embryonnaire ?",
-        options: [
-            "Le rejet systématique",
-            "La capacité de maintenir une greffe réalisée entre embryons",
-            "L'impossibilité de greffer des embryons",
-            "La production d'anticorps chez le fœtus"
-        ],
-        correct: 1,
-        explanation: "La tolérance embryonnaire permet de maintenir une greffe réalisée au stade embryonnaire."
-    },
-    {
-        question: "Qu'est-ce qu'un adjuvant ?",
-        options: [
-            "Un antigène très puissant",
-            "Une molécule augmentant l'immunogénicité",
-            "Un type de lymphocyte",
-            "Une protéine du CMH"
-        ],
-        correct: 1,
-        explanation: "Un adjuvant augmente l'immunogénicité d'un antigène."
-    },
-    {
-        question: "Quels sont les effets des adjuvants ?",
-        options: [
-            "Augmenter la taille uniquement",
-            "Prolonger la présence de l'antigène et augmenter la co-stimulation",
-            "Détruire l'antigène",
-            "Produire directement des anticorps"
-        ],
-        correct: 1,
-        explanation: "Les adjuvants prolongent l'exposition, augmentent les signaux de co-stimulation, etc."
-    },
-    {
-        question: "Quel composé est utilisé pour prolonger le temps d'exposition de l'antigène ?",
-        options: [
-            "Chlorure de sodium",
-            "Sulfate de potassium et d'aluminium",
-            "Glucose",
-            "Bicarbonate"
-        ],
-        correct: 1,
-        explanation: "Le sulfate de potassium et d'aluminium provoque une précipitation de l'antigène."
-    },
-            {
-    question: "Qu'est-ce qu'une VLP (Virus Like Particle) ?",
+        const questions = [{
+    question: "Qui a introduit la notion d'histocompatibilité ?",
     options: [
-        "Une structure mimant un virus dépourvue de matériel génétique interne",
-        "Une protéine virale purifiée présentée isolément sans encapsidation",
-        "Un anticorps antiviral circulant fabriqué par l'organisme immunisé",
-        "Un virus vivant affaibli utilisé tel quel comme agent vaccinal"
+        "Gregor Mendel dans les années 1860",
+        "Snell et Gorer dans les années 1930",
+        "Paul Ehrlich au début du XXᵉ siècle",
+        "Louis Pasteur au XIXᵉ siècle"
     ],
-    correct: 0,
-    explanation: "Une VLP est une particule qui mime un virus sans contenir de génome. Elle est utilisée dans certains vaccins, comme le Cyt006-AngQb."
+    correct: 1,
+    explanation: "La notion d'histocompatibilité a été introduite par Snell et Gorer vers 1930."
 },
 {
-    question: "Qu'est-ce qu'un antigène thymodépendant ?",
+    question: "Que désigne une réaction allogénique ?",
     options: [
-        "Une molécule nécessitant l’association lymphocytes B et T pour produire des anticorps",
-        "Un antigène stimulant directement les lymphocytes B sans aucune coopération externe",
-        "Un antigène synthétisé par le thymus au cours du développement immunitaire",
-        "Un antigène inefficace ne générant aucune forme de réponse anticorps"
+        "Tolérance immunologique induite volontairement",
+        "Réponse immunitaire dirigée uniquement contre un virus",
+        "Rejet immunitaire d'un greffon entre individus génétiquement différents",
+        "Réaction immunitaire contre un antigène environnemental"
     ],
-    correct: 0,
-    explanation: "Les antigènes thymodépendants nécessitent l’intervention conjointe des lymphocytes B et T."
+    correct: 2,
+    explanation: "La réaction allogénique correspond au rejet d'un greffon entre individus non identiques génétiquement."
 },
 {
-    question: "Qu'est-ce qu'un antigène thymoindépendant ?",
+    question: "Qu'est‑ce qu'un haplotype CMH ?",
     options: [
-        "Un antigène capable d’activer directement les lymphocytes B sans aide des lymphocytes T",
-        "Un antigène nécessitant absolument les lymphocytes T pour pouvoir être reconnu",
-        "Un antigène dépourvu d’activité immunogène et donc non détecté",
-        "Un antigène produit de manière exclusive par des virus pathogènes"
+        "Un complexe protéique sécrété dans le plasma",
+        "Une région non codante du CMH",
+        "Un seul gène HLA isolé fonctionnel",
+        "Ensemble d'antigènes HLA hérités en bloc sur un même chromosome"
     ],
-    correct: 0,
-    explanation: "Les antigènes thymoindépendants activent directement les lymphocytes B sans intervention des cellules T."
+    correct: 3,
+    explanation: "Un haplotype CMH regroupe les gènes HLA physiquement liés et transmis ensemble."
 },
 {
-    question: "Qu'est-ce que le paratope ?",
+    question: "Que signifie le déséquilibre de liaison dans le CMH ?",
     options: [
-        "La zone variable de l’anticorps permettant la reconnaissance précise de l’épitope ciblé",
-        "La portion de l’antigène identifiée et reconnue par une structure immunitaire",
-        "La région constante de l’anticorps dépourvue de variabilité fonctionnelle",
-        "Un type particulier de lymphocyte intervenant dans l’immunité adaptative"
+        "Recombinaisons moins fréquentes que prévues entre gènes voisins",
+        "Expression tissulaire différente selon l'âge",
+        "Recombinaisons plus fréquentes que prévu par Mendel",
+        "Absence totale de recombinaison dans la zone HLA"
     ],
     correct: 0,
-    explanation: "Le paratope correspond à la région variable de l’anticorps qui reconnaît l’épitope."
+    explanation: "Le déséquilibre de liaison reflète une fréquence réduite de recombinaisons entre gènes proches."
 },
 {
-    question: "Qu'est-ce que la région Fc d'un anticorps ?",
+    question: "Quel est l'effet d'une disparité allélique importante du CMH sur une greffe ?",
     options: [
-        "La fraction cristallisable constituant la partie constante responsable des fonctions effectrices",
-        "La portion hypervariable impliquée dans la reconnaissance spécifique de l’antigène",
-        "Le site exact de liaison permettant l’attachement de l’épitope ciblé",
-        "La région variable structurée pour identifier sélectivement un antigène"
+        "Prophylaxie antibiotique nécessaire uniquement",
+        "Tolérance durable sans traitement",
+        "Rejet rapide et violent du greffon",
+        "Pas d'effet sur la survie du greffon"
     ],
-    correct: 0,
-    explanation: "La région Fc est la portion constante de l’anticorps portant l’activité biologique."
+    correct: 2,
+    explanation: "Une grande différence HLA entre donneur et receveur provoque classiquement un rejet aigu."
 },
 {
-    question: "Que sont les régions CDR d'un anticorps ?",
+    question: "Quels groupes de gènes composent classiquement le CMH ?",
     options: [
-        "Les segments hypervariables situés dans la partie variable incluant CDR1, CDR2 et CDR3",
-        "Les domaines constants conservés au sein des différentes classes d’anticorps",
-        "Les zones de reconnaissance impliquées spécifiquement dans l’interaction CMH",
-        "Les régions favorisant l’ancrage direct de l’anticorps sur les cellules"
+        "Les récepteurs T et B groupés",
+        "Les classes I, II et III",
+        "Les loci A, B et D uniquement",
+        "Les chaînes alpha, bêta et gamma"
     ],
-    correct: 0,
-    explanation: "Les CDR sont les trois régions hypervariables responsables de la reconnaissance fine de l’antigène."
+    correct: 1,
+    explanation: "Le CMH comprend trois régions fonctionnelles désignées classes I, II et III."
 },
 {
-    question: "Combien d'acides aminés composent généralement un épitope séquentiel de cellules B ?",
+    question: "Quels loci codent les molécules de CMH de classe I chez l'humain ?",
     options: [
-        "En moyenne un ensemble formé d’environ quinze à vingt acides aminés alignés",
-        "Un petit regroupement constitué de seulement deux à cinq acides aminés liés",
-        "Une organisation intermédiaire comprenant environ cinq à dix acides aminés liés",
-        "Une longue séquence comprenant plus de trente acides aminés consécutifs"
+        "β2‑microglobuline et TAP",
+        "HLA‑A, HLA‑B, HLA‑C",
+        "CD1a, CD1b, CD1c",
+        "HLA‑DP, HLA‑DQ, HLA‑DR"
     ],
-    correct: 0,
-    explanation: "Les épitopes séquentiels contiennent généralement 15 à 20 acides aminés consécutifs."
+    correct: 1,
+    explanation: "Les loci A, B et C codent les principales molécules de classe I humaines."
 },
 {
-    question: "Combien d'acides aminés composent généralement un épitope conformationnel ?",
+    question: "Quels loci codent les molécules de CMH de classe II chez l'homme ?",
     options: [
-        "Un ensemble non consécutif constitué d’environ quatre à sept acides aminés rapprochés",
-        "Un regroupement extrêmement réduit d’un à trois acides aminés seulement",
-        "Un long fragment composé d’environ quinze à vingt acides aminés alignés",
-        "Une structure volumineuse dépassant largement vingt-cinq acides aminés"
+        "HLA‑A, HLA‑B, HLA‑C",
+        "Classe III uniquement",
+        "CD1d et CD1b",
+        "HLA‑DP, HLA‑DQ, HLA‑DR"
     ],
-    correct: 0,
-    explanation: "Un épitope conformationnel contient généralement 4 à 7 acides aminés non contigus mais rapprochés en 3D."
+    correct: 3,
+    explanation: "Les gènes DP, DQ et DR sont responsables des molécules de classe II."
 },
 {
-    question: "Quelle est la caractéristique des épitopes de surface des protéines natives ?",
+    question: "Sur quelles cellules les HLA de classe I sont‑ils majoritairement exprimés ?",
     options: [
-        "Des résidus hydrophiles accessibles situés à la surface de la protéine native",
-        "Des résidus hydrophobes enterrés au cœur de la structure protéique interne",
-        "Des motifs entièrement cachés dépourvus d’accessibilité à l’extérieur",
-        "Des séquences systématiquement glycosylées indépendamment de la fonction"
+        "La plupart des cellules nucléées",
+        "Uniquement les cellules présentatrices d'antigène",
+        "Uniquement les cellules germinales",
+        "Seulement les cellules épithéliales"
     ],
     correct: 0,
-    explanation: "Les épitopes de surface sont hydrophiles et accessibles aux anticorps."
+    explanation: "Les HLA I sont exprimés à la surface de la majorité des cellules nucléées."
 },
 {
-    question: "Que se passe-t-il avec les épitopes conformationnels lors de la dénaturation d'une protéine ?",
+    question: "Quelles cellules expriment constitutivement le CMH de classe II ?",
     options: [
-        "Ils sont détruits car dépendants de l’architecture tridimensionnelle de la molécule",
-        "Ils restent entièrement identiques malgré la perte de structure interne",
-        "Ils deviennent beaucoup plus immunogènes après dépliement complet",
-        "Ils se convertissent spontanément en épitopes dits séquentiels"
+        "Les hépatocytes uniquement",
+        "Cellules présentatrices d'antigène (cellules dendritiques, macrophages, LB)",
+        "Toutes les cellules endothéliales",
+        "Les érythrocytes matures"
+    ],
+    correct: 1,
+    explanation: "Les CPA professionnelles expriment constitutivement des molécules de classe II."
+},
+{
+    question: "Quelle protéine stabilise la chaîne α des HLA de classe I ?",
+    options: [
+        "La tapasin",
+        "La chaîne invariant Ii",
+        "La β2‑microglobuline",
+        "La clathrine"
+    ],
+    correct: 2,
+    explanation: "La β2‑microglobuline s'associe à la chaîne α pour stabiliser la molécule HLA I."
+},
+{
+    question: "Quelle est la longueur usuelle des peptides présentés par CMH I ?",
+    options: [
+        "8 à 10 acides aminés",
+        "Plus de 30 acides aminés",
+        "3 à 5 acides aminés",
+        "15 à 25 acides aminés"
     ],
     correct: 0,
-    explanation: "Les épitopes conformationnels disparaissent lors de la dénaturation."
+    explanation: "Les peptides CMH I sont courts, généralement entre 8 et 10 AA."
+},
+{
+    question: "Quelle est la longueur typique des peptides présentés par CMH II ?",
+    options: [
+        "Inférieure à 5 acides aminés",
+        "Environ 15 à 25 acides aminés",
+        "Environ 7 à 9 acides aminés",
+        "Toujours supérieure à 30 acides aminés"
+    ],
+    correct: 1,
+    explanation: "Le sillon ouvert du CMH II accueille des peptides plus longs (≈15–25 AA)."
+},
+{
+    question: "Quelle caractéristique des extrémités favorise l'ancrage d'un peptide dans CMH I ?",
+    options: [
+        "Présence obligatoire d'une lysine terminale",
+        "Extrémités phosphorylées",
+        "Charges négatives aux deux extrémités",
+        "Résidus aromatiques en N‑term et hydrophobes en C‑term"
+    ],
+    correct: 3,
+    explanation: "Les résidus aromatiques et hydrophobes aux extrémités aident l'ancrage dans le sillon fermé du CMH I."
+},
+{
+    question: "Par quel mécanisme les protéines cytosoliques sont‑elles ciblées pour dégradation en peptides CMH I ?",
+    options: [
+        "Autophagie indépendante d'ubiquitine",
+        "Ubiquitination puis dégradation par le protéasome",
+        "Phagocytose suivie d'une fusion lysosomale",
+        "Translocation nucléaire puis clivage"
+    ],
+    correct: 1,
+    explanation: "La voie classique implique ubiquitination et protéasome pour générer les peptides CMH I."
+},
+{
+    question: "Quels transporteurs font entrer les peptides dans le réticulum pour le chargement CMH I ?",
+    options: [
+        "TAP1 et TAP2",
+        "LAMP1 et LAMP2",
+        "Sec61 et Sec62",
+        "Clathrine et adaptine"
+    ],
+    correct: 0,
+    explanation: "TAP1/TAP2 transportent les peptides du cytosol vers le RE pour montage sur CMH I."
+},
+{
+    question: "Quelles chaperonnes participent à l'assemblage et au chargement des peptides sur CMH I ?",
+    options: [
+        "Calnexine, calréticuline et tapasin",
+        "HLA‑G et ILT‑4",
+        "Chaîne invariant Ii et CLIP",
+        "β2‑microglobuline et TAP"
+    ],
+    correct: 0,
+    explanation: "Calnexine, calréticuline et tapasin aident au repliement et au chargement des CMH I."
+},
+{
+    question: "Quel est le sort du complexe CMH I/peptide une fois formé ?",
+    options: [
+        "Dégradé immédiatement dans le lysosome",
+        "Retenu définitivement dans le RE",
+        "Transporté via Golgi vers la surface cellulaire",
+        "Sécrété dans le milieu extracellulaire libre"
+    ],
+    correct: 2,
+    explanation: "Après chargement, le complexe est acheminé par la voie Golgi vers la membrane plasmique."
+},
+{
+    question: "Quels effecteurs reconnaissent les peptides présentés par CMH I ?",
+    options: [
+        "Lymphocytes T CD8+ cytotoxiques",
+        "Lymphocytes T CD4+ auxiliaires",
+        "Macrophages résidents",
+        "Cellules B productrices d'anticorps"
+    ],
+    correct: 0,
+    explanation: "Les LT CD8+ reconnaissent les peptides affichés par les molécules de classe I."
+},
+{
+    question: "Quelle protéine empêche le chargement prématuré d'antigènes endogènes sur CMH II dans le RE ?",
+    options: [
+        "TAP1 qui bloque le sillon",
+        "La chaîne invariant (Ii) qui laisse le fragment CLIP",
+        "Calnexine qui garde le CMH fermé",
+        "La β2‑microglobuline qui masque la poche"
+    ],
+    correct: 1,
+    explanation: "La chaîne invariant occupe le sillon du CMH II; sa dégradation laisse le CLIP jusqu'à l'échange."
+},
+{
+    question: "Où a lieu le remplacement du CLIP par un peptide exogène sur CMH II ?",
+    options: [
+        "Dans le cytosol par le protéasome",
+        "Sur la surface cellulaire immédiatement après synthèse",
+        "Dans le noyau durant la transcription",
+        "Dans des endosomes/lysosomes acidifiés"
+    ],
+    correct: 3,
+    explanation: "La rencontre avec endosomes/lysosomes acidifiés permet d'enlever CLIP et charger le peptide."
+},
+{
+    question: "Quels lymphocytes reconnaissent les peptides présentés par CMH II ?",
+    options: [
+        "Neutrophiles circulants",
+        "Cellules NK innées",
+        "Lymphocytes T CD8+ cytotoxiques",
+        "Lymphocytes T CD4+ auxiliaires"
+    ],
+    correct: 3,
+    explanation: "Les peptides présentés par CMH II sont reconnus par les LT CD4+ qui orchestrent la réponse."
+},
+{
+    question: "Quels tissus mentionnés expriment peu ou pas HLA de classe I ?",
+    options: [
+        "Cerveau, cartilage, trophoblaste et spermatozoïdes",
+        "Muscle squelettique et peau",
+        "Rate, foie, poumon et intestin",
+        "Thymocytes et plaquettes"
+    ],
+    correct: 0,
+    explanation: "Certains tissus (cerveau, cartilage, trophoblaste, spermatozoïdes) ont une expression HLA I très faible."
+},
+{
+    question: "Quel est l'effet d'une faible diversité HLA au sein d'une population ?",
+    options: [
+        "Tolérance universelle pour toutes les greffes",
+        "Moindre capacité à faire face à divers agents infectieux",
+        "Développement obligatoire de maladies auto‑immunes",
+        "Immunité accrue contre toutes les infections"
+    ],
+    correct: 1,
+    explanation: "Une faible diversité HLA réduit l'adaptabilité immunitaire face aux pathogènes variés."
+},
+{
+    question: "Quel rôle joue HLA‑G au niveau du placenta ?",
+    options: [
+        "Inhiber NK et CTL pour protéger le fœtus",
+        "Transporter des nutriments vers le fœtus",
+        "Stimuler une réponse inflammatoire locale",
+        "Augmenter la présentation antigénique au fœtus"
+    ],
+    correct: 0,
+    explanation: "HLA‑G s'exprime au trophoblaste et contribue à l'immunotolérance maternelle du fœtus."
+},
+{
+    question: "Comment les cellules tumorales tirent‑elles parti de HLA‑G ?",
+    options: [
+        "Stimuler la phagocytose par macrophages",
+        "Exprimer des néo‑antigènes fortement immunogènes",
+        "En inhibant NK, CTL et APC pour échapper à l'immunosurveillance",
+        "Augmenter l'activation des LT CD8+ antitumoraux"
+    ],
+    correct: 2,
+    explanation: "L'expression de HLA‑G par des tumeurs favorise l'évasion immunitaire en inhibant effecteurs et APC."
+},
+{
+    question: "Quelle isoforme soluble de HLA‑G peut induire la différenciation de cellules T régulatrices ?",
+    options: [
+        "CD1d soluble",
+        "HLA‑G1 membranaire",
+        "HLA‑G5 soluble",
+        "HLA‑A2 soluble"
+    ],
+    correct: 2,
+    explanation: "L'isoforme soluble HLA‑G5 peut favoriser l'induction de T régulatrices et l'apoptose des CD8+."
+},
+{
+    question: "Quels récepteurs interagissent avec HLA‑G pour exercer des effets inhibiteurs ?",
+    options: [
+        "TCR αβ et CD3",
+        "CD28 et B7",
+        "ILT‑2, ILT‑4 et KIR2DL4",
+        "FcγR et CR1"
+    ],
+    correct: 2,
+    explanation: "HLA‑G se lie à des récepteurs inhibiteurs tels qu'ILT‑2, ILT‑4 et KIR2DL4 pour moduler l'activité immune."
+},
+{
+    question: "Quels agents infectieux cités peuvent induire l'expression neuronale de HLA‑G ?",
+    options: [
+        "HSV‑1, RABV et VIH",
+        "Streptococcus pneumoniae uniquement",
+        "Mycobacterium tuberculosis uniquement",
+        "Candida albicans uniquement"
+    ],
+    correct: 0,
+    explanation: "Quelques virus neurotropes (HSV‑1, rage, VIH) peuvent induire l'expression d'isoformes HLA‑G."
+},
+{
+    question: "Que sont les antigènes CD1 et que présentent‑ils principalement ?",
+    options: [
+        "Molécules de classe II spécialisées dans les peptides courts",
+        "Molécules apparentées au CMH I qui présentent lipides/glycolipides",
+        "Protéines chaperonnes du RE",
+        "Récepteurs TCR alternatifs sur LB"
+    ],
+    correct: 1,
+    explanation: "Les CD1 ressemblent aux CMH I mais sont spécialisés dans la présentation d'antigènes lipidiques."
+},
+{
+    question: "Sur quel chromosome humain se trouvent les gènes CD1 ?",
+    options: [
+        "Chromosome X",
+        "Chromosome 21",
+        "Chromosome 6",
+        "Chromosome 1"
+    ],
+    correct: 3,
+    explanation: "Chez l'humain, les gènes CD1 sont localisés sur le chromosome 1."
+},
+{
+    question: "Quelle particularité de CD1 chez la souris est mentionnée ?",
+    options: [
+        "Duplication de CD1d et perte de CD1a/b/c/e",
+        "Localisation des CD1 sur le chromosome 6",
+        "Présence exclusive de CD1a et absence de CD1d",
+        "Indépendance totale vis‑à‑vis de β2‑microglobuline"
+    ],
+    correct: 0,
+    explanation: "Chez souris/rat, CD1d est dupliqué tandis que d'autres isoformes sont absentes."
+},
+{
+    question: "Que se passe‑t‑il en l'absence ou déficience de TAP1/TAP2 ?",
+    options: [
+        "Diminution du chargement en peptides CMH I et baisse d'expression à la surface",
+        "Sur‑activation spontanée des LT CD4+",
+        "Augmentation du nombre de peptides présentés par CMH II",
+        "Remplacement automatique par CD1"
+    ],
+    correct: 0,
+    explanation: "Sans TAP, les peptides n'entrent pas dans le RE, ce qui diminue le chargement et l'expression des CMH I."
+},
+{
+    question: "Quel est le rôle de la tapasin dans l'assemblage du CMH I ?",
+    options: [
+        "Activer la transcription des gènes HLA",
+        "Dégrader les peptides inadéquats dans le cytosol",
+        "Optimiser le chargement du peptide adapté dans le sillon du CMH I",
+        "Transporter CLIP vers le lysosome"
+    ],
+    correct: 2,
+    explanation: "La tapasin rapproche le peptide et favorise le chargement des peptides de forte affinité sur CMH I."
+},
+{
+    question: "Pourquoi la poche antigénique du CMH I est‑elle dite 'fermée' ?",
+    options: [
+        "Parce qu'elle nécessite CLIP pour fonctionner",
+        "Elle limite la longueur des peptides, contraignant des peptides courts",
+        "Elle empêche totalement l'entrée des peptides",
+        "Elle est physiquement séparée du RE"
+    ],
+    correct: 1,
+    explanation: "La conformations du sillon CMH I limite la longueur des peptides, d'où la préférence pour 8–10 AA."
+},
+{
+    question: "Quel est le CLIP dans la biosynthèse des CMH II ?",
+    options: [
+        "Un chaperon du RE associé aux CMH I",
+        "Un type d'isoforme HLA‑G soluble",
+        "Un transporteur membranaire de peptides",
+        "Fragment de la chaîne invariant qui occupe le sillon avant échange par un peptide"
+    ],
+    correct: 3,
+    explanation: "Le CLIP est le résidu de la chaîne invariant qui reste dans le sillon du CMH II avant remplacement."
+},
+{
+    question: "Quelle conséquence clinique majeure dépend de la compatibilité HLA ?",
+    options: [
+        "Risque de rejet de greffe diminué quand HLA donneur/receveur sont proches",
+        "Élimination du besoin d'immunosuppression",
+        "Impossibilité de transmettre des infections",
+        "Développement obligatoire de maladies auto‑immunes"
+    ],
+    correct: 0,
+    explanation: "Une bonne compatibilité HLA réduit la réponse allogénique et le risque de rejet du greffon."
 }
         ];
 
