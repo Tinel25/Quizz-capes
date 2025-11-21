@@ -1,1 +1,1060 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Immunologie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .btn-back {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) translateX(-3px);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .progress-container {
+            background: #f0f0f0;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            text-align: center;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .quiz-content {
+            padding: 30px;
+        }
+        
+        .question-block {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .question-block.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+        
+        .option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+        
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .feedback.incorrect {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .feedback strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-validate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-next {
+            background: #28a745;
+            color: white;
+            display: none;
+        }
+        
+        .btn-next:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-next.show {
+            display: block;
+        }
+        
+        .results {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .results.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .results-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .result-item {
+            text-align: center;
+        }
+        
+        .result-item .number {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .result-item .label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .result-item.correct .number {
+            color: #28a745;
+        }
+        
+        .result-item.incorrect .number {
+            color: #dc3545;
+        }
+        
+        .btn-restart {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 30px;
+            padding: 16px 40px;
+        }
+        
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
 
+        @media (max-width: 768px) {
+            .btn-back {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-bottom: 15px;
+            }
+            
+            .btn-back:hover {
+                transform: translateX(-3px);
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .question-text {
+                font-size: 18px;
+            }
+            
+            .option label {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="../index.html" class="btn-back">← Retour à l'accueil</a>
+            <h1>🧬 Quiz Immunologie</h1>
+            <p>CMH/p>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Question 1 sur 63</div>
+        </div>
+        
+        <div class="quiz-content" id="quizContent"></div>
+        
+        <div class="results" id="results">
+            <h2>🎉 Quiz Terminé !</h2>
+            <div class="score-circle" id="scoreCircle"></div>
+            <div class="results-details">
+                <div class="result-item correct">
+                    <div class="number" id="correctCount">0</div>
+                    <div class="label">Bonnes réponses</div>
+                </div>
+                <div class="result-item incorrect">
+                    <div class="number" id="incorrectCount">0</div>
+                    <div class="label">Mauvaises réponses</div>
+                </div>
+            </div>
+            <button class="btn-restart" onclick="restartQuiz()">🔄 Recommencer le quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+    {
+        question: "Qu'est-ce que l'immunogénicité ?",
+        options: [
+            "La capacité d'un anticorps à se lier à un antigène",
+            "La capacité de l'antigène à induire une réaction immunitaire",
+            "La capacité du système immunitaire à reconnaître le soi",
+            "La capacité d'une cellule à produire des anticorps"
+        ],
+        correct: 1,
+        explanation: "L'immunogénicité est la capacité de l'antigène à induire une réaction immunitaire."
+    },
+    {
+        question: "Qu'est-ce qu'un épitope ?",
+        options: [
+            "Une molécule qui déclenche une réponse immunitaire",
+            "Un type de lymphocyte",
+            "La partie de l'antigène qui se lie à l'anticorps",
+            "Une protéine du CMH"
+        ],
+        correct: 2,
+        explanation: "L'épitope (ou déterminant antigénique) est la partie de l'antigène qui se lie à l'anticorps."
+    },
+    {
+        question: "Quelle est la caractéristique de la réponse humorale ?",
+        options: [
+            "Elle implique les lymphocytes T uniquement",
+            "Elle conduit à la production d'anticorps par les lymphocytes B",
+            "Elle nécessite toujours la présentation par le CMH",
+            "Elle ne reconnaît que les antigènes dénaturés"
+        ],
+        correct: 1,
+        explanation: "La réponse humorale conduit à la production d'anticorps. La reconnaissance se fait par des anticorps fixés aux lymphocytes B."
+    },
+    {
+        question: "Comment les antigènes sont-ils reconnus dans la réponse humorale ?",
+        options: [
+            "Sous forme dénaturée uniquement",
+            "Par l'intermédiaire du CMH obligatoirement",
+            "Sous forme native en solution",
+            "Uniquement après phagocytose"
+        ],
+        correct: 2,
+        explanation: "Dans la réponse humorale, les antigènes sont reconnus sous une forme native en solution par les BCR (B Cell Receptor)."
+    },
+    {
+        question: "Qu'est-ce qu'un épitope B ?",
+        options: [
+            "Un épitope dépendant des lymphocytes T",
+            "Un épitope thymodépendant nécessitant le CMH",
+            "Un épitope thymoindépendant libre dans la circulation sanguine",
+            "Un épitope uniquement présent sur les bactéries"
+        ],
+        correct: 2,
+        explanation: "L'épitope B est thymoindépendant, libre dans la circulation sanguine, et reconnu directement par les BCR portés par les lymphocytes B."
+    },
+    {
+        question: "Quelle est la caractéristique de la réponse cellulaire ?",
+        options: [
+            "Elle produit des anticorps directement",
+            "Elle conduit à la prolifération des lymphocytes T",
+            "Elle ne nécessite pas de présentation antigénique",
+            "Elle reconnaît uniquement les lipides"
+        ],
+        correct: 1,
+        explanation: "La réponse cellulaire conduit à la prolifération des lymphocytes T en réponse aux épitopes T."
+    },
+    {
+        question: "Comment l'antigène est-il présenté dans la réponse cellulaire ?",
+        options: [
+            "Directement par les anticorps",
+            "Par une molécule du CMH (complexe majeur d'histocompatibilité)",
+            "Par les lymphocytes B uniquement",
+            "Sans besoin de présentation"
+        ],
+        correct: 1,
+        explanation: "Dans la réponse cellulaire, la présentation de l'antigène se fait par une molécule du CMH, notamment le CMH de classe II porté par les cellules présentatrices d'antigène (CPA)."
+    },
+    {
+        question: "Quel récepteur reconnaît l'épitope T ?",
+        options: [
+            "Le BCR (B Cell Receptor)",
+            "Le TCR (T Cell Receptor)",
+            "Les anticorps libres",
+            "Le récepteur Fc"
+        ],
+        correct: 1,
+        explanation: "L'épitope T est reconnu par le TCR (T Cell Receptor) après présentation par le CMH."
+    },
+    {
+        question: "Quel principe régit la reconnaissance d'une molécule comme étrangère ?",
+        options: [
+            "La taille de la molécule uniquement",
+            "La notion de distance zoologique entre donneur et receveur",
+            "La présence de sucres uniquement",
+            "Le moment de l'injection"
+        ],
+        correct: 1,
+        explanation: "Plus on est loin du donneur sur le plan zoologique, plus la molécule est considérée comme étrangère et susceptible de déclencher une réponse immunitaire."
+    },
+    {
+        question: "Que se passe-t-il avec des maladies auto-immunes ?",
+        options: [
+            "L'animal ne réagit à aucun antigène",
+            "L'animal réagit uniquement aux antigènes bactériens",
+            "L'animal réagit à ses propres molécules",
+            "L'animal produit trop d'anticorps contre les virus"
+        ],
+        correct: 2,
+        explanation: "Dans les maladies auto-immunes, l'animal réagit à ses propres molécules."
+    },
+    {
+        question: "Quels compartiments corporels sont exclus du circuit lymphatique par des barrières ?",
+        options: [
+            "Le foie, les reins, le cœur",
+            "La chambre de l'œil, le cerveau, les testicules",
+            "Les poumons, l'estomac, l'intestin",
+            "La peau, les muscles, les os"
+        ],
+        correct: 1,
+        explanation: "La chambre de l'œil, le cerveau et les testicules sont exclus du circuit lymphatique par des barrières."
+    },
+    {
+        question: "Pourquoi les spermatozoïdes nécessitent-ils une protection immunologique ?",
+        options: [
+            "Car ils sont trop petits",
+            "Car ils sont élaborés très longtemps après l'apprentissage immunologique de l'individu",
+            "Car ils proviennent de l'extérieur",
+            "Car ils sont composés uniquement de lipides"
+        ],
+        correct: 1,
+        explanation: "Les spermatozoïdes apparaissent bien après la maturation immunitaire, d'où la nécessité d'une protection."
+    },
+    {
+        question: "Quelle est la limite inférieure de poids moléculaire pour qu'une protéine soit immunogène ?",
+        options: [
+            "1 kDa",
+            "5 kDa",
+            "10 kDa",
+            "20 kDa"
+        ],
+        correct: 2,
+        explanation: "Une molécule est d'autant plus immunogène que son poids moléculaire est élevé, avec une limite approximative de 10 kDa."
+    },
+    {
+        question: "Quel type d'acide aminé augmente l'immunogénicité des protéines ?",
+        options: [
+            "Les acides aminés aliphatiques",
+            "Les acides aminés soufrés uniquement",
+            "Les acides aminés aromatiques comme la tyrosine",
+            "Les acides aminés basiques uniquement"
+        ],
+        correct: 2,
+        explanation: "Les acides aminés aromatiques comme la tyrosine renforcent l'immunogénicité."
+    },
+    {
+        question: "Les lipides sont-ils naturellement immunogènes ?",
+        options: [
+            "Oui, tous les lipides sont immunogènes",
+            "Non, ils sont non immunogènes sauf s'ils sont associés à des lécithines ou des protéines",
+            "Seulement les lipides végétaux",
+            "Seulement les acides gras saturés"
+        ],
+        correct: 1,
+        explanation: "Les lipides sont non immunogènes sauf s'ils sont couplés à des protéines ou des lécithines."
+    },
+    {
+        question: "Qu'est-ce que le cardiolipide ?",
+        options: [
+            "Un lipide non immunogène simple",
+            "Une protéine cardiaque",
+            "L'antigène de Wasserman, immunogène complexe",
+            "Un sucre présent dans le cœur"
+        ],
+        correct: 2,
+        explanation: "Le cardiolipide (antigène de Wasserman) est un complexe immunogène composé de glycérol et d'acides gras."
+    },
+    {
+        question: "Les acides nucléiques sont-ils immunogènes ?",
+        options: [
+            "Oui, toujours",
+            "Non, jamais",
+            "Non, sauf s'ils sont couplés à des protéines",
+            "Seulement l'ARN"
+        ],
+        correct: 2,
+        explanation: "Les acides nucléiques sont non immunogènes sauf lorsqu'ils sont couplés à des protéines."
+    },
+    {
+        question: "Dans quel cas pathologique observe-t-on des auto-anticorps contre les acides nucléiques ?",
+        options: [
+            "Le diabète",
+            "Le lupus érythémateux",
+            "L'asthme",
+            "L'arthrite"
+        ],
+        correct: 1,
+        explanation: "Dans le lupus érythémateux, on observe des auto-anticorps dirigés contre les acides nucléiques."
+    },
+    {
+        question: "Les glycanes (polymères de glucose) sont-ils immunogènes ?",
+        options: [
+            "Oui, toujours",
+            "Non, car constitués d'un seul type d'ose",
+            "Seulement s'ils sont d'origine bactérienne",
+            "Seulement s'ils sont végétaux"
+        ],
+        correct: 1,
+        explanation: "Les glycanes composés d'un seul ose (ex. glycogène, amidon) sont non immunogènes."
+    },
+    {
+        question: "Qu'est-ce qui rend les dextranes immunogènes ?",
+        options: [
+            "Leur origine végétale",
+            "Leur petite taille",
+            "Leur structure branchée",
+            "Leur association à des protéines"
+        ],
+        correct: 2,
+        explanation: "Les dextranes sont immunogènes grâce à leur structure branchée."
+    },
+    {
+        question: "Quelle est l'immunogénicité des hétéroglycanes d'origine animale ?",
+        options: [
+            "Non immunogène",
+            "Faiblement immunogène",
+            "Immunogène",
+            "Fortement immunogène"
+        ],
+        correct: 2,
+        explanation: "Les hétéroglycanes animaux sont immunogènes."
+    },
+    {
+        question: "Quelle est l'immunogénicité des hétéroglycanes d'origine végétale ?",
+        options: [
+            "Non immunogène",
+            "Immunogène",
+            "Fortement immunogène",
+            "Variable selon la plante"
+        ],
+        correct: 0,
+        explanation: "Les hétéroglycanes végétaux sont non immunogènes."
+    },
+    {
+        question: "Quelle est l'immunogénicité des hétéroglycanes d'origine bactérienne ?",
+        options: [
+            "Non immunogène",
+            "Faiblement immunogène",
+            "Immunogène",
+            "Fortement immunogène"
+        ],
+        correct: 3,
+        explanation: "Les hétéroglycanes bactériens sont fortement immunogènes."
+    },
+    {
+        question: "Les homopolymères sont-ils immunogènes ?",
+        options: [
+            "Oui, toujours",
+            "Non, seuls les hétéropolymères le sont",
+            "Seulement s'ils sont branchés",
+            "Seulement s'ils sont linéaires"
+        ],
+        correct: 1,
+        explanation: "Les homopolymères (un seul acide aminé) sont non immunogènes."
+    },
+    {
+        question: "De quoi dépend l'importance de la réaction antigénique dans les antigènes synthétiques ?",
+        options: [
+            "Uniquement de la longueur de la chaîne",
+            "De l'ordre des acides aminés, de la distance les séparant, et de leur configuration optique",
+            "Uniquement de la configuration optique",
+            "Uniquement du type d'acides aminés"
+        ],
+        correct: 1,
+        explanation: "La réaction dépend de l'ordre, de la distance entre acides aminés et de la configuration L ou D."
+    },
+    {
+        question: "Le génotype de l'animal receveur influence-t-il la réponse immunitaire ?",
+        options: [
+            "Non",
+            "Oui, différentes souches répondent différemment",
+            "Seulement pour les virus",
+            "Seulement pour les bactéries"
+        ],
+        correct: 1,
+        explanation: "Le génotype conditionne la réponse immunitaire, comme l'a montré McDevitt."
+    },
+    {
+        question: "Où est localisé le gène contrôlant la capacité de réponse immunitaire ?",
+        options: [
+            "Sur le chromosome X",
+            "Dans la sous-région du CMH",
+            "Dans les lymphocytes B uniquement",
+            "Dans le thymus"
+        ],
+        correct: 1,
+        explanation: "Ce gène est localisé dans la sous-région du CMH."
+    },
+    {
+        question: "Qu'est-ce que la tolérance de basse zone ?",
+        options: [
+            "Une réponse immunitaire trop forte",
+            "Une activation insuffisante des lymphocytes",
+            "Une production excessive d'anticorps",
+            "Un état de porteur sain"
+        ],
+        correct: 1,
+        explanation: "Une faible dose d'immunogène entraîne une stimulation insuffisante."
+    },
+    {
+        question: "Qu'est-ce que la tolérance de haute zone ?",
+        options: [
+            "Activation maximale",
+            "Production massive d'anticorps",
+            "Dose trop forte induisant une non-réponse",
+            "Réponse modérée"
+        ],
+        correct: 2,
+        explanation: "Une dose excessive éteint la réponse immunitaire."
+    },
+    {
+        question: "Quel type d'anticorps est produit lors de la première rencontre avec un antigène ?",
+        options: [
+            "IgG",
+            "IgM",
+            "IgA",
+            "IgE"
+        ],
+        correct: 1,
+        explanation: "Les IgM apparaissent en premier."
+    },
+    {
+        question: "Quel type d'anticorps est produit lors de la deuxième rencontre avec un antigène ?",
+        options: [
+            "IgM",
+            "IgG",
+            "IgE",
+            "IgD"
+        ],
+        correct: 1,
+        explanation: "Les IgG sont produits lors de la réponse mémoire."
+    },
+    {
+        question: "Qu'est-ce que la tolérance embryonnaire ?",
+        options: [
+            "Le rejet systématique",
+            "La capacité de maintenir une greffe réalisée entre embryons",
+            "L'impossibilité de greffer des embryons",
+            "La production d'anticorps chez le fœtus"
+        ],
+        correct: 1,
+        explanation: "La tolérance embryonnaire permet de maintenir une greffe réalisée au stade embryonnaire."
+    },
+    {
+        question: "Qu'est-ce qu'un adjuvant ?",
+        options: [
+            "Un antigène très puissant",
+            "Une molécule augmentant l'immunogénicité",
+            "Un type de lymphocyte",
+            "Une protéine du CMH"
+        ],
+        correct: 1,
+        explanation: "Un adjuvant augmente l'immunogénicité d'un antigène."
+    },
+    {
+        question: "Quels sont les effets des adjuvants ?",
+        options: [
+            "Augmenter la taille uniquement",
+            "Prolonger la présence de l'antigène et augmenter la co-stimulation",
+            "Détruire l'antigène",
+            "Produire directement des anticorps"
+        ],
+        correct: 1,
+        explanation: "Les adjuvants prolongent l'exposition, augmentent les signaux de co-stimulation, etc."
+    },
+    {
+        question: "Quel composé est utilisé pour prolonger le temps d'exposition de l'antigène ?",
+        options: [
+            "Chlorure de sodium",
+            "Sulfate de potassium et d'aluminium",
+            "Glucose",
+            "Bicarbonate"
+        ],
+        correct: 1,
+        explanation: "Le sulfate de potassium et d'aluminium provoque une précipitation de l'antigène."
+    },
+            {
+    question: "Qu'est-ce qu'une VLP (Virus Like Particle) ?",
+    options: [
+        "Une structure mimant un virus dépourvue de matériel génétique interne",
+        "Une protéine virale purifiée présentée isolément sans encapsidation",
+        "Un anticorps antiviral circulant fabriqué par l'organisme immunisé",
+        "Un virus vivant affaibli utilisé tel quel comme agent vaccinal"
+    ],
+    correct: 0,
+    explanation: "Une VLP est une particule qui mime un virus sans contenir de génome. Elle est utilisée dans certains vaccins, comme le Cyt006-AngQb."
+},
+{
+    question: "Qu'est-ce qu'un antigène thymodépendant ?",
+    options: [
+        "Une molécule nécessitant l’association lymphocytes B et T pour produire des anticorps",
+        "Un antigène stimulant directement les lymphocytes B sans aucune coopération externe",
+        "Un antigène synthétisé par le thymus au cours du développement immunitaire",
+        "Un antigène inefficace ne générant aucune forme de réponse anticorps"
+    ],
+    correct: 0,
+    explanation: "Les antigènes thymodépendants nécessitent l’intervention conjointe des lymphocytes B et T."
+},
+{
+    question: "Qu'est-ce qu'un antigène thymoindépendant ?",
+    options: [
+        "Un antigène capable d’activer directement les lymphocytes B sans aide des lymphocytes T",
+        "Un antigène nécessitant absolument les lymphocytes T pour pouvoir être reconnu",
+        "Un antigène dépourvu d’activité immunogène et donc non détecté",
+        "Un antigène produit de manière exclusive par des virus pathogènes"
+    ],
+    correct: 0,
+    explanation: "Les antigènes thymoindépendants activent directement les lymphocytes B sans intervention des cellules T."
+},
+{
+    question: "Qu'est-ce que le paratope ?",
+    options: [
+        "La zone variable de l’anticorps permettant la reconnaissance précise de l’épitope ciblé",
+        "La portion de l’antigène identifiée et reconnue par une structure immunitaire",
+        "La région constante de l’anticorps dépourvue de variabilité fonctionnelle",
+        "Un type particulier de lymphocyte intervenant dans l’immunité adaptative"
+    ],
+    correct: 0,
+    explanation: "Le paratope correspond à la région variable de l’anticorps qui reconnaît l’épitope."
+},
+{
+    question: "Qu'est-ce que la région Fc d'un anticorps ?",
+    options: [
+        "La fraction cristallisable constituant la partie constante responsable des fonctions effectrices",
+        "La portion hypervariable impliquée dans la reconnaissance spécifique de l’antigène",
+        "Le site exact de liaison permettant l’attachement de l’épitope ciblé",
+        "La région variable structurée pour identifier sélectivement un antigène"
+    ],
+    correct: 0,
+    explanation: "La région Fc est la portion constante de l’anticorps portant l’activité biologique."
+},
+{
+    question: "Que sont les régions CDR d'un anticorps ?",
+    options: [
+        "Les segments hypervariables situés dans la partie variable incluant CDR1, CDR2 et CDR3",
+        "Les domaines constants conservés au sein des différentes classes d’anticorps",
+        "Les zones de reconnaissance impliquées spécifiquement dans l’interaction CMH",
+        "Les régions favorisant l’ancrage direct de l’anticorps sur les cellules"
+    ],
+    correct: 0,
+    explanation: "Les CDR sont les trois régions hypervariables responsables de la reconnaissance fine de l’antigène."
+},
+{
+    question: "Combien d'acides aminés composent généralement un épitope séquentiel de cellules B ?",
+    options: [
+        "En moyenne un ensemble formé d’environ quinze à vingt acides aminés alignés",
+        "Un petit regroupement constitué de seulement deux à cinq acides aminés liés",
+        "Une organisation intermédiaire comprenant environ cinq à dix acides aminés liés",
+        "Une longue séquence comprenant plus de trente acides aminés consécutifs"
+    ],
+    correct: 0,
+    explanation: "Les épitopes séquentiels contiennent généralement 15 à 20 acides aminés consécutifs."
+},
+{
+    question: "Combien d'acides aminés composent généralement un épitope conformationnel ?",
+    options: [
+        "Un ensemble non consécutif constitué d’environ quatre à sept acides aminés rapprochés",
+        "Un regroupement extrêmement réduit d’un à trois acides aminés seulement",
+        "Un long fragment composé d’environ quinze à vingt acides aminés alignés",
+        "Une structure volumineuse dépassant largement vingt-cinq acides aminés"
+    ],
+    correct: 0,
+    explanation: "Un épitope conformationnel contient généralement 4 à 7 acides aminés non contigus mais rapprochés en 3D."
+},
+{
+    question: "Quelle est la caractéristique des épitopes de surface des protéines natives ?",
+    options: [
+        "Des résidus hydrophiles accessibles situés à la surface de la protéine native",
+        "Des résidus hydrophobes enterrés au cœur de la structure protéique interne",
+        "Des motifs entièrement cachés dépourvus d’accessibilité à l’extérieur",
+        "Des séquences systématiquement glycosylées indépendamment de la fonction"
+    ],
+    correct: 0,
+    explanation: "Les épitopes de surface sont hydrophiles et accessibles aux anticorps."
+},
+{
+    question: "Que se passe-t-il avec les épitopes conformationnels lors de la dénaturation d'une protéine ?",
+    options: [
+        "Ils sont détruits car dépendants de l’architecture tridimensionnelle de la molécule",
+        "Ils restent entièrement identiques malgré la perte de structure interne",
+        "Ils deviennent beaucoup plus immunogènes après dépliement complet",
+        "Ils se convertissent spontanément en épitopes dits séquentiels"
+    ],
+    correct: 0,
+    explanation: "Les épitopes conformationnels disparaissent lors de la dénaturation."
+}
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let incorrectAnswers = 0;
+        let userAnswers = [];
+        let shuffledQuestions = [];
+
+        // Fonction pour mélanger un tableau (algorithme de Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Initialiser le quiz avec les questions mélangées
+        function initQuiz() {
+            shuffledQuestions = shuffleArray(questions);
+            currentQuestion = 0;
+            correctAnswers = 0;
+            incorrectAnswers = 0;
+            userAnswers = [];
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestion];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="question-block active">
+                    <div class="question-number">Question ${currentQuestion + 1} sur ${shuffledQuestions.length}</div>
+                    <div class="question-text">${question.question}</div>
+                    <div class="options" id="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option" onclick="selectOption(${index})">
+                                <input type="radio" name="answer" id="option${index}" value="${index}">
+                                <label for="option${index}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback"></div>
+                    <div class="buttons">
+                        <button class="btn-validate" id="validateBtn" onclick="validateAnswer()" disabled>
+                            ✓ Valider la réponse
+                        </button>
+                        <button class="btn-next" id="nextBtn" onclick="nextQuestion()">
+                            Question suivante →
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            updateProgress();
+        }
+
+        function selectOption(index) {
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.style.background = '#f8f9fa';
+                opt.style.borderColor = '#e0e0e0';
+            });
+            
+            const selectedOption = document.querySelectorAll('.option')[index];
+            selectedOption.style.background = '#f0f4ff';
+            selectedOption.style.borderColor = '#667eea';
+            
+            document.getElementById(`option${index}`).checked = true;
+            document.getElementById('validateBtn').disabled = false;
+        }
+
+        function validateAnswer() {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (!selectedOption) return;
+            
+            const userAnswer = parseInt(selectedOption.value);
+            const question = shuffledQuestions[currentQuestion];
+            const isCorrect = userAnswer === question.correct;
+            
+            userAnswers.push({
+                question: currentQuestion,
+                answer: userAnswer,
+                correct: isCorrect
+            });
+            
+            if (isCorrect) {
+                correctAnswers++;
+            } else {
+                incorrectAnswers++;
+            }
+            
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswer && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = `
+                <strong>${isCorrect ? '✓ Bonne réponse !' : '✗ Mauvaise réponse'}</strong>
+                ${question.explanation}
+            `;
+            
+            document.getElementById('validateBtn').style.display = 'none';
+            document.getElementById('nextBtn').classList.add('show');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            
+            if (currentQuestion < shuffledQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion + 1) / shuffledQuestions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Question ${currentQuestion + 1} sur ${shuffledQuestions.length}`;
+        }
+
+        function showResults() {
+            document.querySelector('.progress-container').style.display = 'none';
+            document.getElementById('quizContent').style.display = 'none';
+            
+            const percentage = Math.round((correctAnswers / shuffledQuestions.length) * 100);
+            document.getElementById('scoreCircle').textContent = percentage + '%';
+            document.getElementById('correctCount').textContent = correctAnswers;
+            document.getElementById('incorrectCount').textContent = incorrectAnswers;
+            document.getElementById('results').classList.add('show');
+        }
+
+        function restartQuiz() {
+            document.querySelector('.progress-container').style.display = 'block';
+            document.getElementById('quizContent').style.display = 'block';
+            document.getElementById('results').classList.remove('show');
+            
+            initQuiz();
+        }
+
+        // Démarrer le quiz avec les questions mélangées
+        initQuiz();
+    </script>
+</body>
+</html>
