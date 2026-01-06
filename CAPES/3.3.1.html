@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Matrices & Jonctions</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 3.3.1 : Matrices extracellulaires et Jonctions</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 3.3.1 : MEC et JONCTIONS
+       - Focus : Collagène, Paroi végétale, Jonctions, Intégrines.
+    */
+    const quizData = [
+      // --- MEC ANIMALE : COMPOSANTS ---
+      {
+        question: "Quelle est l'unité structurale fondamentale des collagènes fibrillaires (ex: type I) ?",
+        answers: [
+          "Une triple hélice droite formée de trois chaînes alpha gauches, riche en glycine, proline et hydroxyproline.",
+          "Une double hélice alpha superenroulée stabilisée par des ponts disulfures inter-chaînes tous les trois résidus.", // Leurre
+          "Un feuillet bêta plissé très rigide qui s'assemble en fibres parallèles grâce à des liaisons hydrogène latérales.", // Leurre
+          "Une structure globulaire compacte qui s'agrège en chapelet de perles (microfibrilles) dans le milieu extracellulaire.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'un protéoglycane (ex: Agrégan) ?",
+        answers: [
+          "Une protéine centrale (core protein) sur laquelle sont greffées de très longues chaînes de glycosaminoglycanes (GAGs) sulfatés.",
+          "Une petite glycoprotéine d'adhérence qui sert de pont entre le collagène et les intégrines membranaires.", // Leurre (Fibronectine/Laminine)
+          "Un polysaccharide ramifié complexe qui forme un gel hydraté sans composante protéique majeure.", // Leurre (Acide hyaluronique seul)
+          "Une enzyme extracellulaire qui remodèle la matrice en clivant les fibres de collagène endommagées.", // Leurre (MMP)
+        ]
+      },
+      {
+        question: "Quel est le rôle biologique principal de la fibronectine ?",
+        answers: [
+          "C'est une glycoprotéine dimérique multi-adhésive qui connecte les cellules (via les intégrines) aux fibres de collagène et aux protéoglycanes.",
+          "C'est une protéine élastique qui permet aux tissus comme la peau et les poumons de reprendre leur forme après étirement.", // Leurre (Elastine)
+          "C'est un composant exclusif de la lame basale qui forme un réseau plan en feuillet pour soutenir les épithéliums.", // Leurre (Laminine)
+          "C'est un facteur de croissance séquestré dans la matrice qui est libéré lors de la blessure tissulaire.", // Leurre
+        ]
+      },
+      {
+        question: "La lame basale est une matrice spécialisée. Quels sont ses deux composants majeurs ?",
+        answers: [
+          "Le collagène de type IV (réseau plan) et la laminine, associés à l'entactine (nidogène) et au perlécan.",
+          "Le collagène de type I (fibrillaire) et l'élastine, associés à de grandes quantités d'acide hyaluronique.", // Leurre (Matrice interstitielle)
+          "La fibronectine et le collagène de type II, formant une structure spongieuse résistante à la compression.", // Leurre (Cartilage)
+          "La cellulose et la pectine, formant une barrière rigide imperméable aux macromolécules.", // Leurre (Paroi végétale)
+        ]
+      },
+      {
+        question: "Pourquoi l'acide hyaluronique (hyaluronane) occupe-t-il un volume immense dans les tissus ?",
+        answers: [
+          "C'est un GAG non sulfaté très hydrophile qui attire massivement les cations et l'eau, créant une pression de turgescence (résistance à la compression).",
+          "C'est une protéine fibreuse très rigide qui empêche l'effondrement des espaces intercellulaires par encombrement stérique.", // Leurre
+          "C'est un lipide complexe qui s'organise en micelles géantes repoussant les molécules d'eau.", // Leurre
+          "C'est un cristal minéral d'hydroxyapatite qui durcit la matrice extracellulaire des os et des dents.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la conséquence d'une carence en Vitamine C (Scorbut) sur la matrice extracellulaire ?",
+        answers: [
+          "Un défaut d'hydroxylation des prolines et lysines du collagène, empêchant la formation stable de la triple hélice et fragilisant les tissus.",
+          "Une inhibition de la synthèse d'élastine, provoquant une perte d'élasticité de la peau et des vaisseaux sanguins.", // Leurre
+          "Une dégradation accélérée des protéoglycanes par les enzymes lysosomales qui ne sont plus inhibées.", // Leurre
+          "Un blocage de la polymérisation des microtubules, empêchant l'exocytose des composants matriciels.", // Leurre
+        ]
+      },
+
+      // --- PAROI VÉGÉTALE ---
+      {
+        question: "Comment la cellulose est-elle synthétisée chez les végétaux ?",
+        answers: [
+          "Par des complexes enzymatiques en rosette (cellulose synthases) situés dans la membrane plasmique, qui extrudent les microfibrilles directement dans la paroi.",
+          "Dans l'appareil de Golgi, puis transportée par des vésicules géantes qui fusionnent avec la membrane plasmique.", // Leurre (Pectines/Hémicelluloses)
+          "Dans le cytoplasme sous forme de précurseurs solubles qui polymérisent spontanément au contact du pH acide extracellulaire.", // Leurre
+          "Par des enzymes situées dans la lamelle moyenne qui assemblent le glucose provenant de la dégradation de l'amidon.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle des hémicelluloses (ex: xyloglucanes) dans la paroi primaire ?",
+        answers: [
+          "Elles forment des ponts hydrogène entre les microfibrilles de cellulose, créant un réseau cohésif mais extensible.",
+          "Elles forment un gel hydraté chargé négativement qui contrôle la porosité de la paroi aux ions.", // Leurre (Pectines)
+          "Elles imperméabilisent la paroi pour empêcher les pertes d'eau excessives par transpiration.", // Leurre (Cutine/Subérine)
+          "Elles servent de molécules de signalisation libérées lors de l'attaque par des pathogènes.", // Leurre (Oligosaccharines, rôle secondaire)
+        ]
+      },
+      {
+        question: "La lamelle moyenne (middle lamella) assure l'adhérence entre cellules végétales. Elle est riche en :",
+        answers: [
+          "Pectines, des polysaccharides acides qui forment un gel calcium-dépendant (ciment intercellulaire).",
+          "Lignine, un polymère phénolique hydrophobe qui soude les parois secondaires entre elles.", // Leurre (Paroi secondaire)
+          "Cellulose, qui traverse les parois pour relier physiquement les cytosquelettes des deux cellules.", // Leurre
+          "Protéines d'extension (extensines) qui forment des liaisons covalentes irréversibles entre cellules.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est l'effet de l'auxine sur la paroi cellulaire (théorie de la croissance acide) ?",
+        answers: [
+          "Elle active des pompes à protons, acidifiant la paroi, ce qui active les expansines qui rompent les liaisons hydrogène et relâchent la paroi.",
+          "Elle stimule directement la synthèse de cellulose synthase pour épaissir la paroi et stopper l'élongation.", // Leurre
+          "Elle provoque la dégradation massive des pectines par des pectinases, liquéfiant la lamelle moyenne.", // Leurre
+          "Elle induit la lignification précoce de la paroi primaire pour la rigidifier définitivement.", // Leurre
+        ]
+      },
+      {
+        question: "La lignine est un composant clé du bois. Quelle est sa propriété principale ?",
+        answers: [
+          "C'est un polymère phénolique hydrophobe et rigide qui imprègne la paroi secondaire, conférant imperméabilité et résistance à la compression.",
+          "C'est un polysaccharide flexible qui permet aux arbres de se courber sous le vent sans casser.", // Leurre
+          "C'est une protéine structurale riche en hydroxyproline qui permet l'extension rapide des jeunes tiges.", // Leurre
+          "C'est un lipide complexe qui forme une barrière contre les pathogènes à la surface des feuilles.", // Leurre (Cuticule)
+        ]
+      },
+
+      // --- JONCTIONS CELLULAIRES ---
+      {
+        question: "Quelle est la fonction principale des jonctions serrées (Zonula occludens) dans un épithélium ?",
+        answers: [
+          "Elles assurent l'étanchéité de l'espace paracellulaire (barrière) et maintiennent la polarité cellulaire en bloquant la diffusion latérale membranaire.",
+          "Elles permettent le passage direct d'ions et de petites molécules entre les cytoplasmes des cellules voisines.", // Leurre (Gap)
+          "Elles ancrent les filaments intermédiaires de cytokératine pour assurer la cohésion mécanique du tissu.", // Leurre (Desmosomes)
+          "Elles attachent la cellule à la lame basale pour empêcher son décollement sous l'effet de flux liquidiens.", // Leurre (Hémidesmosomes)
+        ]
+      },
+      {
+        question: "Les desmosomes (Macula adherens) sont des jonctions d'ancrage. Quels sont leurs constituants moléculaires ?",
+        answers: [
+          "Des cadhérines desmosomales (desmogléine, desmocolline) liées aux filaments intermédiaires via une plaque cytoplasmique (desmoplakine).",
+          "Des connexines organisées en hexamères (connexons) formant un canal hydrophile transmembranaire.", // Leurre (Gap)
+          "Des claudines et occludines qui forment des brins protéiques scellant l'espace intercellulaire.", // Leurre (Serrées)
+          "Des intégrines liées aux filaments d'actine via la taline et la vinculine.", // Leurre (Adhérences focales)
+        ]
+      },
+      {
+        question: "Les jonctions communicantes (Gap junctions) permettent :",
+        answers: [
+          "Le couplage électrique (ions) et métabolique (ATP, glucose, second messagers) entre cellules voisines (< 1000 Da).",
+          "Le passage de macromolécules comme les protéines et les ARN messagers pour synchroniser l'expression génique.", // Leurre (Trop gros)
+          "L'adhérence forte entre les cellules cardiaques pour empêcher leur séparation lors de la contraction.", // Leurre (Desmosomes)
+          "La fusion des membranes plasmiques pour former un syncytium géant multinucléé.", // Leurre
+        ]
+      },
+      {
+        question: "Dans les jonctions adhérentes (Zonula adherens), les cadhérines sont reliées au cytosquelette :",
+        answers: [
+          "D'actine, via des protéines adaptatrices comme les caténines (alpha, bêta, p120).",
+          "De microtubules, via des protéines motrices comme la dynéine et la kinésine.", // Leurre
+          "De filaments intermédiaires de kératine, via la desmoplakine.", // Leurre (Desmosome)
+          "De spectrine, formant un réseau sous-membranaire élastique comme dans les globules rouges.", // Leurre
+        ]
+      },
+      {
+        question: "Les hémidesmosomes ancrent les cellules épithéliales à la lame basale. Ils utilisent :",
+        answers: [
+          "Des intégrines (ex: alpha6-beta4) qui se lient à la laminine extracellulaire et aux filaments intermédiaires intracellulaires.",
+          "Des cadhérines qui se lient au collagène de type IV et aux microfilaments d'actine.", // Leurre
+          "Des sélectines qui reconnaissent les sucres des glycoprotéines de la matrice extracellulaire.", // Leurre
+          "Des connexons qui permettent l'échange de nutriments entre l'épithélium et le tissu conjonctif sous-jacent.", // Leurre
+        ]
+      },
+
+      // --- ADHÉRENCE CELLULE-MATRICE & SIGNALISATION ---
+      {
+        question: "Comment fonctionnent les intégrines en tant que récepteurs matriciels ?",
+        answers: [
+          "Ce sont des hétérodimères alpha/bêta qui basculent entre une forme inactive (repliée) et active (dépliée) pour lier la matrice (RGD) et le cytosquelette.",
+          "Ce sont des canaux ioniques calcium-dépendants qui s'ouvrent lorsque la cellule touche le collagène.", // Leurre
+          "Ce sont des enzymes protéolytiques qui dégradent la matrice pour permettre la migration cellulaire.", // Leurre
+          "Ce sont des molécules d'adhérence homophilique qui se lient aux intégrines identiques des cellules voisines.", // Leurre (Cadhérines)
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'une adhérence focale (ou point de contact focal) ?",
+        answers: [
+          "Un complexe dynamique où les intégrines lient la matrice extracellulaire aux filaments d'actine (fibres de stress) via taline, vinculine, paxilline.",
+          "Un point d'ancrage permanent et statique qui empêche toute migration cellulaire dans les tissus adultes.", // Leurre
+          "Une jonction entre deux cellules qui permet la transmission des forces mécaniques lors de la contraction musculaire.", // Leurre
+          "Une vésicule d'exocytose spécialisée qui sécrète les composants de la matrice au pôle basal.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité des plasmodesmes chez les végétaux par rapport aux Gap junctions animales ?",
+        answers: [
+          "Ce sont des canaux tapissés de membrane plasmique contenant un tube de réticulum endoplasmique (desmotubule), permettant le passage de macromolécules.",
+          "Ce sont des structures protéiques transitoires qui ne s'ouvrent que lors de stress hydrique sévère.", // Leurre
+          "Ils ne permettent que le transport passif d'eau, excluant tout soluté ou molécule organique.", // Leurre
+          "Ils sont formés par la fusion locale des parois cellulaires sans continuité cytoplasmique réelle.", // Leurre
+        ]
+      },
+      {
+        question: "Les sélectines interviennent dans l'adhérence cellulaire. Quel est leur rôle spécifique ?",
+        answers: [
+          "Elles reconnaissent des motifs glucidiques (lectines) et permettent l'adhérence transitoire (rolling) des leucocytes sur l'endothélium enflammé.",
+          "Elles assurent l'adhérence forte et irréversible des cellules souches dans leur niche tissulaire.", // Leurre
+          "Elles forment des jonctions imperméables dans la barrière hémato-encéphalique.", // Leurre
+          "Elles lient les cellules nerveuses entre elles pour guider la croissance des axones.", // Leurre (NCAMs)
+        ]
+      },
+      {
+        question: "Le Pemphigus vulgaire est une maladie auto-immune grave. Quelle structure est ciblée par les anticorps ?",
+        answers: [
+          "Les desmogléines (cadhérines des desmosomes), entraînant la rupture de l'adhérence entre kératinocytes et la formation de bulles cutanées.",
+          "Les collagènes de la lame basale, provoquant le décollement de l'épiderme entier (épidermolyse bulleuse).", // Leurre (Pemphigoïde)
+          "Les connexines des jonctions Gap, causant des arythmies cardiaques fatales par découplage électrique.", // Leurre
+          "Les claudines des jonctions serrées, entraînant une perte massive d'eau par la peau.", // Leurre
+        ]
+      },
+
+      // --- DIVERS & RÉGULATION ---
+      {
+        question: "Les cadhérines sont calcium-dépendantes. Que se passe-t-il si on retire le calcium extracellulaire ?",
+        answers: [
+          "Elles perdent leur rigidité, leur domaine extracellulaire s'effondre et l'adhérence intercellulaire est rompue (dissociation du tissu).",
+          "Elles changent de conformation pour se lier préférentiellement à la matrice extracellulaire plutôt qu'aux autres cellules.", // Leurre
+          "Elles sont immédiatement endocytées et dégradées par les lysosomes pour recycler les acides aminés.", // Leurre
+          "Elles s'activent de manière constitutive, provoquant une agrégation cellulaire irréversible.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle des métalloprotéinases matricielles (MMP) ?",
+        answers: [
+          "Ce sont des enzymes qui dégradent les composants de la matrice (collagène, fibronectine) pour permettre le remodelage tissulaire et la migration.",
+          "Ce sont des protéines chaperonnes qui aident à l'assemblage correct des fibres de collagène dans l'espace extracellulaire.", // Leurre
+          "Ce sont des facteurs de transcription qui activent les gènes codant pour les protéines de la matrice.", // Leurre
+          "Ce sont des inhibiteurs qui bloquent l'action des intégrines pour stabiliser les cellules en place.", // Leurre (TIMP)
+        ]
+      },
+      {
+        question: "La séquence RGD (Arginine-Glycine-Acide Aspartique) est célèbre en biologie cellulaire. Pourquoi ?",
+        answers: [
+          "C'est le motif présent sur la fibronectine (et d'autres protéines matricielles) qui est reconnu et lié spécifiquement par les intégrines.",
+          "C'est la séquence signal qui adresse les protéines matricielles vers la voie de sécrétion constitutive.", // Leurre
+          "C'est le site de clivage enzymatique qui permet la maturation du procollagène en collagène.", // Leurre
+          "C'est le motif de liaison au calcium présent dans les domaines extracellulaires des cadhérines.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que l'adhérence 'Inside-Out' (de l'intérieur vers l'extérieur) des intégrines ?",
+        answers: [
+          "Un signal intracellulaire modifie le cytosquelette et active l'intégrine, augmentant son affinité pour la matrice (ex: activation plaquettaire).",
+          "La liaison de la matrice à l'intégrine déclenche une cascade de phosphorylation intracellulaire (ex: survie cellulaire).", // Leurre (Outside-In)
+          "L'exportation de nouvelles intégrines vers la membrane plasmique lors de la cytocinèse.", // Leurre
+          "Le détachement forcé de la cellule par contraction des fibres de stress d'actine.", // Leurre
+        ]
+      },
+      {
+        question: "Le syndrome d'Ehlers-Danlos est un groupe de maladies génétiques affectant le tissu conjonctif. Quelle est la cause fréquente ?",
+        answers: [
+          "Des mutations affectant la structure, la synthèse ou la maturation des collagènes fibrillaires, entraînant une hyperélasticité cutanée et articulaire.",
+          "Une mutation du gène de la fibrilline-1, causant une croissance osseuse excessive et des problèmes aortiques.", // Leurre (Marfan)
+          "Une absence totale d'intégrines bêta-1, empêchant le développement embryonnaire précoce.", // Leurre
+          "Une surproduction de métalloprotéinases qui détruisent le cartilage articulaire dès l'enfance.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle différence majeure existe-t-il entre la paroi primaire et la paroi secondaire des cellules végétales ?",
+        answers: [
+          "La paroi primaire est extensible et riche en pectines (cellules en croissance), la paroi secondaire est rigide, épaisse, souvent lignifiée et interne à la primaire.",
+          "La paroi primaire est située à l'intérieur, contre la membrane, alors que la paroi secondaire est déposée à l'extérieur.", // Leurre (Inverse)
+          "La paroi primaire contient de la cellulose, alors que la paroi secondaire est composée exclusivement de lignine.", // Leurre
+          "La paroi primaire est imperméable à l'eau, tandis que la paroi secondaire permet les échanges gazeux.", // Leurre
+        ]
+      },
+      {
+        question: "Dans le rein, la lame basale glomérulaire joue un rôle physiologique précis. Lequel ?",
+        answers: [
+          "Elle agit comme un filtre sélectif (charge et taille) empêchant le passage des protéines plasmatiques (albumine) vers l'urine primitive.",
+          "Elle absorbe activement le glucose et les acides aminés pour les renvoyer dans la circulation sanguine.", // Leurre (Tubule proximal)
+          "Elle sécrète de l'érythropoïétine en réponse à une baisse de la pression partielle en oxygène.", // Leurre
+          "Elle permet la contraction du glomérule pour réguler le débit de filtration glomérulaire.", // Leurre (Cellules mésangiales)
+        ]
+      },
+      {
+        question: "Les glycoprotéines de la paroi végétale comme les extensines ont une structure particulière. Laquelle ?",
+        answers: [
+          "Elles sont riches en hydroxyproline et forment des réseaux insolubles en réponse au stress mécanique ou aux pathogènes.",
+          "Elles possèdent des domaines hydrophobes qui traversent la membrane pour former des pores aqueux.", // Leurre
+          "Elles sont capables de se contracter comme la myosine pour permettre le mouvement des chloroplastes.", // Leurre
+          "Elles agissent comme des enzymes qui dégradent la cellulose pour permettre l'élongation cellulaire.", // Leurre
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! La biologie tissulaire est maîtrisée.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bien joué. Attention à ne pas confondre les différents types de jonctions.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Continuez. C'est un sujet dense qui demande de la précision.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
