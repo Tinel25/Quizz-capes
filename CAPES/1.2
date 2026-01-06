@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz : Grandes fonctions chez les Embryophytes</title>
+  <style>
+    /* --- STYLE IDENTIQUE AU PRÉCÉDENT --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #764ba2;
+    }
+    .header h1 { font-size: 24px; margin-bottom: 10px; }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* --- STYLES SPÉCIFIQUES --- */
+    .question-section { margin-bottom: 25px; }
+    .question-text {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .answer-section {
+      display: flex;
+      flex-direction: column;
+      gap: 15px; 
+    }
+    .answer-btn {
+      width: 100%;
+      min-height: 70px; 
+      padding: 15px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 16px;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct {
+      background: #c6f6d5 !important;
+      border-color: #38a169 !important;
+      color: #22543d !important;
+    }
+    .answer-btn.incorrect {
+      background: #fed7d7 !important;
+      border-color: #e53e3e !important;
+      color: #822727 !important;
+    }
+    .quiz-controls {
+      margin-top: 30px;
+      text-align: center;
+      border-top: 1px solid #eee;
+      padding-top: 20px;
+    }
+    #next-btn {
+      background: #764ba2;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+    }
+    #next-btn:hover { background: #673ab7; }
+    .score-board { font-weight: bold; color: #764ba2; margin-bottom: 10px;}
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #eee;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #667eea;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    
+    <div class="header">
+      <h1>Grandes fonctions chez quelques Embryophytes</h1>
+    </div>
+
+    <div id="quiz-box">
+      <div class="score-board">Question <span id="current-q">1</span> / <span id="total-q">30</span></div>
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Votre score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic; color: #555;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto; background: #764ba2; color: white;">Recommencer</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ============================================================
+    // DONNÉES DU QUIZ (30 Questions - Thème 1.2 Embryophytes)
+    // ============================================================
+    // La première réponse est TOUJOURS la bonne (mélangée ensuite par le script).
+    
+    const quizData = [
+      // --- CIRCULATION ET TISSUS VASCULAIRES ---
+      {
+        question: "Quel est le moteur principal de la montée de la sève brute dans le xylème chez les arbres de grande taille ?",
+        answers: [
+          "La transpiration foliaire créant une tension (aspiration) transmise par la cohésion des molécules d'eau.",
+          "La poussée racinaire générée par l'osmose au niveau des poils absorbants.",
+          "La capillarité due au faible diamètre des vaisseaux du xylème.",
+          "Le transport actif des ions potassium qui entraîne l'eau vers le haut."
+        ]
+      },
+      {
+        question: "Quelle est la différence fondamentale entre les éléments conducteurs du xylème et ceux du phloème ?",
+        answers: [
+          "Le xylème est composé de cellules mortes (paroi lignifiée), le phloème de cellules vivantes (tubes criblés).",
+          "Le xylème transporte la matière organique, le phloème transporte l'eau et les sels minéraux.",
+          "Le xylème est vivant mais sans noyau, le phloème est constitué de cellules mortes.",
+          "Le flux dans le xylème est bidirectionnel, alors qu'il est unidirectionnel dans le phloème."
+        ]
+      },
+      {
+        question: "Qu'est-ce que l'embolie (ou cavitation) dans les vaisseaux du xylème ?",
+        answers: [
+          "La rupture de la colonne d'eau liquide par l'apparition d'une bulle d'air, bloquant le transport.",
+          "L'accumulation de sucres qui bouche les vaisseaux.",
+          "L'écrasement des vaisseaux par la croissance secondaire.",
+          "L'infection des vaisseaux par des champignons pathogènes."
+        ]
+      },
+      {
+        question: "Chez les Gymnospermes, quels sont les éléments conducteurs de la sève brute ?",
+        answers: [
+          "Les trachéides uniquement (vaisseaux imparfaits).",
+          "Les vaisseaux parfaits et les trachéides.",
+          "Les tubes criblés.",
+          "Les vaisseaux ponctués ouverts aux deux extrémités."
+        ]
+      },
+      {
+        question: "Comment se nomment les cellules compagnes du phloème qui assurent le chargement actif des sucres ?",
+        answers: [
+          "Les cellules de transfert.",
+          "Les cellules de garde.",
+          "Le parenchyme palissadique.",
+          "Les éléments de vaisseau."
+        ]
+      },
+
+      // --- NUTRITION HYDROMINÉRALE ---
+      {
+        question: "Quel est le rôle de la bande de Caspary située dans l'endoderme de la racine ?",
+        answers: [
+          "Elle bloque la voie apoplastique, forçant l'eau et les ions à traverser la membrane plasmique (filtrage sélectif).",
+          "Elle permet le passage rapide de l'eau par capillarité vers le cylindre central.",
+          "Elle stocke l'amidon sous forme de statolithes pour la perception de la gravité.",
+          "Elle protège la racine contre les herbivores grâce à sa lignification intense."
+        ]
+      },
+      {
+        question: "La majorité de l'absorption hydrominérale chez les plantes forestières est assurée par :",
+        answers: [
+          "Les mycorhizes (symbiose avec des champignons).",
+          "Les poils absorbants situés à l'apex racinaire uniquement.",
+          "L'épiderme de la tige principale.",
+          "La coiffe racinaire."
+        ]
+      },
+      {
+        question: "Lors de la symbiose fixatrice d'azote (Rhizobium/Légumineuses), quelle molécule protège la nitrogénase de l'oxygène ?",
+        answers: [
+          "La léghémoglobine.",
+          "La chlorophylle b.",
+          "La rubisco.",
+          "L'auxine."
+        ]
+      },
+      {
+        question: "Quel mécanisme permet l'entrée des nitrates (NO3-) dans les cellules racinaires contre leur gradient de concentration ?",
+        answers: [
+          "Un symport H+/NO3- utilisant le gradient de protons généré par une pompe H+-ATPase.",
+          "Une diffusion simple à travers la bicouche lipidique.",
+          "Un canal ionique passif voltage-dépendant.",
+          "L'endocytose de gouttelettes d'eau contenant les nitrates."
+        ]
+      },
+      {
+        question: "Que signifie la 'voie symplastique' de transport dans la racine ?",
+        answers: [
+          "Le transport de cellule à cellule via les plasmodesmes (continuité cytoplasmique).",
+          "Le transport via les parois cellulaires et les méats intercellulaires.",
+          "Le transport via les vaisseaux du xylème uniquement.",
+          "Le transport exclusif par les vacuoles."
+        ]
+      },
+
+      // --- PHOTOSYNTHÈSE ET GAZ ---
+      {
+        question: "Quel est le mécanisme d'ouverture des stomates à la lumière ?",
+        answers: [
+          "L'entrée active de K+ dans les cellules de garde, suivie d'une entrée d'eau (augmentation de la turgescence).",
+          "La sortie d'eau des cellules de garde qui deviennent flasques.",
+          "La contraction des parois cellulaires sous l'effet de l'ABA (acide abscissique).",
+          "La production directe de glucose qui force l'ostiole à s'ouvrir mécaniquement."
+        ]
+      },
+      {
+        question: "Quelle est la fonction première de la Rubisco (Ribulose-1,5-bisphosphate carboxylase/oxygenase) ?",
+        answers: [
+          "Catalyser la fixation du CO2 sur le RuBP (Ribulose Bisphosphate).",
+          "Convertir l'énergie lumineuse en ATP.",
+          "Régénérer le NADPH dans la phase claire.",
+          "Transporter les électrons dans la chaîne photosynthétique."
+        ]
+      },
+      {
+        question: "Quel avantage procurent les plantes en C4 (ex: Maïs) par rapport aux plantes en C3 ?",
+        answers: [
+          "Elles concentrent le CO2 autour de la Rubisco, limitant la photorespiration en climat chaud et sec.",
+          "Elles n'ont pas besoin de lumière pour fixer le carbone.",
+          "Elles fixent l'azote atmosphérique directement par les feuilles.",
+          "Elles utilisent l'oxygène au lieu du CO2 pour produire des sucres."
+        ]
+      },
+      {
+        question: "Chez les plantes CAM (ex: Cactus), quand les stomates sont-ils ouverts ?",
+        answers: [
+          "La nuit, pour fixer le CO2 sous forme d'acide malique et limiter les pertes d'eau.",
+          "Le jour, pour profiter de l'énergie solaire immédiatement.",
+          "En permanence, car elles vivent dans des milieux humides.",
+          "Uniquement lorsqu'il pleut."
+        ]
+      },
+      {
+        question: "Où se déroule la photolyse de l'eau (oxydation de l'eau) ?",
+        answers: [
+          "Dans la lumière (lumen) des thylakoïdes, associée au photosystème II.",
+          "Dans le stroma du chloroplaste.",
+          "Dans la membrane externe de la mitochondrie.",
+          "Dans le cytoplasme de la cellule."
+        ]
+      },
+
+      // --- CROISSANCE ET DÉVELOPPEMENT ---
+      {
+        question: "Quel méristème assure la croissance en épaisseur (secondaire) produisant le bois et le liber ?",
+        answers: [
+          "Le cambium cribro-vasculaire (assise génératrice libéro-ligneuse).",
+          "Le méristème apical caulinaire.",
+          "Le méristème intercalaire.",
+          "Le phellogène (qui produit le liège)."
+        ]
+      },
+      {
+        question: "Quel est l'effet principal de l'auxine lorsqu'elle s'accumule sur la face à l'ombre d'une tige ?",
+        answers: [
+          "Elle stimule l'élongation cellulaire (phototropisme positif).",
+          "Elle inhibe la croissance cellulaire.",
+          "Elle provoque la chute des feuilles.",
+          "Elle déclenche la floraison immédiate."
+        ]
+      },
+      {
+        question: "La dominance apicale (inhibition des bourgeons axillaires par le bourgeon terminal) est levée par :",
+        answers: [
+          "Les cytokinines venant des racines.",
+          "L'éthylène produit localement.",
+          "L'acide abscissique en période de sécheresse.",
+          "Les gibbérellines produites par les jeunes feuilles."
+        ]
+      },
+      {
+        question: "Qu'est-ce que le gravitropisme positif de la racine ?",
+        answers: [
+          "La croissance orientée vers le bas, guidée par la sédimentation des statolithes dans la coiffe.",
+          "La croissance vers la lumière.",
+          "La capacité de la racine à contourner les obstacles (thigmotropisme).",
+          "L'attraction de la racine par l'eau du sol."
+        ]
+      },
+
+      // --- ADAPTATIONS ET DIVERSITÉ (BRYOPHYTES, PTÉRIDOPHYTES...) ---
+      {
+        question: "Quelle fonction est absente chez les Bryophytes (mousses) par rapport aux Tracheophytes ?",
+        answers: [
+          "La conduction efficace de l'eau par du vrai xylème lignifié.",
+          "La photosynthèse.",
+          "La reproduction sexuée.",
+          "La présence de stomates (chez certaines mousses, ils existent mais sont rares)."
+        ]
+      },
+      {
+        question: "Chez les Angiospermes, la double fécondation aboutit à la formation de :",
+        answers: [
+          "Un embryon (2n) et un albumen (3n) qui servira de réserve.",
+          "Deux embryons jumeaux identiques.",
+          "Un embryon (2n) et un fruit sans graines.",
+          "Un zygote principal et un zygote de réserve qui dégénère."
+        ]
+      },
+      {
+        question: "Quel polymère complexe confère la rigidité et l'imperméabilité aux vaisseaux du xylème ?",
+        answers: [
+          "La lignine.",
+          "La cellulose.",
+          "La pectine.",
+          "La subérine."
+        ]
+      },
+      {
+        question: "Quel est le rôle de la coiffe à l'extrémité de la racine ?",
+        answers: [
+          "Protéger le méristème et faciliter la pénétration dans le sol (mucigel).",
+          "Absorber la majorité de l'eau et des minéraux.",
+          "Produire les poils absorbants.",
+          "Réaliser la photosynthèse souterraine."
+        ]
+      },
+      {
+        question: "Comment définit-on le potentiel hydrique (Ψ) dans une plante ?",
+        answers: [
+          "C'est l'énergie libre de l'eau; l'eau circule spontanément des potentiels élevés (moins négatifs) vers les potentiels bas (plus négatifs).",
+          "C'est la quantité totale d'eau contenue dans une cellule.",
+          "C'est la pression exercée par la paroi sur le cytoplasme.",
+          "C'est la capacité de la plante à résister à la sécheresse."
+        ]
+      },
+      {
+        question: "Quelle hormone est surnommée 'hormone de stress' et provoque la fermeture des stomates ?",
+        answers: [
+          "L'acide abscissique (ABA).",
+          "L'auxine (AIA).",
+          "L'éthylène.",
+          "La zéatine."
+        ]
+      },
+      {
+        question: "Les plantes parasites comme le Gui (viscum album) prélèvent leurs ressources grâce à :",
+        answers: [
+          "Des suçoirs (haustoria) qui pénètrent jusqu'aux tissus conducteurs de l'hôte.",
+          "Des racines aériennes qui captent l'humidité ambiante.",
+          "Une symbiose avec des fourmis.",
+          "La décomposition des feuilles mortes accumulées sur les branches."
+        ]
+      },
+      {
+        question: "La cuticule présente sur l'épiderme des feuilles a pour fonction principale :",
+        answers: [
+          "De limiter les pertes d'eau (transpiration) grâce à sa nature lipidique hydrophobe.",
+          "D'augmenter la surface d'absorption de la lumière.",
+          "De permettre les échanges gazeux directs.",
+          "De sécréter des enzymes digestives contre les insectes."
+        ]
+      },
+      {
+        question: "Dans le cycle de développement des fougères (Ptéridophytes), la phase dominante visible est :",
+        answers: [
+          "Le sporophyte (diploïde).",
+          "Le gamétophyte (haploïde) appelé prothalle.",
+          "Le grain de pollen.",
+          "L'archégone."
+        ]
+      },
+      {
+        question: "L'éthylène est une phytohormone particulière car :",
+        answers: [
+          "C'est un gaz, responsable notamment de la maturation des fruits climactériques.",
+          "Elle est transportée uniquement par le xylème.",
+          "Elle n'agit qu'à des concentrations très élevées.",
+          "Elle est produite exclusivement par les racines."
+        ]
+      },
+      {
+        question: "Les plastes responsables du stockage de l'amidon dans les organes de réserve (ex: pomme de terre) sont les :",
+        answers: [
+          "Amyloplastes.",
+          "Chromoplastes.",
+          "Chloroplastes.",
+          "Étioplastes."
+        ]
+      }
+    ];
+
+    // ============================================================
+    // LOGIQUE DU QUIZ
+    // ============================================================
+    
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const progressFill = document.getElementById('progress-fill');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({
+              text: answer,
+              correct: index === 0 
+          });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        button.dataset.correct = answerObj.correct; 
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        const finalScoreSpan = document.getElementById('final-score');
+        finalScoreSpan.innerText = score;
+        document.getElementById('total-score').innerText = quizData.length;
+        
+        const feedback = document.getElementById('feedback-message');
+        const percentage = (score / quizData.length) * 100;
+        
+        if(percentage >= 80) {
+            feedback.innerText = "Excellent ! Vos connaissances en biologie végétale sont solides.";
+            finalScoreSpan.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedback.innerText = "Bon travail. Revoir les mécanismes de la photosynthèse ou de l'histologie pourrait aider.";
+            finalScoreSpan.style.color = "#d69e2e";
+        } else {
+            feedback.innerText = "Continuez vos efforts. Focalisez-vous sur les différences Xylème/Phloème et les cycles de vie.";
+            finalScoreSpan.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+
+  </script>
+</body>
+</html>
