@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : La Respiration</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 2.1 : La Respiration et le Milieu</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 2.1 : RESPIRATION
+       - Réponses calibrées pour éviter le biais de longueur.
+       - Questions axées sur les interactions milieu/organisme (Loi de Fick, adaptations, etc.)
+    */
+    const quizData = [
+      // --- PHYSIQUE DES GAZ & MILIEU ---
+      {
+        question: "Selon la loi de Fick, quels facteurs maximisent le flux de diffusion d'un gaz à travers une membrane ?",
+        answers: [
+          "Une grande surface d'échange, une faible épaisseur de la membrane et un fort gradient de pression partielle de part et d'autre.",
+          "Une petite surface d'échange très vascularisée associée à une épaisseur membranaire importante pour protéger les tissus.", // Leurre
+          "Une solubilité faible du gaz dans la membrane lipidique combinée à une température corporelle élevée.", // Leurre
+          "Une pression totale identique des deux côtés de la membrane mais avec une concentration en gaz inerte élevée.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la contrainte physique majeure de la respiration aquatique par rapport à la respiration aérienne ?",
+        answers: [
+          "La solubilité de l'O2 dans l'eau est faible (environ 30 fois moins que dans l'air) et la viscosité de l'eau est élevée, augmentant le coût énergétique ventilatoire.",
+          "Le CO2 est beaucoup moins soluble dans l'eau que dans l'air, ce qui rend son élimination par les branchies extrêmement difficile.", // Leurre (Faux, CO2 très soluble)
+          "L'eau contient une proportion d'azote gazeux beaucoup plus élevée que l'air, risquant de provoquer des embolies gazeuses spontanées.", // Leurre
+          "La densité de l'eau étant faible, elle ne permet pas de soutenir les structures branchiales qui doivent être renforcées par du cartilage.", // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi l'effet de la température est-il critique pour les organismes aquatiques ectothermes (poissons) ?",
+        answers: [
+          "Lorsque la température augmente, la solubilité de l'O2 diminue alors que le métabolisme (et donc la demande en O2) augmente, créant un risque d'hypoxie.",
+          "Lorsque la température augmente, l'eau devient plus visqueuse, ce qui facilite la ventilation branchiale mais réduit la diffusion.", // Leurre (Viscosité baisse quand T° monte)
+          "L'augmentation de la température favorise la dissociation de l'hémoglobine, rendant le sang incapable de relâcher l'O2 aux tissus.", // Leurre
+          "La température froide empêche le CO2 de se dissoudre dans le plasma, provoquant une alcalose respiratoire sévère.", // Leurre
+        ]
+      },
+
+      // --- ANATOMIE & VENTILATION ---
+      {
+        question: "Quel mécanisme ventilatoire permet aux oiseaux d'avoir le système respiratoire le plus efficace des Vertébrés ?",
+        answers: [
+          "Un flux d'air unidirectionnel continu dans les poumons (parabronches) grâce à un système de sacs aériens antérieurs et postérieurs agissant comme des soufflets.",
+          "Une ventilation tidale (en cul-de-sac) avec un volume résiduel important qui tamponne les variations de gaz sanguins.", // Leurre (Mammifères)
+          "Un système à contre-courant parfait entre l'air alvéolaire et le sang capillaire, similaire à celui des branchies de poissons.", // Leurre (Oiseaux = courant croisé / cross-current)
+          "Une respiration cutanée accessoire très développée qui prend le relais lors du vol à haute altitude.", // Leurre
+        ]
+      },
+      {
+        question: "Comment fonctionne le système à contre-courant dans les branchies des Téléostéens ?",
+        answers: [
+          "L'eau et le sang circulent en sens inverse, ce qui maintient un gradient de pression partielle d'O2 favorable sur toute la longueur de la lamelle.",
+          "L'eau et le sang circulent dans le même sens pour équilibrer rapidement leurs pressions partielles à 50% de saturation.", // Leurre (Co-courant)
+          "Le sang circule perpendiculairement au flux d'eau, optimisant ainsi l'extraction du CO2 mais limitant celle de l'O2.", // Leurre (Cross-current)
+          "Le flux sanguin est pulsatile et synchronisé avec les mouvements operculaires pour minimiser le temps de résidence.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le mécanisme principal de la ventilation chez les Amphibiens adultes (ex: grenouille) ?",
+        answers: [
+          "Une pompe buccale à pression positive : l'air est avalé de force vers les poumons grâce à l'élévation du plancher buccal.",
+          "Une pompe d'aspiration à pression négative créée par l'abaissement du diaphragme et l'expansion de la cage thoracique.", // Leurre (Amniotes)
+          "Une diffusion passive exclusive à travers la peau maintenue humide, sans aucun mouvement ventilatoire actif.", // Leurre
+          "Un système de sacs aériens dorsaux qui se remplissent par capillarité lors de l'immersion dans l'eau.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité du système trachéen des Insectes ?",
+        answers: [
+          "Il transporte l'O2 gazeux directement jusqu'aux cellules via des trachéoles, sans passer par le système circulatoire (l'hémolymphe ne transporte pas d'O2).",
+          "Il utilise l'hémocyanine dissoute dans l'hémolymphe pour capter l'O2 au niveau des stigmates et le distribuer aux muscles.", // Leurre
+          "Il est connecté à un poumon primitif appelé poumon en livre, situé dans l'abdomen, où se font les échanges gazeux.", // Leurre (Arachnides)
+          "Il ne fonctionne que par diffusion passive, ce qui empêche les insectes de contrôler activement leur ventilation.", // Leurre (Ils ont une ventilation active/convection)
+        ]
+      },
+
+      // --- TRANSPORTEURS & PIGMENTS ---
+      {
+        question: "Qu'est-ce que l'effet Bohr et quel est son intérêt physiologique ?",
+        answers: [
+          "Une diminution de l'affinité de l'hémoglobine pour l'O2 en présence d'une baisse de pH (ou hausse de CO2), favorisant la libération d'O2 aux tissus actifs.",
+          "Une augmentation de l'affinité de l'hémoglobine pour l'O2 lorsque la température augmente, protégeant l'organisme contre l'hypoxie thermique.", // Leurre
+          "La capacité de l'hémoglobine à fixer le CO2 sur ses groupements amines terminaux pour former de la carbamino-hémoglobine.", // Leurre (Effet Haldane)
+          "L'inhibition de la glycolyse érythrocytaire en présence d'une forte concentration d'oxygène dans les poumons.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la spécificité de l'effet Root observé chez certains poissons téléostéens ?",
+        answers: [
+          "Une chute drastique de la capacité maximale de fixation de l'O2 par l'hémoglobine à pH acide, permettant de remplir la vessie gazeuse sous pression.",
+          "Une augmentation de l'affinité pour l'O2 à pH acide, permettant au poisson de survivre dans des eaux très riches en CO2.", // Leurre
+          "La transformation irréversible de l'hémoglobine en méthémoglobine lorsque la pression hydrostatique dépasse 10 atmosphères.", // Leurre
+          "La capacité de transporter l'oxygène sous forme dissoute dans le plasma lorsque les érythrocytes sont saturés.", // Leurre
+        ]
+      },
+      {
+        question: "Comment le 2,3-diphosphoglycérate (2,3-DPG) module-t-il l'affinité de l'hémoglobine chez les Mammifères ?",
+        answers: [
+          "Il se lie aux chaînes bêta de la désoxyhémoglobine, stabilisant la forme T (tendue) et diminuant ainsi l'affinité pour l'O2 (facilitant le largage).",
+          "Il se fixe sur le fer de l'hème à la place de l'oxygène, augmentant ainsi la capacité de transport du sang en altitude.", // Leurre
+          "Il catalyse la réaction d'hydratation du CO2 en bicarbonate, empêchant l'acidification excessive du cytoplasme érythrocytaire.", // Leurre
+          "Il augmente l'affinité de l'hémoglobine pour l'O2, ce qui est essentiel pour capter l'oxygène dans les poumons fœtaux.", // Leurre (Le fœtus a moins de 2,3-DPG)
+        ]
+      },
+      {
+        question: "Quelle est la différence structurale majeure entre l'hémoglobine et l'hémocyanine ?",
+        answers: [
+          "L'hémoglobine contient du fer (hème) et est intra-cellulaire (érythrocytes), l'hémocyanine contient du cuivre et est dissoute dans le plasma.",
+          "L'hémoglobine est un dimère de transport du CO2, alors que l'hémocyanine est un tétramère spécialisé dans le transport de l'O2.", // Leurre
+          "L'hémoglobine est de couleur bleue lorsqu'elle est oxygénée, tandis que l'hémocyanine devient rouge vif.", // Leurre (Inverse)
+          "L'hémoglobine est spécifique des Vertébrés terrestres, tandis que l'hémocyanine ne se trouve que chez les plantes aquatiques.", // Leurre
+        ]
+      },
+
+      // --- RÉGULATION DE LA RESPIRATION ---
+      {
+        question: "Quel est le principal stimulus chimique (driver) de la ventilation chez un Mammifère terrestre au repos ?",
+        answers: [
+          "La pression partielle de CO2 (PaCO2) artérielle, détectée indirectement par le pH du liquide céphalo-rachidien au niveau du tronc cérébral.",
+          "La pression partielle d'O2 (PaO2) artérielle, détectée par les chémorécepteurs des glomus carotidiens et aortiques.", // Leurre (C'est le driver secondaire/hypoxique)
+          "La concentration en lactate plasmatique, qui stimule directement les centres respiratoires bulbaires pour compenser l'acidose.", // Leurre
+          "Le taux de saturation de l'hémoglobine veineuse, mesuré par des barorécepteurs situés dans l'oreillette droite du cœur.", // Leurre
+        ]
+      },
+      {
+        question: "Chez les poissons, quel est le paramètre principal qui régule la ventilation branchiale ?",
+        answers: [
+          "La pression partielle d'O2 (PaO2), car l'oxygène est le facteur limitant dans l'eau et le CO2 est très soluble et s'élimine facilement.",
+          "La pression partielle de CO2 (PaCO2), car une accumulation de CO2 provoque une acidose mortelle beaucoup plus vite qu'un manque d'O2.", // Leurre (Vrai pour aériens, faux pour aquatiques)
+          "La salinité de l'eau, détectée par des osmorécepteurs branchiaux qui ajustent le débit d'eau pour limiter les pertes ioniques.", // Leurre
+          "La température de l'eau, qui agit directement sur la fréquence de décharge du nœud sinusal du cœur.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que le réflexe d'Hering-Breuer ?",
+        answers: [
+          "Un réflexe mécanorécepteur qui inhibe l'inspiration lorsque les poumons sont trop distendus, protégeant contre le sur-étirement.",
+          "Un réflexe chémorécepteur qui déclenche une hyperventilation immédiate en réponse à une baisse brutale du pH sanguin.", // Leurre
+          "Un réflexe de plongée qui provoque une bradycardie et une vasoconstriction périphérique lors de l'immersion de la face.", // Leurre
+          "Un réflexe de toux déclenché par l'irritation des voies aériennes supérieures pour expulser les corps étrangers.", // Leurre
+        ]
+      },
+
+      // --- ADAPTATIONS (ALTITUDE, PLONGÉE) ---
+      {
+        question: "Quelle adaptation physiologique immédiate (acclimatation) se produit chez l'humain en haute altitude ?",
+        answers: [
+          "Une hyperventilation réflexe induite par l'hypoxie, entraînant une alcalose respiratoire qui augmente l'affinité de l'Hb pour l'O2.",
+          "Une diminution de la fréquence cardiaque pour économiser l'oxygène consommé par le muscle cardiaque.", // Leurre
+          "Une synthèse massive et immédiate (en quelques minutes) de nouveaux globules rouges par la moelle osseuse.", // Leurre (Prend des semaines)
+          "Une vasodilation généralisée des artérioles systémiques pour augmenter le débit sanguin vers tous les organes.", // Leurre
+        ]
+      },
+      {
+        question: "Chez les oiseaux migrateurs de haute altitude (ex: Oie à tête barrée), quelle adaptation moléculaire est observée ?",
+        answers: [
+          "Une mutation de l'hémoglobine qui augmente son affinité pour l'O2 (décalage de la courbe vers la gauche) pour capter l'O2 raréfié.",
+          "Une augmentation de la concentration en 2,3-DPG qui diminue l'affinité de l'Hb et facilite le largage aux tissus.", // Leurre (Contre-productif en altitude extrême pour le chargement)
+          "Une capacité à passer en métabolisme anaérobie strict pendant toute la durée du vol au-dessus de l'Himalaya.", // Leurre
+          "Le développement de poumons alvéolaires de type mammalien pour augmenter la surface d'échange respiratoire.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le mécanisme principal permettant aux Mammifères marins (Cétacés, Phoques) de plonger longtemps ?",
+        answers: [
+          "Le stockage massif d'oxygène dans la myoglobine musculaire et une vasoconstriction périphérique sélective (diving reflex) épargnant cerveau et cœur.",
+          "Le stockage d'un grand volume d'air dans des poumons surdimensionnés qu'ils utilisent lentement au cours de la plongée.", // Leurre (Faux, les poumons s'écrasent)
+          "La capacité de leurs branchies vestigiales à extraire l'oxygène dissous dans l'eau de mer profonde.", // Leurre
+          "Une accélération importante du rythme cardiaque (tachycardie) pour faire circuler le sang plus vite vers les muscles actifs.", // Leurre (Inverse : bradycardie)
+        ]
+      },
+      {
+        question: "Pourquoi les plongeurs profonds risquent-ils la maladie de décompression (accident de désaturation) ?",
+        answers: [
+          "L'azote dissous dans les tissus à haute pression forme des bulles de gaz dans le sang lors d'une remontée trop rapide, bloquant la circulation.",
+          "L'oxygène devient toxique à haute pression et provoque des convulsions immédiates détruisant les neurones.", // Leurre (Hyperoxie, mais pas la décompression)
+          "Le CO2 s'accumule dans les poumons comprimés et provoque une narcose qui empêche le plongeur de respirer.", // Leurre
+          "La pression hydrostatique écrase les alvéoles pulmonaires, empêchant définitivement leur réouverture à la surface.", // Leurre
+        ]
+      },
+
+      // --- DIVERSITÉ & ÉVOLUTION ---
+      {
+        question: "Les Dipneustes (poissons pulmonés) illustrent une transition évolutive importante. Comment respirent-ils ?",
+        answers: [
+          "Ils possèdent à la fois des branchies (souvent réduites) et des poumons fonctionnels homologues à ceux des tétrapodes, leur permettant de respirer l'air.",
+          "Ils utilisent leur vessie natatoire uniquement pour la flottabilité, leur respiration étant assurée par la peau en cas de sécheresse.", // Leurre
+          "Ils stockent de l'eau dans une poche branchiale spéciale qu'ils font circuler en circuit fermé lorsqu'ils sont hors de l'eau.", // Leurre
+          "Ils sont capables de métaboliser la vase du fond des rivières pour en extraire l'oxygène chimique lié aux sédiments.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que le plastron respiratoire chez certains insectes aquatiques (ex: Aphelocheirus) ?",
+        answers: [
+          "Une structure de poils hydrophobes retenant une fine couche d'air permanente qui fonctionne comme une branchie physique (diffusion O2 eau->air).",
+          "Une carapace rigide imperméable qui stocke une réserve d'air comprimé utilisée lors des plongées profondes.", // Leurre
+          "Un appendice abdominal long (siphon) qui doit percer la surface de l'eau pour renouveler l'air trachéen.", // Leurre (Siphon ≠ plastron)
+          "Une symbiose avec des algues vertes fixées sur la cuticule qui produisent de l'oxygène directement injecté dans les trachées.", // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi la respiration cutanée est-elle efficace chez la salamandre mais négligeable chez le lézard ?",
+        answers: [
+          "La salamandre a une peau fine, humide et perméable ; le lézard a une peau épaisse, kératinisée et sèche (écailles) pour éviter la déshydratation.",
+          "La salamandre possède un système circulatoire double qui envoie tout le sang à la peau, contrairement au lézard.", // Leurre
+          "Le lézard a un métabolisme beaucoup plus faible que la salamandre et n'a pas besoin de supplément d'oxygène cutané.", // Leurre (Lézard = métabolisme souvent plus élevé)
+          "La salamandre vit dans l'eau où l'oxygène diffuse mieux à travers la peau que dans l'air sec où vit le lézard.", // Leurre (Diffusion O2 plus rapide dans l'air)
+        ]
+      },
+
+      // --- SITUATIONS EXTRÊMES ---
+      {
+        question: "Comment le fœtus mammalien parvient-il à extraire l'oxygène du sang maternel au niveau du placenta ?",
+        answers: [
+          "L'hémoglobine fœtale a une affinité pour l'O2 supérieure à celle de l'hémoglobine maternelle, favorisant le transfert Mère -> Fœtus.",
+          "Le sang fœtal et maternel se mélangent dans les villosités choriales, permettant une équilibration parfaite des pressions partielles.", // Leurre (Pas de mélange)
+          "Le fœtus utilise une pompe active à oxygène située sur la membrane du trophoblaste qui consomme de l'ATP placentaire.", // Leurre
+          "La température du fœtus étant inférieure à celle de la mère, l'effet thermique favorise la capture de l'oxygène.", // Leurre (Fœtus souvent plus chaud)
+        ]
+      },
+      {
+        question: "Qu'est-ce que l'hypoxie environnementale et comment certains poissons (ex: Carpe) y survivent-ils ?",
+        answers: [
+          "C'est une baisse du taux d'O2 dans l'eau ; la carpe survit en augmentant l'affinité de son Hb et en utilisant la fermentation anaérobie produisant de l'éthanol.",
+          "C'est une augmentation de la salinité ; la carpe survit en buvant de l'eau douce stockée dans sa vessie natatoire.", // Leurre
+          "C'est une pollution aux métaux lourds ; la carpe survit en séquestrant les toxines dans son foie grâce à des métallothionéines.", // Leurre
+          "C'est une baisse de température ; la carpe survit en entrant en hibernation profonde au fond de la vase.", // Leurre
+        ]
+      },
+      
+      // --- BIOMÉCANIQUE RESPIRATOIRE ---
+      {
+        question: "Quel est le rôle du surfactant pulmonaire sécrété par les pneumocytes II ?",
+        answers: [
+          "Il réduit la tension superficielle à l'interface air-liquide des alvéoles, empêchant leur collapsus à l'expiration et réduisant l'effort inspiratoire.",
+          "Il agit comme un antibiotique naturel empêchant la prolifération bactérienne dans le milieu chaud et humide des poumons.", // Leurre
+          "Il facilite la dissolution du CO2 dans le plasma en catalysant sa transformation en acide carbonique.", // Leurre
+          "Il forme une couche imperméable qui empêche l'eau des capillaires sanguins d'inonder les alvéoles pulmonaires.", // Leurre
+        ]
+      },
+      {
+        question: "La compliance pulmonaire désigne :",
+        answers: [
+          "La capacité du poumon à se distendre sous l'effet d'une pression ; une compliance élevée signifie une distension facile (faible élasticité).",
+          "La résistance des voies aériennes au flux d'air, déterminée principalement par le diamètre des bronchioles.", // Leurre
+          "Le volume maximal d'air que le poumon peut contenir après une inspiration forcée (Capacité Pulmonaire Totale).", // Leurre
+          "La vitesse à laquelle les gaz diffusent à travers la membrane alvéolo-capillaire selon la loi de Fick.", // Leurre
+        ]
+      },
+      {
+        question: "Le volume résiduel (VR) dans les poumons mammaliens correspond à :",
+        answers: [
+          "Le volume d'air qui reste dans les poumons après une expiration forcée maximale et qui ne peut jamais être expulsé volontairement.",
+          "Le volume d'air inspiré et expiré au repos lors d'une respiration normale (volume courant).", // Leurre
+          "Le volume d'air supplémentaire qu'on peut inspirer après une inspiration normale (volume de réserve inspiratoire).", // Leurre
+          "L'espace mort anatomique des voies aériennes conductrices où il n'y a pas d'échanges gazeux.", // Leurre
+        ]
+      },
+
+      // --- COMPARATIF FINAL ---
+      {
+        question: "Quel animal possède un poumon diffus (ou poumon vasculaire) qui n'est pas une invagination mais une cavité palléale vascularisée ?",
+        answers: [
+          "L'Escargot (Gastéropode pulmoné) : sa cavité palléale s'ouvre par un pneumostome et sa paroi richement vascularisée sert de poumon.",
+          "L'Araignée : elle possède des poumons en feuillets qui sont des invaginations de l'exosquelette abdominal.", // Leurre
+          "L'Holothurie (Concombre de mer) : elle respire par des arbres respiratoires qui sont des évaginations du cloaque.", // Leurre
+          "Le Lombric : il utilise son cœlome comme une chambre respiratoire interne brassée par les mouvements du corps.", // Leurre
+        ]
+      },
+      {
+        question: "En termes de coût énergétique, lequel de ces modes respiratoires est le plus coûteux ?",
+        answers: [
+          "La ventilation branchiale dans l'eau, car il faut déplacer une masse importante d'un fluide dense et visqueux pour extraire peu d'O2.",
+          "La ventilation pulmonaire chez les mammifères, à cause de la résistance élastique élevée du tissu pulmonaire.", // Leurre
+          "La ventilation trachéenne chez les insectes, car la diffusion des gaz dans les tubes longs est très lente.", // Leurre
+          "La respiration cutanée chez les amphibiens, car elle nécessite une production permanente de mucus protecteur.", // Leurre
+        ]
+      },
+      {
+        question: "La respiration des embryons d'Oiseaux (dans l'œuf) est assurée par :",
+        answers: [
+          "L'allantoïde, une annexe embryonnaire vascularisée qui s'accole à la coquille poreuse pour échanger les gaz par diffusion.",
+          "Le sac vitellin, qui contient des réserves d'oxygène stockées par la mère lors de la formation de l'œuf.", // Leurre
+          "Les branchies temporaires de l'embryon qui filtrent le liquide amniotique environnant.", // Leurre
+          "L'amnios, dont le liquide circule activement grâce aux mouvements de l'embryon pour capter l'air extérieur.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle affirmation est vraie concernant la respiration des Reptiles non aviens (ex: Tortue, Lézard) ?",
+        answers: [
+          "Ils ventilent par aspiration (dépression) grâce aux muscles intercostaux ou abdominaux, n'ayant pas de diaphragme musculaire complet.",
+          "Ils possèdent une respiration cutanée aussi efficace que celle des amphibiens grâce à des écailles perméables.", // Leurre
+          "Leur ventilation est unidirectionnelle comme celle des oiseaux, utilisant des sacs aériens abdominaux complexes.", // Leurre (C'est vrai pour croco/varan, mais pas généralisé/classique dans les QCM de base vs Oiseaux)
+          "Ils doivent déglutir l'air comme les grenouilles car leur cage thoracique est rigide et immobile.", // Leurre
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ (Standardisé) ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! La physiologie respiratoire est acquise.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Pas mal. Revoyez les courbes de dissociation de l'Hb.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Accrochez-vous. La respiration est un chapitre technique.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
