@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Organisation Cellulaire</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 3.1 : Organisation fonctionnelle de la cellule</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 3.1 : ORGANISATION FONCTIONNELLE DE LA CELLULE
+       - Réponses calibrées pour éviter le biais de longueur.
+       - Focus sur ultrastructure, compartimentation et cytosquelette.
+    */
+    const quizData = [
+      // --- MÉTHODES D'ÉTUDE & GÉNÉRALITÉS ---
+      {
+        question: "Quelle est la limite théorique de résolution d'un microscope optique photonique classique ?",
+        answers: [
+          "Environ 0,2 µm (200 nm), limitée par la longueur d'onde de la lumière visible et l'ouverture numérique de l'objectif.",
+          "Environ 1 nm, ce qui permet d'observer les ribosomes et les détails fins des membranes internes.", // Leurre (C'est le MET)
+          "Environ 10 µm, ce qui est suffisant pour voir les cellules mais pas les organites internes comme le noyau.", // Leurre
+          "Il n'y a pas de limite théorique, cela dépend uniquement de la puissance de grossissement des lentilles utilisées.", // Leurre
+        ]
+      },
+      {
+        question: "Le fractionnement cellulaire par centrifugation différentielle permet de séparer les organites selon :",
+        answers: [
+          "Leur taille et leur densité : les noyaux sédimentent en premier (basse vitesse), suivis des mitochondries, puis des microsomes.",
+          "Leur charge électrique de surface : les organites positifs migrent vers le fond du tube sous l'effet du champ centrifuge.", // Leurre
+          "Leur solubilité dans les lipides : les organites riches en membranes flottent tandis que les structures protéiques coulent.", // Leurre
+          "Leur activité enzymatique spécifique qui modifie la viscosité du milieu de centrifugation.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle technique permet de localiser précisément une protéine spécifique dans une cellule fixée ?",
+        answers: [
+          "L'immunofluorescence : utilisation d'un anticorps primaire spécifique et d'un anticorps secondaire couplé à un fluorochrome.",
+          "La coloration au vert Janus qui marque spécifiquement les mitochondries vivantes par réaction d'oxydoréduction.", // Leurre (Colorant vital non spécifique prot)
+          "L'électrophorèse SDS-PAGE qui sépare les protéines selon leur poids moléculaire dans un gel de polyacrylamide.", // Leurre (Sépare mais ne localise pas in situ)
+          "La centrifugation en gradient de densité de saccharose qui isole les organites contenant la protéine.", // Leurre
+        ]
+      },
+
+      // --- LE NOYAU & L'EXPRESSION ---
+      {
+        question: "Quelle est la structure et la fonction du complexe du pore nucléaire (NPC) ?",
+        answers: [
+          "C'est un complexe protéique octogonal traversant la double membrane qui régule le transport bidirectionnel sélectif (importines/exportines).",
+          "C'est un simple canal aqueux passif qui laisse diffuser librement toutes les molécules inférieures à 100 kDa.", // Leurre
+          "C'est une pompe active consommant de l'ATP pour injecter l'ADN nouvellement répliqué dans le cytoplasme.", // Leurre
+          "C'est une structure lipidique transitoire qui ne se forme que lors de la mitose pour permettre la rupture de l'enveloppe.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que le nucléole, visible en microscopie comme une zone dense dans le noyau ?",
+        answers: [
+          "Le site de transcription des ARN ribosomiques (ARNr) par l'ARN polymérase I et d'assemblage des sous-unités ribosomales.",
+          "Une réserve d'hétérochromatine constitutive inactive, stockée au centre du noyau pour protéger l'information génétique.", // Leurre
+          "Le site de réplication de l'ADN, où se concentrent toutes les fourches de réplication en phase S.", // Leurre
+          "Une vésicule de stockage des ARNm matures avant leur exportation vers le cytoplasme pour la traduction.", // Leurre
+        ]
+      },
+      {
+        question: "Comment l'euchromatine se distingue-t-elle de l'hétérochromatine ?",
+        answers: [
+          "L'euchromatine est décondensée et accessible à la transcription (gènes actifs), l'hétérochromatine est compactée et silencieuse.",
+          "L'euchromatine est située exclusivement contre la membrane nucléaire interne, tandis que l'hétérochromatine est centrale.", // Leurre
+          "L'euchromatine ne contient que des séquences répétées non codantes, alors que l'hétérochromatine contient les gènes.", // Leurre
+          "L'euchromatine est constituée d'ADN nu sans histones, alors que l'hétérochromatine est associée aux nucléosomes.", // Leurre
+        ]
+      },
+
+      // --- SYSTÈME ENDOMEMBRANAIRE ---
+      {
+        question: "Quel est le rôle de la Particule de Reconnaissance du Signal (SRP) lors de la synthèse protéique ?",
+        answers: [
+          "Elle reconnaît la séquence signal N-terminale du peptide naissant, arrête la traduction et dirige le ribosome vers la membrane du RER.",
+          "Elle clive le peptide signal une fois la protéine entrée dans la lumière du réticulum pour l'activer.", // Leurre (Signal peptidase)
+          "Elle chaperonne la protéine dans le cytoplasme pour empêcher son repliement prématuré avant l'entrée dans la mitochondrie.", // Leurre
+          "Elle marque les protéines mal repliées dans le RER pour les diriger vers le protéasome (système ERAD).", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la fonction principale du Réticulum Endoplasmique Lisse (REL) ?",
+        answers: [
+          "La synthèse des lipides membranaires (phospholipides, cholestérol), le stockage du calcium et la détoxification des xénobiotiques.",
+          "La glycosylation des protéines (N-glycosylation) et leur contrôle qualité avant l'export vers le Golgi.", // Leurre (RER)
+          "La digestion intracellulaire des macromolécules grâce à des hydrolases acides (autophagie).", // Leurre (Lysosome)
+          "La production d'énergie sous forme d'ATP grâce à l'oxydation des acides gras.", // Leurre (Mitochondrie)
+        ]
+      },
+      {
+        question: "Dans l'appareil de Golgi, quel est le sens du flux vectoriel principal des protéines ?",
+        answers: [
+          "Du réseau Cis-Golgi (entrée, côté RER) vers le réseau Trans-Golgi (sortie, tri), avec modification progressive des oligosaccharides.",
+          "Du réseau Trans-Golgi vers le réseau Cis-Golgi, les protéines étant synthétisées à la membrane plasmique.", // Leurre
+          "Il n'y a pas de sens défini, les vésicules naviguent aléatoirement entre les dictyosomes par diffusion simple.", // Leurre
+          "Le flux est bidirectionnel strict : chaque vésicule qui avance est compensée par une vésicule qui recule sans modification.", // Leurre
+        ]
+      },
+      {
+        question: "Comment les lysosomes maintiennent-ils leur pH acide interne (environ 5,0) ?",
+        answers: [
+          "Grâce à des pompes à protons (H+-ATPases) membranaires qui concentrent activement les ions H+ à l'intérieur contre le gradient.",
+          "Grâce à la perméabilité sélective de leur membrane qui laisse sortir les ions OH- mais retient les H+.", // Leurre
+          "Grâce à la synthèse continue d'acide lactique par fermentation à l'intérieur de la lumière lysosomale.", // Leurre
+          "Grâce à l'importation de chlore (Cl-) qui acidifie le milieu par formation spontanée d'acide chlorhydrique.", // Leurre
+        ]
+      },
+      {
+        question: "La N-glycosylation des protéines débute dans le RER. Sur quel acide aminé se fixe l'arborisation sucrée ?",
+        answers: [
+          "Sur l'azote d'une Asparagine (Asn) incluse dans la séquence consensus Asn-X-Ser/Thr.",
+          "Sur l'oxygène d'une Sérine ou d'une Thréonine (O-glycosylation), processus qui débute dans le Golgi.", // Leurre
+          "Sur le soufre d'une Cystéine, formant un pont disulfure glycosylé stabilisant la structure tertiaire.", // Leurre
+          "Sur le groupement carboxyle terminal de la protéine, permettant son ancrage dans la membrane.", // Leurre
+        ]
+      },
+
+      // --- MITOCHONDRIES & CHLOROPLASTES ---
+      {
+        question: "Quelle caractéristique des mitochondries soutient la théorie endosymbiotique de leur origine ?",
+        answers: [
+          "Elles possèdent leur propre ADN circulaire, des ribosomes de type 70S (bactérien) et une double membrane.",
+          "Elles sont capables de survivre et de se diviser de manière autonome en dehors de la cellule eucaryote.", // Leurre (Faux, elles dépendent du noyau)
+          "Elles synthétisent toutes leurs protéines sans importer aucune séquence codée par le noyau cellulaire.", // Leurre
+          "Elles possèdent une paroi de peptidoglycane résiduelle entre leurs deux membranes.", // Leurre (Chloroplastes de glaucophytes oui, mais pas mitochondries)
+        ]
+      },
+      {
+        question: "Où se situent les complexes de la chaîne respiratoire et l'ATP synthase dans la mitochondrie ?",
+        answers: [
+          "Dans la membrane interne, qui forme des crêtes pour augmenter la surface disponible pour la phosphorylation oxydative.",
+          "Dans la matrice mitochondriale, où ils flottent librement pour interagir avec les enzymes du cycle de Krebs.", // Leurre
+          "Dans la membrane externe, ce qui permet de créer un gradient de protons directement avec le cytoplasme.", // Leurre
+          "Dans l'espace intermembranaire, où ils acidifient le milieu pour activer les porines.", // Leurre
+        ]
+      },
+      {
+        question: "Dans le chloroplaste, quelle est la fonction précise des thylakoïdes ?",
+        answers: [
+          "Ils abritent les photosystèmes et la chaîne de transport d'électrons, permettant la conversion de l'énergie lumineuse en énergie chimique.",
+          "Ils contiennent la Rubisco et sont le lieu de fixation du CO2 lors du cycle de Calvin (phase sombre).", // Leurre (C'est le stroma)
+          "Ils stockent l'amidon produit par la photosynthèse sous forme de grains insolubles pendant la journée.", // Leurre
+          "Ils assurent la synthèse des lipides membranaires et des pigments caroténoïdes protecteurs.", // Leurre
+        ]
+      },
+      {
+        question: "Les peroxysomes sont des organites oxydatifs. Quelle enzyme caractéristique contiennent-ils en grande quantité ?",
+        answers: [
+          "La catalase, qui décompose le peroxyde d'hydrogène (H2O2) toxique produit par les réactions d'oxydation en eau et oxygène.",
+          "L'ATP synthase, qui produit de l'énergie en couplant l'oxydation des acides gras à la phosphorylation.", // Leurre (Mitochondrie)
+          "La hydrolase acide, qui dégrade les déchets cellulaires en monomères recyclables.", // Leurre (Lysosome)
+          "La Rubisco, qui fixe l'oxygène dans le cadre de la photorespiration des plantes en C3.", // Leurre
+        ]
+      },
+
+      // --- CYTOSQUELETTE & MOTRICITÉ ---
+      {
+        question: "Quelle est la structure et la polarité des microtubules ?",
+        answers: [
+          "Ce sont des tubes creux formés de 13 protofilaments de tubuline alpha/bêta, avec une extrémité (+) dynamique et une extrémité (-) stable.",
+          "Ce sont des filaments pleins formés de deux chaînes d'actine enroulées en hélice, sans polarité structurelle.", // Leurre (Microfilaments)
+          "Ce sont des câbles résistants formés de tétramères de kératine ou de vimentine, assurant la cohésion mécanique.", // Leurre (Filaments intermédiaires)
+          "Ce sont des structures membranaires tubulaires qui parcourent le cytoplasme pour guider les vésicules.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle des protéines motrices Kinésines se déplaçant sur les microtubules ?",
+        answers: [
+          "Elles transportent les vésicules et les organites vers l'extrémité (+) des microtubules (transport antérograde, vers la périphérie).",
+          "Elles transportent les cargaisons vers l'extrémité (-) des microtubules (transport rétrograde, vers le noyau).", // Leurre (Dynéines)
+          "Elles font glisser les filaments d'actine les uns contre les autres pour provoquer la contraction musculaire.", // Leurre (Myosines)
+          "Elles stabilisent les microtubules en empêchant leur dépolymérisation lors de la catastrophe mitotique.", // Leurre
+        ]
+      },
+      {
+        question: "La contraction musculaire est basée sur l'interaction entre :",
+        answers: [
+          "Les microfilaments d'actine et les moteurs de myosine II, déclenchée par une augmentation du calcium intracellulaire.",
+          "Les microtubules du fuseau et les dynéines, déclenchée par l'hydrolyse du GTP.", // Leurre
+          "Les filaments intermédiaires de desmine et les plaques d'adhérence focale à la membrane plasmique.", // Leurre
+          "La polymérisation rapide de l'actine G en actine F qui pousse la membrane vers l'avant.", // Leurre (Mouvement amiboïde)
+        ]
+      },
+      {
+        question: "Quelle est la particularité des filaments intermédiaires par rapport aux microtubules et microfilaments ?",
+        answers: [
+          "Ils sont non polarisés, très stables, résistants à la traction mécanique et spécifiques du type cellulaire (ex: kératine, neurofilaments).",
+          "Ils sont constitués de sous-unités globulaires liant l'ATP et présentent une dynamique rapide d'assemblage/désassemblage.", // Leurre (Actine)
+          "Ils servent de rails pour le transport vésiculaire longue distance grâce à des moteurs moléculaires spécifiques.", // Leurre (Microtubules)
+          "Ils sont responsables de la cytodiérèse en formant un anneau contractile en fin de mitose.", // Leurre (Actine/Myosine)
+        ]
+      },
+      {
+        question: "Le centrosome est le centre organisateur des microtubules (MTOC) chez les animaux. Il contient :",
+        answers: [
+          "Une paire de centrioles disposés perpendiculairement, entourés d'une matrice péricentriolaire riche en gamma-tubuline.",
+          "Un réseau dense de filaments d'actine qui sert de point d'ancrage pour les microtubules astraux.", // Leurre
+          "Des chromosomes condensés qui servent de modèle pour la nucléation des microtubules du fuseau.", // Leurre
+          "De nombreuses copies de l'ADN mitochondrial nécessaires à la production d'énergie pour la polymérisation.", // Leurre
+        ]
+      },
+
+      // --- ADRESSAGE & TRAFIC ---
+      {
+        question: "Comment les protéines mitochondriales codées par le noyau entrent-elles dans la mitochondrie ?",
+        answers: [
+          "Elles sont synthétisées dans le cytosol, maintenues dépliées par des chaperonnes (Hsp70), et importées via les complexes TOM et TIM.",
+          "Elles sont injectées directement par les ribosomes cytoplasmiques qui se fixent sur la membrane externe de la mitochondrie.", // Leurre
+          "Elles transitent par le RER et le Golgi avant d'être envoyées par vésicules de fusion vers la mitochondrie.", // Leurre
+          "Elles entrent par endocytose, la mitochondrie phagocytant des portions de cytoplasme contenant les protéines.", // Leurre
+        ]
+      },
+      {
+        question: "Le signal d'adressage vers le lysosome pour les enzymes solubles (hydrolases) est :",
+        answers: [
+          "Le mannose-6-phosphate (M6P), ajouté dans le Cis-Golgi et reconnu par un récepteur spécifique dans le Trans-Golgi.",
+          "Une séquence signal hydrophobe de 20 acides aminés située à l'extrémité N-terminale de la protéine.", // Leurre (Signal ER)
+          "Une séquence KDEL située à l'extrémité C-terminale qui permet le retour vers le RER.", // Leurre (Rétention ER)
+          "L'ubiquitine, une petite protéine greffée sur les lysines qui marque la protéine pour la dégradation.", // Leurre (Protéasome)
+        ]
+      },
+      {
+        question: "Qu'est-ce que l'endocytose médiée par récepteur (ex: LDL-cholestérol) ?",
+        answers: [
+          "La capture spécifique de ligands qui se fixent à des récepteurs membranaires, provoquant la formation d'un puits recouvert de clathrine.",
+          "L'ingestion non spécifique de fluide extracellulaire et de solutés par invagination de la membrane (pinocytose).", // Leurre
+          "L'extension de pseudopodes pour entourer et englober de grosses particules comme des bactéries (phagocytose).", // Leurre
+          "Le passage direct de molécules à travers la membrane grâce à des canaux ioniques activés par le ligand.", // Leurre
+        ]
+      },
+
+      // --- DIVERSITÉ CELLULAIRE ---
+      {
+        question: "Quelle structure est absente chez une cellule procaryote (bactérie) par rapport à une cellule eucaryote ?",
+        answers: [
+          "Le noyau véritable (enveloppe nucléaire) et le système endomembranaire complexe (RER, Golgi, mitochondries).",
+          "Les ribosomes, car la synthèse des protéines se fait directement sur l'ADN génomique.", // Leurre (Faux, elles ont des ribosomes)
+          "La membrane plasmique, qui est remplacée fonctionnellement par la paroi peptidoglycanique rigide.", // Leurre
+          "Le cytosquelette, les bactéries n'ayant aucune protéine capable de structurer leur forme ou d'assurer la division.", // Leurre (Faux, FtsZ/MreB existent)
+        ]
+      },
+      {
+        question: "Quelle est la principale différence entre la paroi des cellules végétales et celle des champignons ?",
+        answers: [
+          "La paroi végétale est faite de cellulose (glucose bêta 1-4), celle des champignons de chitine (N-acétylglucosamine).",
+          "La paroi végétale est interne à la membrane plasmique, alors que celle des champignons est externe.", // Leurre
+          "La paroi végétale contient des protéines de transport actif, alors que celle des champignons est totalement inerte.", // Leurre
+          "La paroi végétale est rigide et imperméable, alors que celle des champignons est un gel muqueux fluide.", // Leurre
+        ]
+      },
+      {
+        question: "Les jonctions communicantes (Gap junctions) chez les animaux ont pour fonction :",
+        answers: [
+          "De permettre le passage direct d'ions et de petites molécules (<1 kDa) entre les cytoplasmes de cellules adjacentes (couplage électrique/métabolique).",
+          "D'assurer l'adhérence mécanique forte entre les cellules épithéliales grâce aux filaments intermédiaires.", // Leurre (Desmosomes)
+          "D'empêcher la diffusion des molécules entre les cellules en scellant l'espace intercellulaire (barrière étanche).", // Leurre (Jonctions serrées)
+          "De fixer la cellule à la matrice extracellulaire via les intégrines pour permettre la migration cellulaire.", // Leurre (Hémidesmosomes/Points focaux)
+        ]
+      },
+      {
+        question: "Quel organite est le siège principal de la synthèse des hormones stéroïdiennes dans les cellules animales ?",
+        answers: [
+          "Le réticulum endoplasmique lisse (REL), abondant dans les cellules des gonades et des glandes surrénales.",
+          "L'appareil de Golgi, qui clive les précurseurs protéiques pour libérer les hormones actives.", // Leurre
+          "Le nucléole, qui régule l'expression des gènes impliqués dans la stéroïdogenèse.", // Leurre
+          "Les lysosomes, qui transforment le cholestérol stocké en hormones par hydrolyse acide.", // Leurre
+        ]
+      },
+      {
+        question: "L'autophagie est un processus cellulaire important. En quoi consiste-t-il ?",
+        answers: [
+          "C'est la dégradation des propres composants de la cellule (organites endommagés) par enveloppement dans une double membrane puis fusion avec un lysosome.",
+          "C'est le suicide cellulaire programmé (apoptose) déclenché par la libération du cytochrome c mitochondrial.", // Leurre
+          "C'est la capacité de la cellule à synthétiser ses propres nutriments organiques à partir de matière minérale.", // Leurre (Autotrophie)
+          "C'est la digestion de la matrice extracellulaire par sécrétion d'enzymes pour permettre la croissance tissulaire.", // Leurre
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! L'organisation cellulaire est acquise.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bon travail. Revoyez le trafic vésiculaire.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Continuez. La biologie cellulaire est la base de tout.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
