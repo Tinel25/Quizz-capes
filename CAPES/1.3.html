@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Les Champignons</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; /* Hauteur minimale pour uniformiser visuellement */
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Grandes fonctions chez les Champignons (Fungi)</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 1.3 : CHAMPIGNONS
+       Rappel : La première réponse dans le tableau est toujours la bonne.
+       Les leurres sont calibrés pour avoir une longueur similaire.
+    */
+    const quizData = [
+      // --- CYTOLOGIE & STRUCTURE ---
+      {
+        question: "Quelle est la composition chimique majoritaire de la paroi cellulaire des Eumycètes (vrais champignons) ?",
+        answers: [
+          "Elle est composée principalement de chitine (polymère de N-acétylglucosamine) et de bêta-glucanes, formant une matrice rigide.",
+          "Elle est constituée de cellulose cristalline organisée en microfibrilles parallèles, similaire à celle des plantes vasculaires.", // Leurre
+          "Elle est formée de peptidoglycane (muréine) structuré en couches épaisses réticulées par des ponts peptidiques.", // Leurre (Bactéries)
+          "Elle est composée d'une double couche phospholipidique renforcée par du cholestérol sans paroi polysaccharidique externe.", // Leurre (Animal)
+        ]
+      },
+      {
+        question: "Quelle molécule stéroïdienne est spécifique de la membrane plasmique fongique (cible des antifongiques) ?",
+        answers: [
+          "L'ergostérol, qui assure la fluidité et l'intégrité membranaire, analogue fonctionnel du cholestérol animal.",
+          "Le cholestérol, qui est synthétisé par le réticulum endoplasmique et transporté vers la membrane via l'appareil de Golgi.", // Leurre
+          "Le phytostérol, qui permet également la synthèse des hormones stéroïdiennes régulant la reproduction sexuée.", // Leurre
+          "Le hopanéoïde, molécule pentacyclique qui stabilise la membrane dans les environnements extrêmes.", // Leurre (Bactéries)
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'un mycélium coenocytique (ou siphonné) ?",
+        answers: [
+          "Un réseau d'hyphes sans cloisons transversales (septums), où les noyaux partagent un cytoplasme commun continu.",
+          "Un mycélium cloisonné où chaque compartiment contient strictement deux noyaux génétiquement distincts.", // Leurre
+          "Un amas de cellules sphériques isolées (levures) qui ne forment pas de filaments vrais mais des pseudomycéliums.", // Leurre
+          "Une structure reproductrice compacte formée par l'agrégation d'hyphes dicaryotiques lors de la fructification.", // Leurre
+        ]
+      },
+      {
+        question: "À quoi servent les corps de Woronin observés chez les Ascomycètes ?",
+        answers: [
+          "Ce sont des organites protéiques qui bouchent le pore septal en cas de lésion pour éviter la perte du cytoplasme.",
+          "Ce sont des vésicules de stockage de glycogène utilisées lors de la germination des spores en conditions limitantes.", // Leurre
+          "Ce sont des enzymes lytiques sécrétées à l'apex de l'hyphe pour permettre la pénétration dans le substrat.", // Leurre
+          "Ce sont des structures sensorielles qui détectent les gradients chimiques pour orienter la croissance du mycélium.", // Leurre
+        ]
+      },
+
+      // --- NUTRITION ---
+      {
+        question: "Comment définit-on le mode de nutrition fondamental des champignons (absorptrophie) ?",
+        answers: [
+          "Ils sécrètent des exoenzymes digestives dans le milieu extérieur et absorbent ensuite les nutriments simples solubilisés.",
+          "Ils ingèrent les particules alimentaires par phagocytose puis réalisent une digestion intracellulaire dans des vacuoles lytiques.", // Leurre (Amibes/Animaux)
+          "Ils synthétisent leur propre matière organique à partir de carbone minéral grâce à l'énergie issue de l'oxydation de composés inorganiques.", // Leurre (Chimiolithotrophie)
+          "Ils absorbent directement les macromolécules complexes (protéines, amidon) par endocytose médiée par des récepteurs.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le polymère de réserve glucidique principal chez les champignons ?",
+        answers: [
+          "Le glycogène, stocké sous forme de granules cytoplasmiques, comme chez les animaux.",
+          "L'amidon, stocké dans des plastes spécialisés appelés amyloplastes, comme chez les plantes.", // Leurre
+          "La laminarine, un glucane de réserve vacuolaire typique des organismes hétérokontes.", // Leurre
+          "Le paramylon, polymère de glucose insoluble déposé dans le cytoplasme hors des chloroplastes.", // Leurre
+        ]
+      },
+      {
+        question: "Concernant la dégradation du bois, quelle est la spécificité des champignons de la pourriture blanche ?",
+        answers: [
+          "Ils dégradent totalement la lignine grâce à des peroxydases, laissant une cellulose blanche résiduelle avant de la consommer.",
+          "Ils dégradent préférentiellement la cellulose et l'hémicellulose, laissant la lignine brune intacte qui structure le bois.", // Leurre (Pourriture brune)
+          "Ils ne dégradent que les composés pectiques de la lamelle moyenne sans attaquer les parois secondaires lignifiées.", // Leurre
+          "Ils hydrolysent l'amidon stocké dans les rayons parenchymateux sans altérer la structure mécanique du xylème.", // Leurre
+        ]
+      },
+      
+      // --- REPRODUCTION & CYCLES ---
+      {
+        question: "Qu'est-ce que la phase dicaryotique (n+n) caractéristique des Eumycètes supérieurs ?",
+        answers: [
+          "Une phase où chaque cellule contient deux noyaux haploïdes génétiquement distincts qui ne fusionnent pas immédiatement.",
+          "Une phase diploïde classique issue de la fusion immédiate des gamètes, qui subit ensuite de nombreuses mitoses.", // Leurre
+          "Une phase transitoire très courte, limitée au moment exact de la fécondation avant la méiose réductionnelle.", // Leurre
+          "Une phase où le noyau se divise par endomitose sans division cytoplasmique, créant une cellule polyploïde.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la différence fondamentale entre la plasmogamie et la caryogamie ?",
+        answers: [
+          "La plasmogamie est la fusion des cytoplasmes créant un dicaryon, la caryogamie est la fusion des noyaux rétablissant la diploïdie.",
+          "La plasmogamie est la production de spores asexuées, la caryogamie est la production de gamètes sexuées.", // Leurre
+          "La plasmogamie correspond à la méiose, tandis que la caryogamie correspond à la mitose post-méiotique.", // Leurre
+          "La plasmogamie est l'échange de matériel génétique entre hyphes, la caryogamie est la formation de la paroi sporale.", // Leurre
+        ]
+      },
+      {
+        question: "Comment se nomment les spores sexuées produites par les Basidiomycètes (ex: champignon de Paris) ?",
+        answers: [
+          "Les basidiospores, formées à l'extérieur d'une cellule spécialisée appelée baside (exospore).",
+          "Les ascospores, formées à l'intérieur d'un sac appelé asque à la suite d'une méiose suivie d'une mitose.", // Leurre (Ascomycètes)
+          "Les zygospores, issues de la fusion de deux gamétocystes et entourées d'une paroi épaisse et résistante.", // Leurre (Zygomycètes)
+          "Les conidiospores, produites par bourgeonnement ou fragmentation à l'extrémité d'un conidiophore.", // Leurre (Asexué)
+        ]
+      },
+      {
+        question: "Chez les Ascomycètes, le cycle de vie typique est majoritairement :",
+        answers: [
+          "Haplo-dicaryophasique : une phase haploïde dominante, une phase dicaryotique (mycélium secondaire) et une caryogamie juste avant la méiose.",
+          "Diplophasique : seule la phase diploïde est pluricellulaire, la phase haploïde étant réduite aux gamètes.", // Leurre (Animaux)
+          "Haplophasique strict : la caryogamie suit immédiatement la plasmogamie, le zygote est la seule cellule diploïde.", // Leurre
+          "Triphasique : alternance de trois générations indépendantes morphologiquement distinctes (gamétophyte, carposporophyte, tétrasporophyte).", // Leurre (Algues rouges)
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'une conidie ?",
+        answers: [
+          "Une spore de multiplication asexuée, produite par mitose à l'extrémité d'hyphes spécialisés (conidiophores).",
+          "Une structure de résistance à paroi épaisse formée par la fusion de deux mycéliums compatibles en conditions défavorables.", // Leurre
+          "Une cellule flagellée mobile capable de nager dans l'eau libre pour coloniser de nouveaux substrats.", // Leurre (Zoospore)
+          "Un organe femelle pluricellulaire contenant l'oosphère avant la fécondation par un anthéridie.", // Leurre
+        ]
+      },
+
+      // --- ÉCOLOGIE & SYMBIOSES ---
+      {
+        question: "Quelle est la définition biologique d'un lichen ?",
+        answers: [
+          "Une association symbiotique mutualiste obligatoire entre un champignon (mycobionte) et une algue verte ou cyanobactérie (photobionte).",
+          "Un champignon parasite qui colonise les tissus d'une algue, la tuant lentement tout en profitant de sa photosynthèse.", // Leurre
+          "Une mousse primitive adaptée à la sécheresse qui a développé une relation commensale avec des bactéries fixatrices d'azote.", // Leurre
+          "Un organisme chimio-hétérotrophe capable de photosynthèse grâce à l'acquisition de chloroplastes par kleptoplastie.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle principal du champignon dans une mycorhize arbusculaire ?",
+        answers: [
+          "Il explore le sol via son mycélium externe pour absorber l'eau et le phosphore qu'il transfère à la plante via les arbuscules.",
+          "Il fixe l'azote atmosphérique gazeux dans des nodules racinaires pour le transformer en ammonium assimilable.", // Leurre (Rhizobium)
+          "Il dégrade la cellulose des racines mortes pour fournir du glucose directement utilisable par la plante vivante.", // Leurre
+          "Il injecte des hormones de croissance dans la racine pour provoquer une hypertrophie des tissus corticaux.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la différence anatomique entre ectomycorhizes et endomycorhizes ?",
+        answers: [
+          "Les ectomycorhizes forment un manchon externe et un réseau de Hartig intercellulaire, sans pénétrer dans les cellules racinaires.",
+          "Les ectomycorhizes pénètrent profondément dans le cytoplasme cellulaire pour former des pelotons intracellulaires.", // Leurre (Faux, def endo)
+          "Les ectomycorhizes sont spécifiques des plantes herbacées, tandis que les endomycorhizes sont spécifiques des arbres forestiers.", // Leurre (Souvent l'inverse)
+          "Les ectomycorhizes ne modifient pas la morphologie racinaire, contrairement aux endomycorhizes qui forment des nodules visibles.", // Leurre
+        ]
+      },
+      {
+        question: "Les champignons saprotrophes (décomposeurs) jouent un rôle écologique clé car :",
+        answers: [
+          "Ils sont les principaux organismes capables de minéraliser la matière organique complexe (lignine, cellulose) et de recycler les nutriments.",
+          "Ils produisent la majorité de l'oxygène atmosphérique grâce à leur métabolisme photosynthétique particulier.", // Leurre
+          "Ils régulent les populations d'insectes ravageurs en produisant des toxines spécifiques qui stérilisent les femelles.", // Leurre
+          "Ils fixent le carbone inorganique dans les sols profonds, empêchant son retour dans l'atmosphère sous forme de CO2.", // Leurre
+        ]
+      },
+
+      // --- DIVERSITÉ & ADAPTATIONS ---
+      {
+        question: "Quelle structure permet aux champignons parasites de pénétrer la paroi des cellules hôtes sans rompre la membrane plasmique ?",
+        answers: [
+          "L'haustorium, une excroissance hyphale spécialisée qui invagine la membrane de l'hôte pour augmenter la surface d'échange.",
+          "Le rhizomorphe, un cordon mycélien épais capable d'exercer une pression mécanique suffisante pour percer la cuticule.", // Leurre
+          "L'appressorium, qui sécrète des acides puissants pour dissoudre intégralement la paroi et la membrane plasmique.", // Leurre (L'appressorium sert à l'ancrage/pénétration externe)
+          "Le sclérote, une forme de résistance qui germe violemment à l'intérieur des tissus vasculaires de la plante.", // Leurre
+        ]
+      },
+      {
+        question: "Les levures (ex: Saccharomyces cerevisiae) se distinguent morphologiquement par :",
+        answers: [
+          "Leur organisation unicellulaire et leur mode de multiplication végétative principalement par bourgeonnement (ou scissiparité).",
+          "Leur capacité à former des sporophores complexes en forme de chapeau et de pied pour la dissémination.", // Leurre
+          "Leur mode de vie strictement anaérobie obligatoire qui leur interdit de vivre en présence d'oxygène.", // Leurre (Elles sont anaérobies facultatives)
+          "Leur absence totale de reproduction sexuée, se clonant indéfiniment sans jamais réaliser de méiose.", // Leurre (Elles ont un cycle sexué)
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'un dermatophyte ?",
+        answers: [
+          "Un champignon parasite kératinophile capable de dégrader la kératine de la peau, des ongles et des cheveux (ex: teigne).",
+          "Un champignon mutualiste vivant à la surface des feuilles des plantes tropicales pour les protéger des UV.", // Leurre
+          "Un champignon aquatique flagellé qui infecte la peau des amphibiens et perturbe leur régulation osmotique.", // Leurre (Chytridiomycose)
+          "Un champignon saprotrophe qui se développe uniquement sur le cuir et les peaux mortes tannées.", // Leurre
+        ]
+      },
+      {
+        question: "Quel groupe de champignons est responsable de la chytridiomycose, une maladie décimant les amphibiens ?",
+        answers: [
+          "Les Chytridiomycètes, des champignons primitifs produisant des zoospores flagellées mobiles dans l'eau.",
+          "Les Zygomycètes, connus pour leurs moisissures à croissance rapide sur les matières organiques en décomposition.", // Leurre
+          "Les Gloméromycètes, qui sont des symbiotes obligatoires des racines et ne peuvent pas vivre de manière parasitaire.", // Leurre
+          "Les Basidiomycètes, dont les spores sont inhalées par les amphibiens et germent dans leurs poumons.", // Leurre
+        ]
+      },
+
+      // --- MÉTABOLISME & APPLICATIONS ---
+      {
+        question: "Quelle est la réaction métabolique principale réalisée par les levures en absence d'oxygène ?",
+        answers: [
+          "La fermentation alcoolique : transformation du glucose en éthanol et CO2 avec une faible production d'ATP.",
+          "La respiration cellulaire : oxydation complète du glucose en CO2 et H2O grâce à la chaîne respiratoire mitochondriale.", // Leurre
+          "La fermentation lactique : transformation du pyruvate en lactate pour régénérer le NAD+ nécessaire à la glycolyse.", // Leurre (Plutôt bactéries/muscles)
+          "La photosynthèse anoxygénique : utilisation de l'énergie lumineuse pour produire des sucres sans dégagement d'O2.", // Leurre
+        ]
+      },
+      {
+        question: "La pénicilline, premier antibiotique découvert, est produite par un champignon. Quel est son mode d'action ?",
+        answers: [
+          "Elle inhibe la synthèse de la paroi bactérienne en bloquant la transpeptidation du peptidoglycane.",
+          "Elle détruit la membrane plasmique des bactéries en formant des pores qui laissent fuir les ions intracellulaires.", // Leurre
+          "Elle bloque la synthèse des protéines bactériennes en se fixant sur la sous-unité 50S du ribosome.", // Leurre
+          "Elle empêche la réplication de l'ADN bactérien en inhibant l'ADN gyrase nécessaire au déroulement de l'hélice.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'une mycotoxine ?",
+        answers: [
+          "Un métabolite secondaire toxique produit par certaines moisissures (ex: Aspergillus) contaminant les denrées alimentaires.",
+          "Une enzyme digestive sécrétée par le champignon pour liquéfier les tissus de son hôte animal.", // Leurre
+          "Une protéine de surface de la spore qui déclenche une réaction allergique violente chez les mammifères.", // Leurre
+          "Un antibiotique naturel utilisé par le champignon pour éliminer les autres champignons concurrents.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité des Gloméromycètes du point de vue évolutif et écologique ?",
+        answers: [
+          "Ils forment les endomycorhizes à arbuscules avec plus de 80% des plantes terrestres et auraient facilité la sortie des eaux des végétaux.",
+          "Ils sont les ancêtres directs des animaux, partageant avec eux la synthèse de collagène et la phagocytose.", // Leurre
+          "Ils représentent la lignée la plus récente des champignons, apparue après l'extinction des dinosaures sur les débris ligneux.", // Leurre
+          "Ils sont exclusivement aquatiques et marins, dégradant la chitine des carapaces de crustacés dans les sédiments.", // Leurre
+        ]
+      },
+      
+      // --- TERMINOLOGIE ---
+      {
+        question: "Que désigne le terme 'hyménium' chez un champignon à chapeau ?",
+        answers: [
+          "La couche fertile portant les cellules reproductrices (basides ou asques), située généralement sous le chapeau (lamelles, tubes).",
+          "L'ensemble des filaments stériles qui forment le pied et la chair du chapeau, assurant le soutien mécanique.", // Leurre (Plectenchyme)
+          "Le voile partiel qui recouvre les lamelles chez le jeune champignon et forme un anneau sur le pied après rupture.", // Leurre
+          "Le réseau mycélien souterrain qui explore le sol à la recherche de nutriments avant la fructification.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'un sclérote ?",
+        answers: [
+          "Une masse compacte de mycélium endurci, riche en réserves, permettant la survie en conditions défavorables (ex: Ergot du seigle).",
+          "Une structure de dissémination aérienne légère capable de parcourir des milliers de kilomètres dans la stratosphère.", // Leurre
+          "Une symbiose entre un champignon et une racine d'orchidée nécessaire à la germination de la graine.", // Leurre
+          "Un organe parasitaire qui manipule le comportement des insectes pour favoriser la dispersion des spores.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle définition correspond au terme 'hétérothallisme' ?",
+        answers: [
+          "La nécessité pour la reproduction sexuée de croiser deux mycéliums de types sexuels compatibles mais distincts (+ et -).",
+          "La capacité d'un même mycélium à s'autoféconder, produisant des zygotes sans partenaire extérieur.", // Leurre (Homothallisme)
+          "La capacité d'un champignon à changer de mode nutritionnel, passant du saprophytisme au parasitisme selon le milieu.", // Leurre
+          "L'existence de plusieurs types de spores asexuées produites par le même thalle à différents moments de l'année.", // Leurre
+        ]
+      },
+      {
+        question: "Quel rôle jouent les hydrophobines sécrétées par les champignons ?",
+        answers: [
+          "Ce sont des protéines qui abaissent la tension superficielle de l'eau, permettant aux hyphes aériens de s'ériger hors du milieu liquide.",
+          "Ce sont des lipides membranaires qui empêchent l'eau d'entrer dans la cellule en milieu hypotonique.", // Leurre
+          "Ce sont des enzymes qui dégradent les composés hydrophobes du sol comme les cires et les résines végétales.", // Leurre
+          "Ce sont des pigments mélaniques qui protègent les spores contre les rayonnements UV et la dessiccation.", // Leurre
+        ]
+      },
+      {
+        question: "Le cycle parasexuel chez certains champignons imparfaits (Deuteromycètes) permet :",
+        answers: [
+          "Des recombinaisons génétiques (crossing-over mitotique) et une réduction ploïde sans passer par une méiose standard.",
+          "La formation de gamètes flagellés qui fusionnent dans l'eau pour former un zygote diploïde classique.", // Leurre
+          "La production exclusive de clones génétiquement identiques par mitose, sans aucune variation génétique possible.", // Leurre
+          "L'intégration d'ADN étranger provenant de bactéries ou de plantes directement dans le génome fongique.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la principale source de carbone pour les champignons ectomycorhiziens ?",
+        answers: [
+          "Les photosynthétats (sucres simples) fournis par la plante hôte en échange de nutriments minéraux.",
+          "La matière organique morte du sol qu'ils dégradent activement grâce à des cellulases puissantes.", // Leurre (Plutôt saprotrophes)
+          "Le CO2 atmosphérique qu'ils fixent grâce à une voie métabolique unique indépendante de la lumière.", // Leurre
+          "Les acides aminés libres présents dans la solution du sol qu'ils absorbent par transport actif.", // Leurre
+        ]
+      }
+    ];
+
+    // --- LOGIQUE STANDARD DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! Le règne fongique n'a plus de secrets pour vous.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bien joué. Révisez bien les cycles de reproduction.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Continuez à travailler. Les champignons sont complexes !";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
