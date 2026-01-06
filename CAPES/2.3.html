@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Développement Angiospermes</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 2.3 : Développement et Plasticité des Angiospermes</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 2.3 : DÉVELOPPEMENT POST-EMBRYONNAIRE
+       - Réponses calibrées pour éviter le biais de longueur.
+       - Focus sur la plasticité, les méristèmes, et le contrôle hormonal.
+    */
+    const quizData = [
+      // --- MÉRISTÈMES ET CROISSANCE ---
+      {
+        question: "Quelle est la fonction du centre quiescent (centre organisateur) au sein du méristème apical racinaire ?",
+        answers: [
+          "C'est un groupe de cellules à faible activité mitotique qui maintient l'état indifférencié des cellules souches (initiales) voisines.",
+          "C'est la zone où la division cellulaire est la plus rapide, assurant la production massive de cellules pour l'élongation racinaire.", // Leurre
+          "C'est le lieu de perception de la gravité grâce aux statolithes, orientant la croissance de la racine vers le bas (gravitropisme).", // Leurre (C'est la coiffe/columelle)
+          "C'est une zone de mort cellulaire programmée qui permet de séparer la coiffe protectrice du reste de la racine.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que la mérèse et l'auxèse dans le contexte du développement végétal ?",
+        answers: [
+          "La mérèse est l'augmentation du nombre de cellules par mitoses successives, l'auxèse est l'augmentation de leur volume par élongation.",
+          "La mérèse correspond à la différenciation cellulaire en tissus spécialisés, l'auxèse correspond à la division cellulaire rapide.", // Leurre
+          "La mérèse est la croissance en épaisseur (secondaire) du végétal, l'auxèse est la croissance en longueur (primaire).", // Leurre
+          "La mérèse est contrôlée exclusivement par les cytokinines, tandis que l'auxèse est indépendante de tout contrôle hormonal.", // Leurre
+        ]
+      },
+      {
+        question: "Comment s'organise la zone périphérique du méristème apical caulinaire (MAC) ?",
+        answers: [
+          "C'est le site d'initiation des primordiums foliaires et floraux, caractérisé par des divisions cellulaires rapides et orientées.",
+          "C'est une zone de réserve inactive qui ne se divise qu'en cas de blessure de la zone centrale pour régénérer le méristème.", // Leurre
+          "C'est la zone où se différencient les tissus conducteurs (procambium) qui relient le méristème au reste de la tige.", // Leurre (C'est le méristème médullaire/sous-apical)
+          "C'est une couche protectrice unique (tunique L1) qui ne subit que des divisions anticlines pour augmenter la surface.", // Leurre (La zone périphérique inclut L1, L2, L3)
+        ]
+      },
+      {
+        question: "Quelle est l'origine développementale des racines latérales (ramification racinaire) ?",
+        answers: [
+          "Elles sont d'origine endogène, se formant à partir de la dédifférenciation et de la division des cellules du péricycle.",
+          "Elles sont d'origine exogène, naissant directement de l'épiderme racinaire sous l'influence de l'auxine du sol.", // Leurre
+          "Elles proviennent de la fragmentation du méristème apical principal qui se divise en deux pour former une fourche.", // Leurre
+          "Elles se développent à partir des bourgeons axillaires dormants situés à l'aisselle des poils absorbants.", // Leurre
+        ]
+      },
+
+      // --- ARCHITECTURE ET PHYLLOTAXIE ---
+      {
+        question: "Qu'est-ce que la phyllotaxie et quel est son déterminisme principal ?",
+        answers: [
+          "C'est l'arrangement géométrique des feuilles sur la tige, déterminé par des champs inhibiteurs d'auxine autour des primordiums existants.",
+          "C'est la capacité des feuilles à s'orienter vers la lumière, déterminée par la concentration de phototropine dans le pétiole.", // Leurre (Phototropisme)
+          "C'est la modification de la forme des feuilles en fonction du milieu (aquatique vs aérien), contrôlée par l'acide abscissique.", // Leurre (Hétérophyllie)
+          "C'est la chute périodique des feuilles en automne, déclenchée par la réduction de la photopériode et le froid.", // Leurre (Abscission)
+        ]
+      },
+      {
+        question: "Comment s'explique la dominance apicale exercée par le bourgeon terminal ?",
+        answers: [
+          "L'auxine produite par l'apex redescend (transport basipète) et inhibe la biosynthèse de cytokinines nécessaires au débourrement des bourgeons axillaires.",
+          "L'apex consomme tous les sucres disponibles, affamant les bourgeons axillaires qui entrent en dormance par manque d'énergie.", // Leurre (Théorie trophique, moins admise que l'hormonale)
+          "Le bourgeon terminal émet de l'éthylène gazeux qui diffuse vers le bas et bloque physiquement la mitose des bourgeons latéraux.", // Leurre
+          "Les gibbérellines produites par les racines sont captées exclusivement par l'apex, privant les bourgeons latéraux de signal de croissance.", // Leurre
+        ]
+      },
+      {
+        question: "Quel modèle génétique explique la détermination des organes floraux (sépales, pétales, étamines, carpelles) ?",
+        answers: [
+          "Le modèle ABC : l'expression combinatoire de trois classes de gènes d'identité d'organe définit les quatre verticilles floraux.",
+          "Le modèle de Turing : des ondes de réaction-diffusion de morphogènes créent spontanément des motifs périodiques sur le méristème.", // Leurre
+          "Le modèle de l'horloge circadienne : l'identité des organes dépend de l'heure de la journée à laquelle la fleur s'initie.", // Leurre
+          "Le modèle source-puits : la quantité de saccharose arrivant au méristème détermine s'il fera des sépales ou des carpelles.", // Leurre
+        ]
+      },
+
+      // --- CONTRÔLE HORMONAL ---
+      {
+        question: "Quel est le rôle spécifique des cytokinines dans le développement végétal ?",
+        answers: [
+          "Elles stimulent la division cellulaire (cytocinèse), favorisent le développement des bourgeons axillaires et retardent la sénescence foliaire.",
+          "Elles provoquent l'élongation rapide des entre-nœuds en stimulant le relâchement de la paroi cellulaire (auxèse).", // Leurre (Gibbérellines/Auxine)
+          "Elles induisent la fermeture des stomates en réponse au stress hydrique et la dormance des graines en hiver.", // Leurre (ABA)
+          "Elles déclenchent la maturation des fruits climactériques et l'abscission des organes sénescents.", // Leurre (Éthylène)
+        ]
+      },
+      {
+        question: "La 'Révolution Verte' des années 60 a utilisé des variétés de blé naines. Quelle était la mutation responsable ?",
+        answers: [
+          "Une mutation affectant la voie de signalisation des gibbérellines (insensibilité), réduisant l'élongation des tiges sans affecter les grains.",
+          "Une mutation bloquant la synthèse de l'auxine, empêchant la formation de racines latérales et favorisant la tige principale.", // Leurre
+          "Une surexpression de l'éthylène qui provoque un vieillissement prématuré de la plante avant qu'elle ne devienne trop haute.", // Leurre
+          "Une déficience en cytokinines qui empêche la division cellulaire dans le méristème intercalaire des graminées.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le mécanisme d'action de l'acide abscissique (ABA) lors de la maturation des graines ?",
+        answers: [
+          "Il induit la synthèse de protéines LEA (Late Embryogenesis Abundant) et la tolérance à la dessiccation, tout en imposant la dormance.",
+          "Il stimule la production d'enzymes hydrolytiques (amylases) pour mobiliser les réserves de l'albumen vers l'embryon.", // Leurre (Gibbérellines)
+          "Il provoque le ramollissement des téguments pour faciliter la percée de la radicule lors de la future germination.", // Leurre
+          "Il active la division cellulaire de l'embryon pour qu'il atteigne sa taille maximale avant la déshydratation.", // Leurre
+        ]
+      },
+      {
+        question: "L'épinastie (courbure des feuilles vers le bas) observée lors de l'inondation des racines est due à :",
+        answers: [
+          "L'accumulation d'éthylène dans les tissus aériens, car le gaz ne peut plus diffuser par les racines noyées et est transporté par le xylème.",
+          "L'excès d'eau qui gorge les cellules du parenchyme foliaire, les rendant trop lourdes pour être soutenues par le pétiole.", // Leurre
+          "La carence en oxygène qui bloque la photosynthèse, obligeant la plante à replier ses feuilles pour économiser l'énergie.", // Leurre
+          "L'arrêt de la production de cytokinines racinaires, ce qui provoque un vieillissement accéléré et le flétrissement des feuilles.", // Leurre
+        ]
+      },
+
+      // --- PHOTOMORPHOGENÈSE & LUMIÈRE ---
+      {
+        question: "Qu'est-ce que l'étiolement, observé chez une plantule germant à l'obscurité ?",
+        answers: [
+          "Un allongement exacerbé de la tige (hypocotyle), une absence de chlorophylle (couleur jaune/blanche) et des feuilles réduites (crochet apical).",
+          "Un développement normal mais ralenti, caractérisé par des entre-nœuds courts et des feuilles vert foncé riches en chlorophylle.", // Leurre
+          "Une ramification excessive de la tige principale pour explorer l'espace à la recherche de lumière dans toutes les directions.", // Leurre
+          "Une croissance horizontale (plagiotrope) rampante sur le sol pour éviter de dépenser de l'énergie contre la gravité.", // Leurre
+        ]
+      },
+      {
+        question: "Comment les plantes détectent-elles la compétition pour la lumière (syndrome d'évitement de l'ombre) ?",
+        answers: [
+          "Grâce aux phytochromes qui perçoivent une baisse du ratio Rouge Clair / Rouge Lointain (la chlorophylle des voisins absorbant le rouge).",
+          "Grâce aux phototropines qui mesurent la diminution de l'intensité absolue de la lumière bleue sous la canopée.", // Leurre
+          "Grâce aux cryptochromes qui détectent les UV-B nocifs filtrés par les feuilles des plantes environnantes.", // Leurre
+          "Grâce à des thermorécepteurs qui sentent le refroidissement de l'air à l'ombre des autres végétaux.", // Leurre
+        ]
+      },
+      {
+        question: "Le phototropisme positif des coléoptiles (croissance vers la lumière) est médié par :",
+        answers: [
+          "La phototropine (récepteur lumière bleue) qui induit une redistribution latérale de l'auxine vers le côté à l'ombre, stimulant son élongation.",
+          "Le phytochrome (récepteur lumière rouge) qui détruit l'auxine du côté éclairé, arrêtant ainsi la croissance de cette face.", // Leurre (Faux mécanisme)
+          "L'accumulation de sucres photosynthétiques du côté éclairé qui attire l'eau par osmose et fait gonfler les cellules.", // Leurre
+          "La polymérisation de l'actine du côté ombragé qui rigidifie la paroi et force la tige à se courber vers la lumière.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle de la protéine CONSTANS (CO) dans le photopériodisme de floraison ?",
+        answers: [
+          "C'est un régulateur transcriptionnel dont l'accumulation cyclique en jours longs active le gène FT (Florigen), déclenchant la floraison.",
+          "C'est une hormone gazeuse qui est libérée par les feuilles la nuit et migre vers l'apex pour inhiber la floraison.", // Leurre
+          "C'est un pigment photorécepteur qui absorbe la lumière verte pour synchroniser l'horloge circadienne avec l'aube.", // Leurre
+          "C'est une enzyme qui dégrade les inhibiteurs de floraison lorsque la plante a accumulé assez de réserves glucidiques.", // Leurre
+        ]
+      },
+
+      // --- VERNALISATION & FACTEURS ABIOTIQUES ---
+      {
+        question: "La vernalisation est un processus épigénétique. Quel est son mécanisme moléculaire chez Arabidopsis ?",
+        answers: [
+          "Le froid prolongé induit le silençage du gène FLC (inhibiteur de floraison) par modification des histones, levant le frein à la floraison.",
+          "Le froid provoque des mutations aléatoires dans le génome qui, par chance, activent les gènes de développement floral.", // Leurre
+          "Le froid gèle l'eau intracellulaire, ce qui brise mécaniquement l'enveloppe nucléaire et libère les facteurs de transcription floraux.", // Leurre
+          "Le froid active directement la synthèse de gibbérellines dans l'apex, ce qui contourne la nécessité de la photopériode.", // Leurre
+        ]
+      },
+      {
+        question: "La thigmomorphogenèse désigne la réponse des plantes au toucher ou au vent. Quelle modification observe-t-on ?",
+        answers: [
+          "Une réduction de l'élongation de la tige et une augmentation de son diamètre (épaississement) pour renforcer la résistance mécanique.",
+          "Un allongement rapide et fin des entre-nœuds pour échapper à la contrainte mécanique en montant plus haut.", // Leurre (C'est l'inverse)
+          "Une chute immédiate des feuilles (abscission) pour réduire la prise au vent et limiter les dégâts structuraux.", // Leurre
+          "Une modification de la couleur des feuilles qui deviennent rouges (anthocyanes) pour signaler un stress aux herbivores.", // Leurre
+        ]
+      },
+      {
+        question: "L'hétérophyllie chez les plantes aquatiques (ex: Renoncule d'eau) est un exemple de plasticité. Comment se manifeste-t-elle ?",
+        answers: [
+          "La plante produit des feuilles immergées très découpées (filiformes) et des feuilles flottantes/aériennes entières et lobées.",
+          "La plante produit des feuilles rouges en surface pour la photosynthèse et des feuilles blanches en profondeur pour le stockage.", // Leurre
+          "La plante modifie la taille de ses feuilles en fonction de la température de l'eau, les rendant minuscules en hiver.", // Leurre
+          "La plante développe des épines sur les feuilles submergées pour se protéger des poissons herbivores.", // Leurre
+        ]
+      },
+
+      // --- ADAPTATIONS & PLASTICITÉ ---
+      {
+        question: "En réponse à une carence en phosphate dans le sol, comment l'architecture racinaire se modifie-t-elle ?",
+        answers: [
+          "La racine primaire arrête sa croissance et la plante multiplie les racines latérales et les poils absorbants pour explorer la surface.",
+          "La racine principale plonge très profondément (gravitropisme renforcé) pour chercher le phosphore dans les couches géologiques basses.", // Leurre
+          "Les racines se tubérisent pour stocker le peu de phosphore trouvé sous forme de phytates de réserve.", // Leurre
+          "La plante arrête totalement de produire des racines et investit toute son énergie dans la croissance des feuilles.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la différence anatomique entre une feuille d'ombre et une feuille de lumière sur un même arbre ?",
+        answers: [
+          "La feuille de lumière est plus épaisse, avec un parenchyme palissadique multicouche ; la feuille d'ombre est fine et large, riche en chlorophylle b.",
+          "La feuille de lumière ne possède pas de stomates pour éviter la déshydratation, contrairement à la feuille d'ombre.", // Leurre
+          "La feuille d'ombre est couverte d'une cuticule cireuse très épaisse pour réfléchir le peu de lumière disponible.", // Leurre
+          "La feuille de lumière possède des chloroplastes géants, alors que la feuille d'ombre a de nombreux petits chloroplastes.", // Leurre
+        ]
+      },
+      {
+        question: "Comment les plantes halophytes (tolérantes au sel) adaptent-elles leur développement ?",
+        answers: [
+          "Elles développent souvent une succulence (tissus gorgés d'eau) pour diluer le sel et des glandes à sel pour l'excréter.",
+          "Elles forment des racines aériennes (pneumatophores) exclusivement destinées à capter l'eau de pluie non salée.", // Leurre (Pneumatophores = respiration)
+          "Elles accélèrent leur cycle de vie pour fleurir et produire des graines avant que le sel ne tue la plante mère.", // Leurre (Stratégie d'évitement, pas tolérance)
+          "Elles synthétisent une paroi cellulaire en silice pure pour empêcher physiquement l'entrée des ions sodium.", // Leurre
+        ]
+      },
+      
+      // --- CYCLE DE VIE & SENESCENCE ---
+      {
+        question: "Qu'est-ce qu'une plante monatépique (ou monocarpique) ?",
+        answers: [
+          "Une plante qui ne fleurit qu'une seule fois dans sa vie (après un an ou plusieurs années) et meurt après la fructification (ex: Agave, blé).",
+          "Une plante qui produit une seule fleur solitaire à l'extrémité de chaque tige, contrairement aux plantes à inflorescences.", // Leurre
+          "Une plante qui ne possède qu'un seul carpelle dans son gynécée, produisant donc un fruit à graine unique.", // Leurre
+          "Une plante capable de s'autoféconder sans avoir besoin de partenaire, produisant des clones d'elle-même.", // Leurre
+        ]
+      },
+      {
+        question: "Quel rôle joue l'éthylène lors de la sénescence foliaire en automne ?",
+        answers: [
+          "Il stimule la synthèse d'enzymes de dégradation de la paroi (cellulases) dans la zone d'abscission, provoquant la chute de la feuille.",
+          "Il induit la production massive d'anthocyanes rouges pour protéger la chlorophylle contre la photo-oxydation par le soleil froid.", // Leurre
+          "Il provoque le dessèchement rapide du limbe en ouvrant grand les stomates malgré le manque d'eau liquide.", // Leurre
+          "Il inhibe le transport des nutriments vers la feuille, l'affamant jusqu'à ce qu'elle tombe par manque d'énergie.", // Leurre
+        ]
+      },
+      {
+        question: "La dormance des bourgeons chez les arbres tempérés est levée par :",
+        answers: [
+          "L'accumulation d'une quantité suffisante d'heures de froid (chilling requirement) suivie d'une remontée des températures.",
+          "L'exposition à des jours courts intenses en décembre qui signalent l'arrivée prochaine du printemps.", // Leurre (Jours longs lèvent dormance)
+          "L'application exogène d'acide abscissique qui réveille les méristèmes endormis pendant l'hiver.", // Leurre (ABA maintient dormance)
+          "La diminution de la pression atmosphérique qui accompagne souvent les tempêtes de printemps.", // Leurre
+        ]
+      },
+
+      // --- DIVERS & MOLÉCULAIRE ---
+      {
+        question: "Les microARN (miRNA) jouent un rôle clé dans le développement végétal. Lequel ?",
+        answers: [
+          "Ils régulent l'expression des gènes en ciblant des ARNm spécifiques pour les dégrader ou bloquer leur traduction (ex: forme de la feuille).",
+          "Ils servent de messagers longue distance transportés par le phloème pour signaler une attaque de pathogènes.", // Leurre (Possible mais rôle mineur vs régulation dév)
+          "Ils catalysent la synthèse de la cellulose dans la paroi cellulaire en s'associant aux complexes de cellulose synthase.", // Leurre
+          "Ils constituent les amorces nécessaires à la réplication de l'ADN dans les méristèmes à division rapide.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que la totipotence cellulaire végétale ?",
+        answers: [
+          "La capacité d'une cellule végétale différenciée vivante à se dédifférencier et à régénérer une plante entière (clonage).",
+          "La capacité d'une cellule à résister à toutes les toxines environnementales grâce à sa vacuole centrale.", // Leurre
+          "La capacité du pollen à féconder n'importe quelle espèce de plante voisine, créant ainsi de nouveaux hybrides.", // Leurre
+          "La propriété des cellules du xylème de transporter tous les types de sève indifféremment.", // Leurre
+        ]
+      },
+      {
+        question: "Le mutant 'gnom' d'Arabidopsis est affecté dans l'établissement de l'axe apico-basal. Pourquoi ?",
+        answers: [
+          "Le gène GNOM code une protéine régulant le trafic vésiculaire de l'auxine (PIN1), indispensable aux gradients polaires.",
+          "Le gène GNOM est un facteur de transcription qui active la photosynthèse dès le stade 2 cellules de l'embryon.", // Leurre
+          "Le gène GNOM contrôle la synthèse de la paroi cellulaire, empêchant la cellule œuf de s'allonger correctement.", // Leurre
+          "Le gène GNOM est responsable de la dégradation des protéines maternelles qui empêchent l'embryon de se développer.", // Leurre
+        ]
+      },
+      {
+        question: "Comment la plante mesure-t-elle le temps (horloge circadienne) pour anticiper l'aube ?",
+        answers: [
+          "Grâce à une boucle de rétroaction transcriptionnelle impliquant les gènes CCA1, LHY et TOC1 qui oscillent sur 24h.",
+          "Grâce à la variation cyclique de la pression de turgescence dans les cellules motrices des feuilles.", // Leurre (Conséquence, pas cause)
+          "Grâce à l'accumulation passive d'amidon le jour qui sert de sablier métabolique pendant la nuit.", // Leurre (L'amidon est géré par l'horloge, pas l'inverse)
+          "Grâce aux fluctuations du champ magnétique terrestre qui sont perçues par des cristaux de magnétite intracellulaires.", // Leurre
+        ]
+      },
+      {
+        question: "L'anémomorphose est une adaptation au vent constant. Quelle forme la plante adopte-t-elle ?",
+        answers: [
+          "Une forme en drapeau ou prostrée, avec une croissance asymétrique du cambium (bois de réaction) pour résister à la flexion.",
+          "Une forme colonnaire très haute et fine pour offrir le moins de résistance possible au passage de l'air.", // Leurre
+          "Une forme sphérique parfaite qui permet au vent de glisser sur le feuillage sans accrocher les branches.", // Leurre
+          "Une absence totale de feuilles et une photosynthèse réalisée uniquement par l'écorce du tronc.", // Leurre
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! La morphogenèse végétale est maîtrisée.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bien joué. Révisez les mécanismes hormonaux.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Courage. La plasticité phénotypique est un vaste sujet.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
