@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Métazoaires</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      /* Hauteur minimale forcée pour uniformiser visuellement */
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Grandes fonctions chez quelques Métazoaires</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* CALIBRAGE DES QUESTIONS (Thème 1.1) :
+       - Longueur des réponses harmonisée (leurres verbeux).
+       - Vocabulaire scientifique pointu (distracteurs crédibles).
+    */
+    const quizData = [
+      // --- DIGESTION & NUTRITION ---
+      {
+        question: "Concernant la digestion chez les Spongiaires (Porifères), quelle affirmation décrit correctement le processus ?",
+        answers: [
+          "Elle est exclusivement intracellulaire : les particules sont phagocytées par les choanocytes puis transférées aux amibocytes pour la digestion finale.",
+          "Elle est mixte : une première digestion extracellulaire a lieu dans l'atrium grâce aux enzymes sécrétées par le choanoderme, suivie d'une absorption.", // Leurre
+          "Elle repose sur un système gastrovasculaire complexe où des canaux ciliés acheminent les nutriments vers une cavité centrale digestive unique.", // Leurre
+          "Elle est assurée par des bactéries symbiotiques hébergées dans la mésoglée qui dégradent la matière organique dissoute dans l'eau de mer." // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité fonctionnelle de la cavité gastrovasculaire des Cnidaires (ex: Hydre) ?",
+        answers: [
+          "Elle assure à la fois la digestion extracellulaire et la distribution des nutriments (fonction circulatoire), tout en servant de squelette hydrostatique.",
+          "Elle est tapissée d'un épithélium absorbant cilié qui permet uniquement le transport des gaz respiratoires dissous vers les tentacules.", // Leurre
+          "Elle possède deux orifices distincts (bouche et anus) permettant un flux unidirectionnel des aliments pour optimiser l'extraction d'énergie.", // Leurre (Faux, un seul orifice)
+          "Elle contient des glandes calcifiantes spécialisées qui sécrètent le squelette interne nécessaire au maintien de la forme du polype." // Leurre
+        ]
+      },
+      {
+        question: "Chez les Bivalves, quel organe spécialisé permet le tri des particules alimentaires et la digestion mécanique ?",
+        answers: [
+          "Le stylet cristallin situé dans l'estomac, qui tourne contre le bouclier gastrique pour broyer le bol alimentaire et libérer des enzymes.",
+          "La radula, une langue râpeuse chitineuse qui permet de racler le substrat rocheux pour détacher les algues incrustantes.", // Leurre (Bivalves n'ont pas de radula)
+          "Le gésier musculaire tapissé de plaques de kératine qui assure le broyage final des coquilles de proies avant l'absorption intestinale.", // Leurre
+          "Les cæcums pyloriques qui sécrètent de l'acide chlorhydrique concentré pour dissoudre les exosquelettes calcaires du plancton." // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle du typhlosolis observé dans l'intestin des Annélides oligochètes (Lombric) ?",
+        answers: [
+          "C'est un repli dorsal de la paroi intestinale qui augmente considérablement la surface d'absorption digestive sans augmenter le volume du corps.",
+          "C'est une glande annexe qui sécrète du mucus protecteur pour empêcher l'abrasion de l'épithélium par les particules de sol ingérées.", // Leurre
+          "C'est un organe sensoriel chémorécepteur qui analyse la composition chimique du bol alimentaire pour réguler le péristaltisme.", // Leurre
+          "C'est une structure musculaire sphinctérienne qui compartimente le tube digestif pour permettre une fermentation bactérienne séquentielle." // Leurre
+        ]
+      },
+      {
+        question: "Chez les Ruminants, quelle est la fonction biochimique précise du réticulum et du rumen (panse) ?",
+        answers: [
+          "Ils agissent comme des cuves de fermentation anaérobie où des microorganismes symbiotiques hydrolysent la cellulose en acides gras volatils.",
+          "Ils sécrètent de grandes quantités de pepsine et d'acide chlorhydrique pour initier la digestion protéique avant le passage dans l'intestin.", // Leurre (C'est la caillette qui fait ça)
+          "Ils servent uniquement au stockage temporaire de l'herbe ingérée avant qu'elle ne soit régurgitée pour une mastication plus fine.", // Leurre (Incomplet/Faux sur la biochimie)
+          "Ils absorbent la quasi-totalité de l'eau contenue dans le bol alimentaire pour éviter la déshydratation de l'animal lors de la rumination." // Leurre
+        ]
+      },
+
+      // --- RESPIRATION ---
+      {
+        question: "Pourquoi le système respiratoire des Insectes (trachées) limite-t-il leur taille maximale ?",
+        answers: [
+          "La diffusion des gaz dans les longs tubes trachéens devient inefficace sur de grandes distances, empêchant l'oxygénation des tissus profonds.",
+          "Le poids de la cuticule nécessaire pour soutenir un réseau de trachées géant deviendrait trop important pour permettre le vol.", // Leurre
+          "Le système trachéen est ouvert sur l'extérieur et provoquerait une perte d'eau massive par évaporation si la surface corporelle augmentait.", // Leurre
+          "L'hémolymphe ne transportant pas d'oxygène, le cœur ne pourrait pas maintenir une pression suffisante pour irriguer un grand volume." // Leurre
+        ]
+      },
+      {
+        question: "Quel mécanisme optimise les échanges gazeux dans les branchies des Poissons Téléostéens ?",
+        answers: [
+          "Le principe du contre-courant : l'eau et le sang circulent en sens inverse, maintenant un gradient de diffusion constant sur toute la lamelle.",
+          "Le système de ventilation active par pompe buccale qui force l'eau à traverser les branchies à haute pression pour maximiser le contact.", // Leurre (Vrai mais pas le mécanisme d'optimisation principal)
+          "La présence de pigments respiratoires à très haute affinité dans l'épithélium branchial qui capturent l'oxygène activement.", // Leurre
+          "L'augmentation de la surface d'échange par des replis villositaires internes qui piègent des bulles d'air pour une respiration accessoire." // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité anatomique du système respiratoire des Oiseaux (Aviaires) ?",
+        answers: [
+          "La présence de sacs aériens non vascularisés qui agissent comme des soufflets, assurant un flux d'air unidirectionnel continu dans les poumons.",
+          "Des poumons alvéolaires extensibles capables de doubler de volume lors du vol pour augmenter la capacité vitale.", // Leurre (Poumons rigides chez l'oiseau)
+          "Un diaphragme musculaire puissant qui sépare la cavité thoracique de la cavité abdominale, permettant une inspiration active profonde.", // Leurre (Pas de diaphragme comme les mammifères)
+          "Une vascularisation cutanée très dense qui permet de réaliser plus de 50% des échanges gazeux directement à travers la peau sous les plumes." // Leurre
+        ]
+      },
+      {
+        question: "Comment les Amphibiens adultes compensent-ils la faible surface de leurs poumons sacculaires ?",
+        answers: [
+          "Par une respiration cutanée importante, rendue possible par une peau fine, humide, richement vascularisée et dépourvue d'écailles.",
+          "Par une augmentation drastique du taux d'hémoglobine dans le sang pour capter le moindre oxygène disponible dans les poumons.", // Leurre
+          "Par un mécanisme de ventilation à pression négative très efficace grâce à une cage thoracique extensible et des muscles intercostaux.", // Leurre (Ventilation par pompe buccale, pression positive)
+          "Par l'utilisation de branchies internes résiduelles situées dans l'arrière-bouche qui filtrent l'oxygène de l'air dégluti." // Leurre
+        ]
+      },
+
+      // --- CIRCULATION ---
+      {
+        question: "Quelle est la différence fondamentale entre le système circulatoire des Céphalopodes et celui des autres Mollusques ?",
+        answers: [
+          "Il est clos et assisté par des cœurs branchiaux accessoires qui augmentent la pression sanguine pour soutenir un métabolisme actif.",
+          "Il est ouvert (lacunaire), l'hémolymphe baignant directement les organes dans l'hémocœle sans vaisseaux capillaires véritables.", // Leurre (Vrai pour les autres, faux pour Céphalopodes)
+          "Il utilise de l'hémoglobine rouge contenue dans des globules, alors que les autres mollusques utilisent de l'hémocyanine dissoute.", // Leurre (Céphalopodes ont hémocyanine)
+          "Il est absent, les échanges gazeux et nutritifs se faisant entièrement par diffusion facilitée à travers le manteau très fin." // Leurre
+        ]
+      },
+      {
+        question: "Dans le cœur d'un Mammifère, quel événement mécanique correspond au premier bruit du cœur (B1 / 'Tou') ?",
+        answers: [
+          "La fermeture des valves auriculo-ventriculaires (mitrale et tricuspide) au début de la systole ventriculaire pour empêcher le reflux.",
+          "L'ouverture brutale des valves sigmoïdes (aortique et pulmonaire) sous l'effet de la pression sanguine éjectée par les ventricules.", // Leurre
+          "La contraction des oreillettes qui propulse le sang restant vers les ventricules juste avant la fermeture des valves veineuses.", // Leurre
+          "Le remplissage passif rapide des ventricules lors de la diastole, provoquant une vibration des parois cardiaques relaxées." // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle des ostioles dans le système circulatoire ouvert des Arthropodes ?",
+        answers: [
+          "Ce sont des ouvertures latérales du cœur tubulaire qui permettent le retour de l'hémolymphe depuis l'hémocœle lors de la diastole.",
+          "Ce sont des sphincters musculaires situés à la base des antennes qui régulent la pression de l'hémolymphe vers le cerveau.", // Leurre
+          "Ce sont des structures de filtration situées dans les sinus péricardiques qui éliminent les déchets azotés avant le retour au cœur.", // Leurre
+          "Ce sont des connexions directes entre le système trachéen et le système circulatoire pour oxygéner l'hémolymphe." // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi dit-on que la circulation des Poissons est 'simple' ?",
+        answers: [
+          "Parce que le sang ne traverse le cœur qu'une seule fois par tour complet : du cœur aux branchies, puis aux organes, et retour au cœur.",
+          "Parce que leur cœur ne possède qu'une seule cavité contractile qui mélange le sang oxygéné et le sang désoxygéné.", // Leurre
+          "Parce que la pression sanguine est maintenue constante et faible tout au long du circuit vasculaire sans variations pulsatiles.", // Leurre
+          "Parce qu'ils ne possèdent pas de globules rouges, l'oxygène étant transporté simplement dissous dans le plasma sanguin." // Leurre
+        ]
+      },
+
+      // --- EXCRÉTION & OSMORÉGULATION ---
+      {
+        question: "Quel est le mécanisme de fonctionnement des cellules flammes (protonéphridies) chez les Plathelminthes ?",
+        answers: [
+          "Le battement des cils crée une dépression qui aspire le liquide interstitiel à travers un filtre, permettant l'excrétion et l'osmorégulation.",
+          "Elles transportent activement les ions sodium depuis la lumière intestinale vers le parenchyme pour maintenir l'équilibre osmotique.", // Leurre
+          "Elles sécrètent de l'ammoniac gazeux directement à travers la paroi du corps grâce à des transporteurs membranaires spécifiques.", // Leurre
+          "Elles filtrent le sang à haute pression grâce à une capsule glomérulaire primitive reliée à un tubule contourné." // Leurre
+        ]
+      },
+      {
+        question: "Comment les Poissons téléostéens marins luttent-ils contre la déshydratation dans un milieu hypertonique ?",
+        answers: [
+          "Ils boivent de l'eau de mer en grande quantité et excrètent activement les sels excédentaires via les chlorocytes de leurs branchies.",
+          "Ils ne boivent jamais et produisent une urine très abondante et diluée pour éliminer l'excès d'eau qui entre par osmose.", // Leurre (Stratégie eau douce)
+          "Ils augmentent la concentration en urée de leur sang pour égaler l'osmolarité de l'eau de mer et éviter les pertes d'eau.", // Leurre (Stratégie sélaciens)
+          "Ils possèdent une peau totalement imperméable aux ions et à l'eau grâce à une couche épaisse de kératine et de mucus." // Leurre
+        ]
+      },
+      {
+        question: "Quel est l'avantage adaptatif de l'excrétion d'acide urique (uricotélisme) chez les Insectes et les Oiseaux ?",
+        answers: [
+          "L'acide urique est peu toxique et insoluble, ce qui permet de l'excréter sous forme pâteuse avec une perte d'eau minimale.",
+          "L'acide urique est très soluble dans l'eau, ce qui permet de l'éliminer rapidement par simple diffusion à travers la peau.", // Leurre
+          "L'acide urique peut être recyclé par l'organisme en acides aminés lors des périodes de jeûne prolongé ou de métamorphose.", // Leurre
+          "L'acide urique est un gaz volatil qui s'évacue facilement par les voies respiratoires sans nécessiter de rein complexe." // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la fonction précise des tubes de Malpighi chez les Insectes ?",
+        answers: [
+          "Ils captent les déchets azotés et les sels de l'hémolymphe pour les déverser dans l'intestin postérieur, où l'eau est réabsorbée.",
+          "Ils filtrent l'hémolymphe par ultrafiltration sous pression au niveau du cœur pour produire une urine primitive diluée.", // Leurre (Pas d'ultrafiltration pression)
+          "Ils synthétisent l'urée à partir de l'ammoniac produit par le métabolisme des protéines dans le corps gras.", // Leurre
+          "Ils régulent le pH de l'hémolymphe en sécrétant des ions bicarbonate directement dans l'hémocœle." // Leurre
+        ]
+      },
+
+      // --- SYSTÈME NERVEUX & LOCOMOTION ---
+      {
+        question: "Qu'est-ce que le squelette hydrostatique, utilisé notamment par les Annélides et les Nématodes ?",
+        answers: [
+          "Un volume de liquide incompressible maintenu sous pression dans une cavité close, sur lequel les muscles agissent pour créer le mouvement.",
+          "Une structure rigide interne composée de cartilage calcifié qui sert de point d'attache aux muscles longitudinaux.", // Leurre
+          "Un exosquelette articulé formé de plaques de chitine qui protège le corps mou et permet des mouvements précis.", // Leurre
+          "Un réseau de spicules calcaires ou siliceux dispersés dans le derme qui rigidifient la paroi du corps sans gêner la flexion." // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la caractéristique du système nerveux des Cnidaires (méduses, polypes) ?",
+        answers: [
+          "C'est un réseau nerveux diffus (plexus) sans centralisation marquée, permettant une conduction bidirectionnelle des influx.",
+          "C'est une chaîne nerveuse ventrale double avec une paire de ganglions par segment et un cerveau antérieur complexe.", // Leurre (Arthropodes/Annélides)
+          "C'est un tube neural dorsal creux qui s'élargit à l'avant pour former une vésicule cérébrale primitive.", // Leurre (Chordés)
+          "C'est un système exclusivement sensoriel, les réactions motrices étant assurées par des cellules myoépithéliales autonomes." // Leurre
+        ]
+      },
+      {
+        question: "Comment fonctionne le système ambulacraire (aquifère) des Échinodermes (ex: Étoile de mer) ?",
+        answers: [
+          "C'est un réseau de canaux hydrauliques remplis d'eau qui actionne les pieds ambulacraires (podia) pour la locomotion et la préhension.",
+          "C'est un système respiratoire unique où l'eau circule pour oxygéner les organes internes par diffusion directe.", // Leurre
+          "C'est un système circulatoire clos qui transporte les nutriments depuis l'estomac vers les bras de l'étoile de mer.", // Leurre
+          "C'est un mécanisme de défense qui permet d'expulser de l'eau sous pression pour repousser les prédateurs potentiels." // Leurre
+        ]
+      },
+      {
+        question: "Quelle structure assure la coordination motrice rapide chez les Céphalopodes (Poulpes, Calmars) ?",
+        answers: [
+          "Des axones géants qui permettent une conduction de l'influx nerveux à très grande vitesse vers le manteau pour la propulsion par jet.",
+          "Un cervelet très développé situé à l'arrière de la masse viscérale qui gère l'équilibre et la coordination fine des tentacules.", // Leurre
+          "Un réseau de ganglions stellaires indépendants qui contrôlent chaque bras de manière autonome sans intervention centrale.", // Leurre
+          "Une moelle épinière ventrale protégée par une structure cartilagineuse interne analogue aux vertèbres." // Leurre
+        ]
+      },
+
+      // --- ÉVOLUTION & DIVERSITÉ ---
+      {
+        question: "Qu'est-ce que la métamérie, caractéristique fondamentale des Annélides et des Arthropodes ?",
+        answers: [
+          "La répétition séquentielle de segments corporels (métamères) contenant des organes répétés (ganglions, néphridies, muscles).",
+          "La capacité de l'organisme à changer de forme (métamorphose) lors du passage de l'état larvaire à l'état adulte.", // Leurre
+          "La symétrie bilatérale du corps qui permet une céphalisation et une locomotion dirigée vers l'avant.", // Leurre
+          "La fusion de plusieurs segments corporels en unités fonctionnelles distinctes comme la tête, le thorax et l'abdomen." // Leurre (C'est la tagmatisation)
+        ]
+      },
+      {
+        question: "Quel groupe de Métazoaires est caractérisé par la présence de choanocytes ?",
+        answers: [
+          "Les Porifères (éponges) : ce sont des cellules à collerette flagellées qui créent le courant d'eau et capturent les particules.",
+          "Les Cnidaires : ce sont des cellules urticantes spécialisées dans la défense et la capture des proies via des toxines.", // Leurre (Cnidocytes)
+          "Les Plathelminthes : ce sont des cellules ciliées de l'épiderme ventral qui permettent la locomotion par glissement.", // Leurre
+          "Les Cténaires : ce sont des cellules adhésives situées sur les tentacules pour capturer le plancton sans venin." // Leurre (Colloblastes)
+        ]
+      },
+      {
+        question: "Quelle homologie structurale relie l'endostyle des Urocordés (Tuniciers) aux Vertébrés ?",
+        answers: [
+          "L'endostyle est homologue de la glande thyroïde : il sécrète du mucus iodé et des hormones analogues.",
+          "L'endostyle est homologue du pancréas exocrine : il produit des enzymes digestives déversées dans le pharynx.", // Leurre
+          "L'endostyle est homologue de la notochorde : il sert de structure de soutien dorsal chez la larve.", // Leurre
+          "L'endostyle est homologue des fentes branchiales : il permet la respiration et la filtration de l'eau." // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la principale fonction des ocelles présents chez de nombreux Invertébrés ?",
+        answers: [
+          "La détection de l'intensité lumineuse et de la direction de la lumière, sans formation d'image complexe.",
+          "La formation d'images haute résolution en couleur pour la reconnaissance précise des partenaires sexuels.", // Leurre (Yeux composés/camérulaires)
+          "La détection des mouvements rapides dans l'environnement grâce à une sensibilité temporelle très élevée.", // Leurre
+          "La perception de la polarisation de la lumière pour l'orientation magnétique lors des migrations." // Leurre
+        ]
+      },
+
+      // --- IMMUNOLOGIE & DÉFENSE ---
+      {
+        question: "Comment fonctionne le système immunitaire inné chez les Insectes (ex: Drosophile) ?",
+        answers: [
+          "Par la phagocytose via les hémocytes et la production de peptides antimicrobiens (ex: Drosomycine) sécrétés par le corps gras.",
+          "Par la production d'anticorps spécifiques (immunoglobulines) qui neutralisent les pathogènes circulants dans l'hémolymphe.", // Leurre (Immunité adaptative vertébrés)
+          "Par l'activation de lymphocytes T cytotoxiques qui détruisent les cellules infectées par des virus.", // Leurre
+          "Par la coagulation rapide de l'hémolymphe uniquement, sans mécanisme de reconnaissance moléculaire des pathogènes." // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la spécificité des cnidocytes (ou nématocystes) chez les Cnidaires ?",
+        answers: [
+          "Ce sont des organites explosifs à usage unique qui dévaginent un filament harponnant injectant des toxines au contact d'une proie.",
+          "Ce sont des cellules glandulaires qui sécrètent un mucus adhésif puissant pour engluer les proies sans les blesser.", // Leurre
+          "Ce sont des cellules sensorielles qui détectent les vibrations de l'eau et déclenchent la contraction des tentacules.", // Leurre
+          "Ce sont des cellules digestives mobiles qui migrent dans la mésoglée pour distribuer les nutriments aux autres tissus." // Leurre
+        ]
+      },
+      {
+        question: "Quel rôle joue la cuticule des Arthropodes au-delà de la protection mécanique ?",
+        answers: [
+          "Elle sert de site d'attachement musculaire (apodèmes) et limite les pertes d'eau, essentielle à la vie terrestre.",
+          "Elle permet la respiration cutanée grâce à sa perméabilité sélective aux gaz respiratoires comme l'oxygène.", // Leurre (Généralement imperméable)
+          "Elle stocke les réserves lipidiques nécessaires à la métamorphose et à la production des œufs.", // Leurre
+          "Elle agit comme un organe sensoriel géant capable de détecter les variations de température et d'humidité." // Leurre (Ce sont les sensilles qui traversent la cuticule)
+        ]
+      },
+      {
+        question: "Chez les Échinodermes, à quoi servent les pédicellaires présents à la surface du corps ?",
+        answers: [
+          "Ce sont de petites pinces mobiles qui nettoient la surface du corps, éliminent les parasites et participent parfois à la défense.",
+          "Ce sont des branchies dermiques qui augmentent la surface d'échange respiratoire avec l'eau de mer environnante.", // Leurre (Papules)
+          "Ce sont des organes reproducteurs externes qui libèrent les gamètes dans la colonne d'eau lors de la reproduction.", // Leurre
+          "Ce sont des ventouses hydrauliques puissantes qui permettent à l'animal de se fixer solidement au substrat rocheux." // Leurre (Podia)
+        ]
+      }
+    ];
+
+    // --- LOGIQUE DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      // Préparation des réponses (1ère = correcte)
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return; // Sécurité
+
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      // Révéler la solution
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! Maîtrise impressionnante de la zoologie.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bon niveau. Révisez les détails des invertébrés.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Courage ! La diversité animale est vaste, reprenez les bases.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
