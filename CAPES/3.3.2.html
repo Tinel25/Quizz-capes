@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Communications Intercellulaires</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 3.3.2 : Communications Intercellulaires</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 3.3.2 : COMMUNICATIONS INTERCELLULAIRES
+       - Focus : Transduction du signal, Récepteurs, Seconds messagers.
+    */
+    const quizData = [
+      // --- TYPES DE SIGNALISATION & LIGANDS ---
+      {
+        question: "Quelle est la caractéristique définissant la signalisation paracrine ?",
+        answers: [
+          "Le signal (médiateur local) est sécrété dans le milieu extracellulaire et agit uniquement sur les cellules voisines à courte distance.",
+          "Le signal est transporté par le sang pour agir sur des cellules cibles situées à grande distance dans l'organisme.", // Leurre (Endocrine)
+          "Le signal reste attaché à la membrane de la cellule émettrice et nécessite un contact physique direct avec la cellule cible.", // Leurre (Juxtacrine)
+          "Le signal est sécrété par une cellule et agit sur ses propres récepteurs pour auto-réguler sa propre activité.", // Leurre (Autocrine)
+        ]
+      },
+      {
+        question: "Comment le monoxyde d'azote (NO) agit-il comme molécule de signalisation dans la relaxation vasculaire ?",
+        answers: [
+          "C'est un gaz hydrophobe qui diffuse à travers la membrane des cellules musculaires lisses et active directement la guanylate cyclase cytoplasmique.",
+          "C'est un neurotransmetteur stocké dans des vésicules synaptiques qui se lie à des récepteurs canaux ioniques membranaires.", // Leurre
+          "C'est une hormone peptidique qui se lie à un récepteur de surface couplé à une protéine Gs pour produire de l'AMPc.", // Leurre
+          "C'est un radical libre toxique qui détruit les filaments d'actine, provoquant le relâchement passif de la cellule musculaire.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité des hormones stéroïdiennes (ex: Cortisol, Testostérone) ?",
+        answers: [
+          "Elles sont hydrophobes, traversent la membrane plasmique par diffusion et se lient à des récepteurs intracellulaires (nucléaires/cytoplasmiques).",
+          "Elles sont hydrophiles et nécessitent un transporteur membranaire actif pour entrer dans la cellule et atteindre le noyau.", // Leurre
+          "Elles se lient exclusivement à des récepteurs tyrosine kinase membranaires pour déclencher une cascade de phosphorylation rapide.", // Leurre
+          "Elles agissent uniquement comme des facteurs paracrines locaux car elles sont dégradées très vite dans le sang.", // Leurre
+        ]
+      },
+      {
+        question: "La signalisation synaptique se distingue de la signalisation endocrine par :",
+        answers: [
+          "Sa très haute spécificité spatiale et temporelle, le signal étant délivré à une cellule cible précise à concentration très élevée.",
+          "La nature chimique du signal, les neurones n'utilisant jamais de peptides ou d'acides aminés comme messagers.", // Leurre (Faux, neuropeptides/glutamate existent)
+          "Sa lenteur d'action, car la diffusion du neurotransmetteur dans la fente synaptique prend plusieurs minutes.", // Leurre (C'est millisecondes)
+          "L'absence totale de récepteurs membranaires, le neurotransmetteur entrant directement par endocytose.", // Leurre
+        ]
+      },
+
+      // --- RÉCEPTEURS MEMBRANAIRES & PROTÉINES G ---
+      {
+        question: "Quelle est la structure typique d'un Récepteur Couplé aux Protéines G (RCPG) ?",
+        answers: [
+          "Une protéine transmembranaire unique traversant 7 fois la membrane (7 domaines en hélice alpha), avec un domaine N-ter extracellulaire.",
+          "Un dimère de deux protéines traversant chacune une fois la membrane, qui se phosphorylent mutuellement.", // Leurre (RTK)
+          "Un canal ionique formé de 5 sous-unités entourant un pore central qui s'ouvre à la fixation du ligand.", // Leurre (Récepteur canal)
+          "Une protéine périphérique ancrée à la face interne de la membrane par un acide gras, sans domaine extracellulaire.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le cycle d'activation d'une protéine G hétérotrimérique (sous-unités alpha, bêta, gamma) ?",
+        answers: [
+          "Le récepteur activé agit comme un GEF (Guanine Exchange Factor) : la sous-unité alpha échange son GDP contre du GTP et se dissocie du dimère bêta-gamma.",
+          "La sous-unité alpha hydrolyse son GTP en GDP pour s'activer, puis se lie aux effecteurs en aval.", // Leurre (Hydrolyse = désactivation)
+          "Le récepteur phosphoryle la sous-unité bêta, qui se détache alors du complexe pour entrer dans le noyau.", // Leurre
+          "Les trois sous-unités restent associées en permanence mais changent de conformation pour ouvrir un canal ionique.", // Leurre
+        ]
+      },
+      {
+        question: "Comment la toxine cholérique provoque-t-elle une diarrhée massive ?",
+        answers: [
+          "Elle bloque l'activité GTPase de la sous-unité G-alpha-s, la maintenant active en permanence, ce qui surproduit l'AMPc et ouvre les canaux chlore.",
+          "Elle inhibe la sous-unité G-alpha-i, empêchant l'arrêt de la production d'AMPc dans les cellules intestinales.", // Leurre (C'est la toxine pertussique sur Gi)
+          "Elle détruit physiquement les microvillosités intestinales, empêchant la réabsorption de l'eau par osmose.", // Leurre
+          "Elle agit comme un analogue de l'acétylcholine, stimulant continuellement la contraction des muscles lisses intestinaux.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle de la protéine bêta-arrestine dans la régulation des RCPG ?",
+        answers: [
+          "Elle se lie au récepteur phosphorylé par les GRK, empêche son couplage aux protéines G (désensibilisation) et induit son endocytose.",
+          "Elle active la synthèse de nouveaux récepteurs pour remplacer ceux qui ont été dégradés par l'activité lysosomale.", // Leurre
+          "Elle agit comme une protéine G accessoire qui amplifie le signal en activant directement l'adénylate cyclase.", // Leurre
+          "Elle permet au récepteur de transloquer vers le noyau pour réguler l'expression des gènes de réponse au stress.", // Leurre
+        ]
+      },
+
+      // --- SECONDS MESSAGERS (AMPc, Ca2+, IP3) ---
+      {
+        question: "L'Adénylate Cyclase est une enzyme effectrice membranaire. Quelle est sa réaction ?",
+        answers: [
+          "Elle catalyse la conversion de l'ATP en AMP cyclique (3',5'-AMPc) et libère du pyrophosphate.",
+          "Elle hydrolyse l'AMP cyclique en 5'-AMP linéaire pour éteindre le signal intracellulaire.", // Leurre (Phosphodiestérase)
+          "Elle transfère un groupe phosphate de l'ATP sur une protéine cible pour l'activer.", // Leurre (Protéine Kinase)
+          "Elle clive les phospholipides membranaires pour produire de l'IP3 et du diacylglycérol.", // Leurre (Phospholipase C)
+        ]
+      },
+      {
+        question: "Comment l'AMP cyclique active-t-il la Protéine Kinase A (PKA) ?",
+        answers: [
+          "Il se fixe sur les deux sous-unités régulatrices de la PKA, provoquant leur dissociation et la libération des deux sous-unités catalytiques actives.",
+          "Il phosphoryle directement les sous-unités catalytiques de la PKA, ce qui change leur conformation et ouvre le site actif.", // Leurre
+          "Il sert de cofacteur enzymatique indispensable au transfert du phosphate sur le substrat protéique.", // Leurre
+          "Il recrute la PKA à la membrane plasmique où elle est activée par contact avec la protéine G.", // Leurre
+        ]
+      },
+      {
+        question: "La voie de la Phospholipase C bêta (PLC-beta) produit deux seconds messagers. Lesquels ?",
+        answers: [
+          "L'Inositol Triphosphate (IP3) soluble qui libère le Ca2+ du réticulum, et le Diacylglycérol (DAG) membranaire qui active la PKC.",
+          "L'AMP cyclique qui active la PKA et le GMP cyclique qui active la PKG.", // Leurre
+          "Le Calcium qui se lie à la calmoduline et le monoxyde d'azote qui diffuse vers les cellules voisines.", // Leurre
+          "Le PIP3 qui recrute la kinase Akt et le PIP2 qui stabilise le cytosquelette d'actine.", // Leurre (Voie PI3K)
+        ]
+      },
+      {
+        question: "Pourquoi le calcium cytosolique est-il maintenu à une concentration très basse (10^-7 M) au repos ?",
+        answers: [
+          "Pour permettre une réponse rapide et sensible : une faible entrée de calcium crée une augmentation relative de concentration énorme (signal on/off).",
+          "Parce que le calcium est toxique pour les protéines cytosoliques et provoque leur dénaturation immédiate à haute concentration.", // Leurre
+          "Parce que le calcium précipiterait avec les phosphates de l'ATP si sa concentration dépassait le micromolaire.", // Leurre
+          "Parce que les pompes à calcium consomment trop d'énergie pour maintenir une concentration élevée en permanence.", // Leurre
+        ]
+      },
+      {
+        question: "La Calmoduline est une protéine ubiquitaire. Quel est son mode d'action ?",
+        answers: [
+          "Elle fixe 4 ions Ca2+, change de conformation et entoure ses protéines cibles (ex: CaM-Kinases) pour moduler leur activité.",
+          "Elle agit comme un canal calcique intracellulaire situé sur la membrane du réticulum endoplasmique.", // Leurre (Récepteur IP3 / Ryanodine)
+          "Elle pompe activement le calcium hors de la cellule en utilisant l'énergie de l'hydrolyse de l'ATP.", // Leurre (Ca2+-ATPase)
+          "Elle phosphoryle directement les facteurs de transcription pour activer l'expression des gènes calcium-dépendants.", // Leurre
+        ]
+      },
+
+      // --- RÉCEPTEURS TYROSINE KINASE (RTK) & RAS ---
+      {
+        question: "Quelle est la première étape de l'activation d'un Récepteur Tyrosine Kinase (RTK) par son ligand ?",
+        answers: [
+          "La dimérisation du récepteur induite par le ligand, suivie de la trans-autophosphorylation des domaines tyrosines intracellulaires.",
+          "Le clivage du domaine extracellulaire du récepteur qui libère le domaine intracellulaire actif dans le cytoplasme.", // Leurre (Notch)
+          "L'interaction avec une protéine G hétérotrimérique qui active l'activité kinase du récepteur.", // Leurre (RCPG)
+          "L'ouverture d'un pore central permettant l'entrée de calcium qui active le domaine kinase.", // Leurre
+        ]
+      },
+      {
+        question: "Les domaines SH2 (Src Homology 2) présents sur les protéines de signalisation servent à :",
+        answers: [
+          "Reconnaître et se lier spécifiquement aux tyrosines phosphorylées sur les récepteurs activés (docking sites).",
+          "Reconnaître les séquences riches en proline pour permettre l'assemblage de complexes multiprotéiques.", // Leurre (Domaines SH3)
+          "Se lier aux phospholipides membranaires comme le PIP3 pour recruter la protéine à la membrane.", // Leurre (Domaines PH)
+          "Catalyser le transfert de phosphate de l'ATP vers le substrat protéique en aval.", // Leurre (Domaine Kinase)
+        ]
+      },
+      {
+        question: "La protéine Ras est une petite protéine G monomérique. Quel est son rôle clé ?",
+        answers: [
+          "Elle agit comme un interrupteur moléculaire activant la cascade des MAP-Kinases (Raf-MEK-ERK) pour stimuler la prolifération.",
+          "Elle produit directement l'AMPc en réponse à l'activation des récepteurs tyrosine kinase.", // Leurre
+          "Elle inhibe la croissance cellulaire en bloquant l'entrée dans le cycle cellulaire en phase G1.", // Leurre
+          "Elle sert de protéine d'échafaudage pour assembler les complexes de signalisation sans activité enzymatique propre.", // Leurre
+        ]
+      },
+      {
+        question: "Environ 30% des cancers humains impliquent une mutation du gène Ras. Quel est l'effet de cette mutation ?",
+        answers: [
+          "Elle abolit l'activité GTPase intrinsèque de Ras, la bloquant sous sa forme liée au GTP (toujours active), causant une prolifération incontrôlée.",
+          "Elle empêche Ras de se lier au GTP, la rendant inactive en permanence et bloquant les signaux de survie cellulaire.", // Leurre
+          "Elle modifie la spécificité de Ras qui se met à activer des voies de mort cellulaire (apoptose) au lieu de la croissance.", // Leurre
+          "Elle rend la protéine Ras insensible à la dégradation par le protéasome, provoquant son accumulation toxique.", // Leurre
+        ]
+      },
+
+      // --- VOIES SPÉCIFIQUES & INTÉGRATION ---
+      {
+        question: "La voie de signalisation de l'insuline (RTK) active principalement :",
+        answers: [
+          "La PI3-Kinase, qui produit du PIP3 membranaire, recrutant et activant la kinase Akt (PKB) pour favoriser la survie et le stockage du glucose.",
+          "La phospholipase C, qui augmente le calcium intracellulaire pour provoquer la contraction musculaire immédiate.", // Leurre
+          "L'adénylate cyclase, qui augmente l'AMPc pour stimuler la glycogénolyse et la libération de glucose.", // Leurre (Glucagon/Adrénaline)
+          "La voie JAK-STAT, qui transmet le signal directement au noyau pour activer les gènes de l'inflammation.", // Leurre
+        ]
+      },
+      {
+        question: "Comment la voie JAK-STAT (utilisée par les cytokines) transmet-elle le signal au noyau ?",
+        answers: [
+          "Les kinases JAK associées au récepteur phosphorylent les protéines STAT, qui se dimérisent, entrent dans le noyau et agissent comme facteurs de transcription.",
+          "Les kinases JAK entrent elles-mêmes dans le noyau pour phosphoryler les histones et ouvrir la chromatine.", // Leurre
+          "Le récepteur est endocyté et transporté intact jusqu'au pore nucléaire où il libère le ligand.", // Leurre
+          "La voie active une cascade de MAP-Kinases qui finit par phosphoryler des facteurs de transcription préexistants.", // Leurre (Autre voie)
+        ]
+      },
+      {
+        question: "La voie Notch-Delta est un exemple de signalisation juxtacrine (contact-dépendant). Quel est son mécanisme ?",
+        answers: [
+          "La liaison de Delta (cellule signal) sur Notch (cellule cible) provoque le clivage protéolytique de Notch, libérant son domaine intracellulaire qui migre au noyau.",
+          "La liaison de Delta active une activité tyrosine kinase intrinsèque de Notch qui phosphoryle des substrats cytosoliques.", // Leurre
+          "Notch est un canal ionique qui s'ouvre au contact de Delta, provoquant une dépolarisation locale.", // Leurre
+          "Notch et Delta sont internalisés ensemble dans la cellule cible pour être dégradés, arrêtant ainsi le signal.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que l'amplification du signal dans une cascade de transduction ?",
+        answers: [
+          "Le fait qu'une seule molécule de signal active plusieurs enzymes, qui chacune activent de nombreuses molécules en aval, multipliant l'effet final.",
+          "Le mécanisme par lequel la cellule augmente le nombre de récepteurs à sa surface pour devenir plus sensible.", // Leurre (Sensibilisation)
+          "La synthèse de nouveaux ligands par la cellule cible pour propager le signal aux cellules voisines.", // Leurre (Relais)
+          "L'utilisation de plusieurs types de récepteurs différents pour reconnaître la même molécule signal.", // Leurre (Redondance)
+        ]
+      },
+      {
+        question: "Le rôle des protéines d'échafaudage (scaffolding proteins) est de :",
+        answers: [
+          "Regrouper physiquement les différentes enzymes d'une même voie de signalisation pour augmenter la vitesse et la spécificité des interactions.",
+          "Servir de réservoir inactif de molécules de signalisation qui sont libérées en cas de stress cellulaire.", // Leurre
+          "Former le cytosquelette rigide qui maintient la forme de la cellule pendant la transduction du signal.", // Leurre
+          "Protéger les seconds messagers contre la dégradation enzymatique par les phosphodiestérases.", // Leurre
+        ]
+      },
+
+      // --- RÉGULATION & ARRÊT DU SIGNAL ---
+      {
+        question: "Comment l'activité des kinases est-elle contrebalancée dans la cellule ?",
+        answers: [
+          "Par des protéines phosphatases qui retirent les groupements phosphate des protéines, les ramenant à leur état initial.",
+          "Par la dégradation protéolytique systématique de toutes les protéines phosphorylées par le protéasome.", // Leurre
+          "Par l'exportation active des protéines phosphorylées hors de la cellule via des vésicules d'exocytose.", // Leurre
+          "Par la fixation irréversible d'inhibiteurs compétitifs sur le site actif des kinases.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que la désensibilisation (ou adaptation) des récepteurs ?",
+        answers: [
+          "Une diminution de la réponse cellulaire malgré la présence continue du signal, souvent par endocytose ou phosphorylation du récepteur.",
+          "Une augmentation de la sensibilité du récepteur suite à une exposition prolongée à une faible dose de ligand.", // Leurre (Hypersensibilisation)
+          "La destruction définitive de la cellule cible par apoptose si le signal est trop fort.", // Leurre
+          "La modification de la structure du ligand dans le milieu extracellulaire pour qu'il ne puisse plus se lier.", // Leurre
+        ]
+      },
+      {
+        question: "La phosphodiestérase est une enzyme clé de l'arrêt du signal. Que fait-elle ?",
+        answers: [
+          "Elle dégrade les nucléotides cycliques (AMPc, GMPc) en nucléotides linéaires inactifs (5'-AMP, 5'-GMP).",
+          "Elle retire les groupes phosphates des lipides membranaires comme le PIP3 pour arrêter la voie PI3K.", // Leurre (PTEN)
+          "Elle hydrolyse les protéines G pour les forcer à relâcher le GTP et lier le GDP.", // Leurre (GAP)
+          "Elle clive le domaine extracellulaire des récepteurs pour empêcher la fixation de nouveaux ligands.", // Leurre
+        ]
+      },
+
+      // --- INTÉGRATION & EXEMPLES CLINIQUES ---
+      {
+        question: "Comment le Viagra (Sildénafil) agit-il sur la signalisation cellulaire ?",
+        answers: [
+          "Il inhibe la phosphodiestérase 5 (PDE5), empêchant la dégradation du GMPc produit par le NO, prolongeant ainsi la relaxation vasculaire.",
+          "Il active directement la guanylate cyclase pour produire plus de GMPc sans besoin de monoxyde d'azote.", // Leurre
+          "Il agit comme un agoniste des récepteurs adrénergiques, provoquant une vasoconstriction puissante.", // Leurre
+          "Il bloque les canaux calciques des muscles lisses pour empêcher leur contraction réflexe.", // Leurre
+        ]
+      },
+      {
+        question: "La voie Wnt/bêta-caténine est cruciale dans le développement. Que se passe-t-il en absence de signal Wnt ?",
+        answers: [
+          "La bêta-caténine est phosphorylée par un complexe de destruction (APC/Axine/GSK3), ubiquitinylée et dégradée, empêchant l'activation des gènes cibles.",
+          "La bêta-caténine s'accumule dans le noyau et active la transcription des gènes de prolifération cellulaire.", // Leurre (Présence de Wnt)
+          "Le récepteur Frizzled est internalisé et dégradé pour empêcher toute activation accidentelle de la voie.", // Leurre
+          "La bêta-caténine se lie aux cadhérines membranaires et renforce l'adhérence cellulaire pour bloquer la migration.", // Leurre
+        ]
+      },
+      {
+        question: "Le 'Cross-talk' (diaphonie) entre voies de signalisation signifie que :",
+        answers: [
+          "Les voies de signalisation ne sont pas linéaires mais interconnectées, une voie pouvant activer ou inhiber des composants d'une autre voie.",
+          "Les cellules communiquent entre elles pour vérifier qu'elles ont bien reçu le même signal en même temps.", // Leurre
+          "Le signal passe d'un type de récepteur à un autre sur la membrane avant d'être transmis à l'intérieur.", // Leurre
+          "Les seconds messagers sont capables de traverser la membrane nucléaire pour parler directement à l'ADN.", // Leurre
+        ]
+      },
+      {
+        question: "Les intégrines transmettent des signaux 'Outside-in' (de l'extérieur vers l'intérieur). Exemple :",
+        answers: [
+          "La liaison à la matrice extracellulaire active la kinase FAK (Focal Adhesion Kinase), favorisant la survie et la migration cellulaire.",
+          "La liaison à la matrice provoque l'ouverture immédiate de canaux chlorure, changeant le potentiel de membrane.", // Leurre
+          "La pression mécanique sur la matrice induit la synthèse de collagène par activation directe des ribosomes.", // Leurre
+          "L'absence de contact matriciel active une voie de prolifération incontrôlée menant au cancer.", // Leurre (Anoïkis = mort, pas prolifération)
+        ]
+      },
+      {
+        question: "Le calcium agit souvent en synergie avec le DAG pour activer :",
+        answers: [
+          "La Protéine Kinase C (PKC), qui migre à la membrane plasmique pour être activée.",
+          "La Protéine Kinase A (PKA), qui est dépendante de l'AMPc et insensible aux lipides.", // Leurre
+          "La Calmoduline Kinase, qui ne dépend que du calcium et pas des lipides membranaires.", // Leurre
+          "La PI3-Kinase, qui est activée par les récepteurs tyrosine kinase en amont de la phospholipase.", // Leurre
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! La transduction du signal est maîtrisée.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bon travail. Revoyez les voies spécifiques (RTK vs RCPG).";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Continuez l'effort. C'est un sujet complexe mais essentiel.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
