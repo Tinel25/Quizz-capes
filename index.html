@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>L3 SVT</title>
+  <title>Révisions L3 SVT & CAPES</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -11,6 +11,7 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       padding: 20px;
+      color: #333;
     }
     .container {
       max-width: 900px;
@@ -19,12 +20,14 @@
       border-radius: 20px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
       overflow: hidden;
+      padding-bottom: 20px;
     }
     .header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       padding: 30px;
       text-align: center;
+      margin-bottom: 20px;
     }
     .header h1 {
       font-size: 28px;
@@ -35,99 +38,397 @@
       opacity: 0.9;
     }
     .content {
-      padding: 30px;
+      padding: 0 30px;
     }
-    .dropdown {
-      margin-bottom: 20px;
+
+    /* Styles des boutons principaux (S5, S6, CAPES) */
+    .main-section {
+      margin-bottom: 15px;
     }
-    .dropdown button {
+    .main-btn {
       width: 100%;
       text-align: left;
-      background: #f8f9fa;
-      border: 2px solid #e0e0e0;
+      background: #4a5568; /* Gris foncé pour les gros titres */
+      color: white;
+      border: none;
       border-radius: 12px;
+      padding: 15px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .main-btn:hover {
+      background: #2d3748;
+      transform: scale(1.01);
+    }
+    .main-content {
+      display: none;
+      padding: 15px;
+      background: #f0f2f5;
+      border-radius: 0 0 12px 12px;
+      margin-top: -5px; /* Pour coller au bouton */
+      margin-bottom: 10px;
+      border: 1px solid #e0e0e0;
+    }
+
+    /* Styles des sous-menus (Matières / Thèmes) */
+    .dropdown {
+      margin-bottom: 10px;
+    }
+    .sub-btn {
+      width: 100%;
+      text-align: left;
+      background: #white;
+      border: 2px solid #e0e0e0;
+      border-left: 5px solid #667eea; /* Marqueur couleur */
+      border-radius: 8px;
       padding: 12px 18px;
       font-size: 16px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
+      background-color: #fff;
     }
-    .dropdown button:hover {
+    .sub-btn:hover {
       border-color: #667eea;
-      background: #f0f4ff;
+      background: #f8f9fa;
+      padding-left: 25px; /* Petit effet de mouvement */
     }
+    
+    /* Contenu des liens finaux */
     .dropdown-content {
       display: none;
-      margin-top: 10px;
-      margin-left: 20px;
+      margin-top: 5px;
+      margin-left: 10px;
+      margin-right: 10px;
     }
     .dropdown-content a {
       display: block;
       text-decoration: none;
-      color: #333;
-      background: #f8f9fa;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
+      color: #444;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
       padding: 10px 14px;
-      transition: all 0.3s ease;
-      margin-bottom: 8px;
+      transition: all 0.2s ease;
+      margin-bottom: 5px;
+      font-size: 14px;
     }
     .dropdown-content a:hover {
-      border-color: #667eea;
-      background: #f0f4ff;
+      border-color: #764ba2;
+      color: #764ba2;
+      background: #fdfdfd;
       transform: translateX(5px);
+    }
+    
+    /* Indicateur flèche */
+    .arrow {
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
     <div class="header">
-      <h1>Bonne révision !</h1>
-      <p>Choisis ta matière</p>
+      <h1>Plateforme de Révision</h1>
+      <p>L3 SVT & CAPES 2026</p>
     </div>
+
     <div class="content">
-      
-      <div class="dropdown">
-        <button onclick="toggleDropdown('immuno')">Immunologie ▼</button>
-        <div id="immuno" class="dropdown-content">
-          <a href="Immunologie/Notion_d_Antigene.html">Notion d'Antigène</a>
-          <a href="Immunologie/Cmh.html">CMH</a>
+
+      <div class="main-section">
+        <button class="main-btn" onclick="toggleDisplay('s5-window')">
+          SEMESTRE 5 <span class="arrow">▼</span>
+        </button>
+        <div id="s5-window" class="main-content">
+          
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('immuno')">Immunologie</button>
+            <div id="immuno" class="dropdown-content">
+              <a href="Immunologie/Notion_d_Antigene.html">Notion d'Antigène</a>
+              <a href="Immunologie/Cmh.html">CMH</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('nmh')">NMH</button>
+            <div id="nmh" class="dropdown-content">
+              <a href="NMH/nutritionnel.html">Besoins Nutritionnels</a>
+              <a href="informatique/quiz2.html">Quiz 2 : x</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('dyn')">DTS</button>
+            <div id="dyn" class="dropdown-content">
+              <a href="DTS/cinematique.html">Tectonique globale et cinématique</a>
+              <a href="DTS/sismologie.html">Sismologie</a>
+              <a href="DTS/subduction.html">Subduction</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('oeb')">OEB</button>
+            <div id="oeb" class="dropdown-content">
+              <a href="oeb/domestication.html">Domestication</a>
+              <a href="oeb/phylogenie.html">Phylogénie</a>
+              <a href="oeb/speciation.html">Espèce et Spéciation</a>
+              <a href="oeb/evolution.html">Evolution humaine</a>
+              <a href="oeb/enseigner.html">Enseigner l'évolution</a>
+              <a href="oeb/paleo.html">Paléobiodiversité</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('clim')">Climato</button>
+            <div id="clim" class="dropdown-content">
+              <a href="climato/intro.html">Introduction</a>
+              <a href="climato/rayonnement.html">Rayonnement solaire</a>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="dropdown">
-        <button onclick="toggleDropdown('nmh')">NMH ▼</button>
-        <div id="nmh" class="dropdown-content">
-          <a href="NMH/nutritionnel.html">Besoins Nutritionnels</a>
-          <a href="informatique/quiz2.html">Quiz 2 : x</a>
+      <div class="main-section">
+        <button class="main-btn" onclick="toggleDisplay('s6-window')">
+          SEMESTRE 6 <span class="arrow">▼</span>
+        </button>
+        <div id="s6-window" class="main-content">
+          
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('s6-m1')">Matière 1</button>
+            <div id="s6-m1" class="dropdown-content">
+              <a href="S6/Matiere1/cours1.html">Cours 1</a>
+              <a href="S6/Matiere1/cours2.html">Cours 2</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('s6-m2')">Matière 2</button>
+            <div id="s6-m2" class="dropdown-content">
+              <a href="S6/Matiere2/cours1.html">Cours 1</a>
+              <a href="S6/Matiere2/cours2.html">Cours 2</a>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="dropdown">
-        <button onclick="toggleDropdown('dyn')">DTS ▼</button>
-        <div id="dyn" class="dropdown-content">
-          <a href="DTS/cinematique.html">Tectonique globale et cinématique des plaques</a>
-          <a href="DTS/sismologie.html">Sismologie</a>
-           <a href="DTS/subduction.html">Subduction</a>
-        </div>
-      </div>
+      <div class="main-section">
+        <button class="main-btn" onclick="toggleDisplay('capes-window')">
+          PROGRAMME CAPES 2026 <span class="arrow">▼</span>
+        </button>
+        <div id="capes-window" class="main-content">
+          
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t1')">1. Diversité du monde vivant</button>
+            <div id="c-t1" class="dropdown-content">
+              <a href="capes/t1_1.html">1.1. Grandes fonctions chez quelques Métazoaires</a>
+              <a href="capes/t1_2.html">1.2. Grandes fonctions chez quelques Embryophytes</a>
+              <a href="capes/t1_3.html">1.3. Grandes fonctions chez quelques champignons</a>
+              <a href="capes/t1_4.html">1.4. Grandes fonctions chez quelques organismes unicellulaires</a>
+            </div>
+          </div>
 
-      <div class="dropdown">
-        <button onclick="toggleDropdown('oeb')">OEB ▼</button>
-        <div id="oeb" class="dropdown-content">
-          <a href="oeb/domestication.html">Domestication</a>
-          <a href="oeb/phylogenie.html">Phylogénie</a>
-          <a href="oeb/speciation.html">Espèce et Spéciation</a>
-          <a href="oeb/evolution.html">Evolution humaine</a>
-          <a href="oeb/enseigner.html">Enseigner l'évolution</a>
-           <a href="oeb/paleo.html">Paléobiodiversité</a>
-        </div>
-      </div>
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t2')">2. Interactions organismes/milieu</button>
+            <div id="c-t2" class="dropdown-content">
+              <a href="capes/t2_1.html">2.1. La respiration: interaction directe avec le milieu</a>
+              <a href="capes/t2_2.html">2.2. Nutrition des Angiospermes en lien avec le milieu</a>
+              <a href="capes/t2_3.html">2.3. Développement post-embryonnaire des Angiospermes</a>
+            </div>
+          </div>
 
-<div class="dropdown">
-        <button onclick="toggleDropdown('clim')">Climato ▼</button>
-        <div id="clim" class="dropdown-content">
-          <a href="climato/intro.html">Introduction</a>
-          <a href="climato/rayonnement.html">Rayonnement solaire</a>
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t3')">3. La cellule dans son environnement</button>
+            <div id="c-t3" class="dropdown-content">
+              <a href="capes/t3_1.html">3.1. Organisation fonctionnelle de la cellule</a>
+              <a href="capes/t3_2.html">3.2. Membranes et échanges membranaires</a>
+              <a href="capes/t3_3_1.html">3.3.1. Matrices extracellulaires et jonctions cellulaires</a>
+              <a href="capes/t3_3_2.html">3.3.2. Communications intercellulaires</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t4')">4. Molécules du vivant</button>
+            <div id="c-t4" class="dropdown-content">
+              <a href="capes/t4_1.html">4.1 Les constituants du vivant</a>
+              <a href="capes/t4_2_1.html">4.2.1. Lipides</a>
+              <a href="capes/t4_2_2.html">4.2.2. Oses et polyosides</a>
+              <a href="capes/t4_2_3.html">4.2.3. Nucléotides et acides nucléiques</a>
+              <a href="capes/t4_2_4.html">4.2.4. Acides aminés et protéines</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t5')">5. Le métabolisme cellulaire</button>
+            <div id="c-t5" class="dropdown-content">
+              <a href="capes/t5_1.html">5.1. Les enzymes et la catalyse des réactions</a>
+              <a href="capes/t5_2.html">5.2. L'approvisionnement en matière organique</a>
+              <a href="capes/t5_3.html">5.3. Le devenir de la matière organique</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t6')">6. Génomique structurale/fonctionnelle</button>
+            <div id="c-t6" class="dropdown-content">
+              <a href="capes/t6_1.html">6.1. Génomes des cellules et des virus</a>
+              <a href="capes/t6_2.html">6.2. Transmission de l'info génétique (réplication, mitose, méiose)</a>
+              <a href="capes/t6_3.html">6.3. L'expression du génome et son contrôle</a>
+              <a href="capes/t6_4.html">6.4. La diversification des génomes</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t7')">7. Reproduction et développement</button>
+            <div id="c-t7" class="dropdown-content">
+              <a href="capes/t7_1.html">7.1. Reproduction sexuée et asexuée (Embryophytes)</a>
+              <a href="capes/t7_2.html">7.2. Reproduction sexuée chez les Mammifères</a>
+              <a href="capes/t7_3.html">7.3. Etapes et mécanismes du développement (Vertébrés)</a>
+              <a href="capes/t7_4.html">7.4. Croissance/dév post-embryonnaire (Angiosp, Insectes, Amphibiens)</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t8')">8. Physiologie humaine</button>
+            <div id="c-t8" class="dropdown-content">
+              <a href="capes/t8_1.html">8.1. Physiologie sensorielle</a>
+              <a href="capes/t8_2.html">8.2. Motricité somatique</a>
+              <a href="capes/t8_3.html">8.3. Physiologie de la reproduction</a>
+              <a href="capes/t8_4.html">8.4. Physiologie de la digestion</a>
+              <a href="capes/t8_5.html">8.5. Régulation de la glycémie</a>
+              <a href="capes/t8_6.html">8.6. Physiologie de la respiration</a>
+              <a href="capes/t8_7.html">8.7. La circulation sanguine</a>
+              <a href="capes/t8_8.html">8.8. Immunologie</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t9')">9. Populations et écosystèmes</button>
+            <div id="c-t9" class="dropdown-content">
+              <a href="capes/t9_1.html">9.1. Les populations et leur démographie</a>
+              <a href="capes/t9_2.html">9.2. Écosystèmes: structure, fonctionnement, dynamique</a>
+              <a href="capes/t9_3.html">9.3. Les sols: interfaces et gestion</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t10')">10. Évolution et phylogénie</button>
+            <div id="c-t10" class="dropdown-content">
+              <a href="capes/t10_1.html">10.1. Les mécanismes de l'évolution</a>
+              <a href="capes/t10_2.html">10.2. Une approche phylogénétique de la biodiversité</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t11')">11. Cycles biogéochimiques</button>
+            <div id="c-t11" class="dropdown-content">
+              <a href="capes/t11_1.html">11.1. Le cycle du carbone</a>
+              <a href="capes/t11_2.html">11.2. Le cycle de l'azote</a>
+              <a href="capes/t11_3.html">11.3. Impacts des activités humaines</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t12')">12. La carte géologique</button>
+            <div id="c-t12" class="dropdown-content">
+              <a href="capes/t12.html">12. La carte géologique et ses utilisations</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t13')">13. La mesure du temps</button>
+            <div id="c-t13" class="dropdown-content">
+              <a href="capes/t13_1.html">13.1. Échelle stratigraphique et stratigraphie relative</a>
+              <a href="capes/t13_2.html">13.2. Datation quantitative</a>
+              <a href="capes/t13_3.html">13.3. Quelques étapes de l'évolution de la vie</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t14')">14. Structure de la Terre</button>
+            <div id="c-t14" class="dropdown-content">
+              <a href="capes/t14_1.html">14.1. Formation du globe et différenciation des enveloppes</a>
+              <a href="capes/t14_2.html">14.2. Enveloppes terrestres et modèle radial</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t15')">15. Dynamique enveloppes internes</button>
+            <div id="c-t15" class="dropdown-content">
+              <a href="capes/t15_1.html">15.1. Chaleur interne et bilan thermique</a>
+              <a href="capes/t15_2.html">15.2. Lithosphère/asthénosphère et mouvements verticaux</a>
+              <a href="capes/t15_3.html">15.3. Dynamique horizontale (cycle de Wilson)</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t16')">16. Déformations de la lithosphère</button>
+            <div id="c-t16" class="dropdown-content">
+              <a href="capes/t16_1.html">16.1. Nature, structure et rhéologie de la lithosphère</a>
+              <a href="capes/t16_2.html">16.2. Diversité des déformations</a>
+              <a href="capes/t16_3.html">16.3. Les séismes: origine et conséquences</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t17')">17. Le climat de la Terre</button>
+            <div id="c-t17" class="dropdown-content">
+              <a href="capes/t17_1.html">17.1. Atmosphère et océan: composition/structure</a>
+              <a href="capes/t17_2.html">17.2. Les circulations atmosphériques et océaniques</a>
+              <a href="capes/t17_3.html">17.3. Le cycle de l'eau</a>
+              <a href="capes/t17_4.html">17.4. Climat et variabilité (Naturelle & Anthropique)</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t18')">18. Processus sédimentaires</button>
+            <div id="c-t18" class="dropdown-content">
+              <a href="capes/t18_1.html">18.1. Altération, érosion et transferts</a>
+              <a href="capes/t18_2.html">18.2. Sédimentation et précipitation</a>
+              <a href="capes/t18_3.html">18.3. La diagenèse</a>
+              <a href="capes/t18_4.html">18.4. Bassins sédimentaires et géodynamique</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t19')">19. Le magmatisme</button>
+            <div id="c-t19" class="dropdown-content">
+              <a href="capes/t19_1.html">19.1. Processus fondamentaux (fusion, cristallisation)</a>
+              <a href="capes/t19_2.html">19.2. Magmatisme et contextes géodynamiques</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t20')">20. Le métamorphisme</button>
+            <div id="c-t20" class="dropdown-content">
+              <a href="capes/t20_1.html">20.1. Minéraux, Pression/Température, faciès</a>
+              <a href="capes/t20_2.html">20.2. Distribution spatiale et variations temporelles</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t21')">21. Aléas, risques, ressources</button>
+            <div id="c-t21" class="dropdown-content">
+              <a href="capes/t21_1.html">21.1. Les aléas et risques géologiques</a>
+              <a href="capes/t21_2.html">21.2. Les ressources géologiques</a>
+            </div>
+          </div>
+
+          <div class="dropdown">
+            <button class="sub-btn" onclick="toggleDisplay('c-t22')">22. Grands ensembles géologiques</button>
+            <div id="c-t22" class="dropdown-content">
+              <a href="capes/t22_1.html">22.1. Chaîne de montagnes (Alpes)</a>
+              <a href="capes/t22_2_1.html">22.2.1. Grands ensembles structuraux de France</a>
+              <a href="capes/t22_2_2.html">22.2.2. Les îles océaniques</a>
+            </div>
+          </div>
+
         </div>
       </div>
       
@@ -135,9 +436,21 @@
   </div>
 
   <script>
-    function toggleDropdown(id) {
-      const content = document.getElementById(id);
-      content.style.display = (content.style.display === "block") ? "none" : "block";
+    function toggleDisplay(id) {
+      const element = document.getElementById(id);
+      
+      // Vérifie si l'élément est actuellement visible
+      const isVisible = element.style.display === "block";
+      
+      // On ferme tout ? (Optionnel, ici on laisse juste le toggle simple)
+      // element.style.display = isVisible ? "none" : "block";
+
+      // Animation simple via display
+      if (isVisible) {
+        element.style.display = "none";
+      } else {
+        element.style.display = "block";
+      }
     }
   </script>
 </body>
