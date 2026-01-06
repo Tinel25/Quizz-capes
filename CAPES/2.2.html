@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Nutrition des Angiospermes</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 2.2 : Nutrition des Angiospermes</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 2.2 : NUTRITION DES ANGIOSPERMES
+       - Réponses calibrées pour éviter le biais de longueur.
+       - Focus sur l'interaction sol/plante, symbioses, et adaptations.
+    */
+    const quizData = [
+      // --- ABSORPTION RACINAIRE & SOL ---
+      {
+        question: "Quel mécanisme permet l'entrée des cations (ex: K+) dans les cellules racinaires contre leur gradient de concentration ?",
+        answers: [
+          "L'établissement d'un potentiel de membrane très négatif par les pompes à protons (H+-ATPase), créant une force électromotrice attirant les cations.",
+          "L'échange direct avec des anions carbonate produits par la respiration racinaire via des antiports membranaires passifs.", // Leurre
+          "La diffusion facilitée par des canaux voltage-dépendants qui s'ouvrent uniquement lorsque le sol est saturé en eau.", // Leurre
+          "L'endocytose de gouttelettes d'eau du sol contenant les ions dissous, suivie d'un tri dans l'appareil de Golgi.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que le Complexe Argilo-Humique (CAH) et quel est son rôle dans la nutrition végétale ?",
+        answers: [
+          "Une structure colloïdale chargée négativement qui retient les cations (Ca2+, K+, Mg2+) et les protège du lessivage tout en les laissant échangeables.",
+          "Une matrice imperméable qui empêche l'eau de pénétrer trop rapidement dans la racine, évitant ainsi l'éclatement cellulaire.", // Leurre
+          "Un réservoir d'anions comme les nitrates et les phosphates qui sont fixés électrostatiquement sur ses charges positives.", // Leurre (Le CAH est électronégatif)
+          "Une couche protectrice formée par les exsudats racinaires qui solubilise les métaux lourds toxiques pour la plante.", // Leurre
+        ]
+      },
+      {
+        question: "Comment les plantes acidifient-elles leur rhizosphère pour mobiliser certains nutriments peu solubles ?",
+        answers: [
+          "Par l'excrétion active de protons (H+) via les H+-ATPases membranaires et la libération d'acides organiques (citrate, malate).",
+          "Par la sécrétion d'enzymes digestives extracellulaires qui dégradent la matière organique du sol en acides aminés.", // Leurre
+          "Par l'absorption massive d'anions hydroxyde (OH-) qui déplace l'équilibre ionique du sol vers l'acidité.", // Leurre
+          "Par la symbiose avec des bactéries qui fermentent les sucres exsudés par la racine en acide lactique.", // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi l'absorption du nitrate (NO3-) par la racine alcalinise-t-elle souvent la rhizosphère ?",
+        answers: [
+          "Car l'entrée du NO3- est couplée à un symport de protons (2H+/NO3-), ce qui retire des protons du milieu extérieur.",
+          "Car la plante doit excréter des ions hydroxyde (OH-) pour compenser la charge négative du nitrate absorbé.", // Leurre
+          "Car le nitrate est immédiatement réduit en ammonium dans le sol avant d'être absorbé, consommant des protons.", // Leurre
+          "Car les transporteurs de nitrate fonctionnent comme des échangeurs d'anions, libérant du bicarbonate dans le sol.", // Leurre
+        ]
+      },
+
+      // --- AZOTE & SYMBIOSE ---
+      {
+        question: "Quelle est l'étape limitante de l'assimilation de l'azote atmosphérique (N2) par les plantes ?",
+        answers: [
+          "La rupture de la triple liaison covalente du diazote, qui nécessite une énergie considérable et l'enzyme nitrogénase (absente chez les plantes).",
+          "L'absorption du gaz N2 par les stomates, qui est fortement limitée par la présence d'oxygène compétiteur.", // Leurre
+          "La toxicité de l'ammoniac produit, qui doit être immédiatement stocké dans la vacuole sous forme de cristaux.", // Leurre
+          "L'absence de transporteurs membranaires pour le N2 sur les poils absorbants de la racine des Angiospermes.", // Leurre
+        ]
+      },
+      {
+        question: "Dans la symbiose Légumineuse-Rhizobium, quel signal chimique de la plante initie le dialogue moléculaire ?",
+        answers: [
+          "La sécrétion de flavonoïdes spécifiques dans le sol, qui activent les gènes de nodulation (gènes Nod) chez la bactérie.",
+          "La libération de facteurs Nod (lipochito-oligosaccharides) qui induisent la courbure des poils absorbants.", // Leurre (C'est la réponse de la bactérie)
+          "L'émission d'éthylène gazeux qui attire les bactéries par chimiotactisme vers la zone d'élongation racinaire.", // Leurre
+          "La production de léghémoglobine dans le sol pour créer un environnement microaérophile favorable à l'infection.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle précis de la léghémoglobine dans les nodosités des Fabacées ?",
+        answers: [
+          "Elle tamponne la concentration d'oxygène libre, protégeant la nitrogénase de l'inactivation tout en permettant la respiration bactérienne.",
+          "Elle transporte l'azote fixé sous forme d'ammoniac depuis le bactérioïde vers le système vasculaire de la plante.", // Leurre
+          "Elle catalyse la réduction du fer ferrique en fer ferreux indispensable au fonctionnement de la nitrogénase.", // Leurre
+          "Elle agit comme un pigment photosynthétique accessoire permettant de récupérer de l'énergie lumineuse dans la racine.", // Leurre
+        ]
+      },
+      {
+        question: "Sous quelle forme l'azote est-il majoritairement transporté dans le xylème chez les légumineuses tempérées ?",
+        answers: [
+          "Sous forme d'amides (asparagine, glutamine) car ils ont un rapport N/C élevé et sont énergétiquement économiques.",
+          "Sous forme de nitrate libre, qui sera réduit en ammonium uniquement dans les feuilles photosynthétiques.", // Leurre
+          "Sous forme d'uréides (allantoïne), qui sont très solubles et permettent de transporter quatre atomes d'azote par molécule.", // Leurre (Plutôt légumineuses tropicales)
+          "Sous forme de protéines de réserve (albumines) synthétisées directement dans les nodosités.", // Leurre
+        ]
+      },
+
+      // --- MYCORHIZES & PHOSPHORE ---
+      {
+        question: "Le phosphore est souvent un élément limitant dans le sol car :",
+        answers: [
+          "Il est très peu mobile et précipite facilement avec le calcium (sol calcaire) ou le fer/aluminium (sol acide), devenant insoluble.",
+          "Il est volatilisé sous forme de gaz phosphine par les bactéries dénitrifiantes en conditions anaérobies.", // Leurre
+          "Il est lessivé très rapidement par les eaux de pluie en raison de sa charge positive qui n'est pas retenue par le CAH.", // Leurre (Phosphate est anionique)
+          "Il est consommé prioritairement par les micro-organismes du sol qui entrent en compétition féroce avec la plante.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le bénéfice principal des mycorhizes à arbuscules pour la nutrition phosphatée ?",
+        answers: [
+          "Les hyphes du champignon explorent un volume de sol bien supérieur à la zone d'épuisement des racines et absorbent le phosphore via des transporteurs haute affinité.",
+          "Le champignon est capable de fixer le phosphore atmosphérique gazeux et de le transformer en orthophosphate assimilable.", // Leurre
+          "Le champignon dégrade la matière organique du sol pour libérer des acides aminés phosphorés directement absorbés par la plante.", // Leurre
+          "Le champignon modifie le pH de la rhizosphère de manière systémique pour solubiliser les roches mères phosphatées.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que la zone de déplétion (ou d'épuisement) autour d'une racine ?",
+        answers: [
+          "La zone de sol adjacente à la racine où la concentration en nutriments peu mobiles (ex: P) chute car l'absorption est plus rapide que la diffusion.",
+          "La zone où les exsudats racinaires ont tué tous les micro-organismes compétiteurs pour réserver les ressources à la plante.", // Leurre
+          "La couche de cellules mortes de la coiffe qui se détachent lors de la pénétration dans le sol.", // Leurre
+          "L'espace entre le cylindre central et l'endoderme où les nutriments sont stockés avant chargement dans le xylème.", // Leurre
+        ]
+      },
+
+      // --- ADAPTATIONS NUTRITIONNELLES ---
+      {
+        question: "Pourquoi les plantes carnivores (ex: Drosera, Dionée) capturent-elles des insectes ?",
+        answers: [
+          "Pour obtenir un apport complémentaire en azote et en phosphore, car elles vivent dans des sols tourbeux acides et très pauvres en minéraux.",
+          "Pour se procurer du carbone organique car elles ont perdu la capacité de réaliser la photosynthèse.", // Leurre (Elles sont autotrophes C)
+          "Pour éliminer les insectes herbivores qui menacent de manger leurs feuilles tendres et riches en eau.", // Leurre
+          "Pour récupérer des vitamines essentielles que leurs racines ne peuvent pas synthétiser à cause du froid.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la stratégie nutritionnelle des plantes holoparasites comme l'Orobanche ?",
+        answers: [
+          "Elles sont non chlorophylliennes et prélèvent la sève élaborée (sucres) et la sève brute (eau/minéraux) de l'hôte via des suçoirs (haustoria).",
+          "Elles sont chlorophylliennes mais ne possèdent pas de racines, elles prélèvent donc uniquement l'eau et les sels minéraux de l'hôte.", // Leurre (Hémiparasite)
+          "Elles vivent en symbiose avec l'hôte, lui fournissant des hormones de croissance en échange de nutriments.", // Leurre
+          "Elles digèrent les racines de l'hôte par des enzymes externes pour absorber les nutriments libérés dans le sol.", // Leurre
+        ]
+      },
+      {
+        question: "Comment le Gui (Viscum album) se nourrit-il en tant qu'hémiparasite ?",
+        answers: [
+          "Il réalise sa propre photosynthèse mais prélève l'eau et les sels minéraux dans le xylème de l'arbre hôte via des suçoirs primaires.",
+          "Il ne réalise pas de photosynthèse et dépend entièrement de la sève élaborée prélevée dans le phloème de l'hôte.", // Leurre (Holoparasite)
+          "Il capte l'eau de pluie et les poussières minérales grâce à ses feuilles en forme de coupe, sans parasiter les vaisseaux.", // Leurre
+          "Il injecte des enzymes lytiques dans l'écorce pour créer une blessure d'où s'écoule une sève riche en sucres.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle adaptation nutritionnelle caractérise les plantes épiphytes (ex: Orchidées tropicales) ?",
+        answers: [
+          "Elles absorbent l'eau et les nutriments de l'air, de la pluie et des débris accumulés grâce à des racines aériennes dotées d'un voile (velamen).",
+          "Elles plongent leurs racines dans le bois de l'arbre support pour parasiter sa sève brute montante.", // Leurre (Elles ne sont pas parasites)
+          "Elles vivent en symbiose avec des fourmis qui leur apportent des morceaux de feuilles à digérer dans des urnes spécialisées.", // Leurre
+          "Elles fixent l'azote atmosphérique directement par leurs feuilles grâce à des cyanobactéries endophytes.", // Leurre
+        ]
+      },
+
+      // --- TRANSPORT & DISTRIBUTION ---
+      {
+        question: "Quel est le moteur de la circulation de la sève brute dans le xylème ?",
+        answers: [
+          "La transpiration foliaire qui crée une tension (pression négative) tirant la colonne d'eau, couplée à la cohésion des molécules d'eau.",
+          "La poussée racinaire active générée par le pompage des ions, qui suffit à faire monter l'eau jusqu'au sommet des grands arbres.", // Leurre (Insuffisant pour les grands arbres)
+          "Les contractions rythmiques des parois des vaisseaux du xylème qui propulsent le liquide vers le haut (péristaltisme).", // Leurre
+          "La capillarité pure due au diamètre très fin des vaisseaux, qui permet à l'eau de monter spontanément sans énergie.", // Leurre
+        ]
+      },
+      {
+        question: "Selon la théorie du flux de masse (Münch), comment circule la sève élaborée dans le phloème ?",
+        answers: [
+          "Par un gradient de pression hydrostatique (turgor) créé par le chargement actif des sucres à la source et leur déchargement au puits.",
+          "Par diffusion passive le long du gradient de concentration en saccharose depuis les feuilles vers les racines.", // Leurre (Trop lent)
+          "Par un courant cytoplasmique actif (cyclose) entraîné par le cytosquelette d'actine dans les tubes criblés.", // Leurre
+          "Par l'aspiration créée par la consommation d'eau dans les fruits et les organes de réserve en croissance.", // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi le calcium est-il un élément peu mobile dans la plante, causant des carences aux apex ?",
+        answers: [
+          "Il circule exclusivement dans le xylème (flux de transpiration) et ne peut pas être redistribué via le phloème depuis les vieilles feuilles.",
+          "Il précipite sous forme d'oxalate de calcium insoluble dès qu'il entre dans les racines, bloquant son transport.", // Leurre
+          "Il est utilisé structurellement dans la paroi cellulaire et ne peut plus être détaché une fois intégré.", // Leurre (Vrai qu'il est pariétal, mais le pb de transport est xylème/phloème)
+          "Il est toxique pour les tubes criblés du phloème qui possèdent des mécanismes d'exclusion actifs.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le rôle des cellules de transfert dans le transport des nutriments ?",
+        answers: [
+          "Elles possèdent des invaginations de la membrane plasmique augmentant la surface d'échange pour le chargement/déchargement actif des solutés.",
+          "Elles forment des ponts cytoplasmiques géants (plasmodesmes modifiés) permettant le passage de grosses protéines.", // Leurre
+          "Elles stockent temporairement les ions toxiques dans leur vacuole pour protéger les tissus conducteurs.", // Leurre
+          "Elles sécrètent du mucigel pour lubrifier le passage de la sève dans les vaisseaux étroits du xylème.", // Leurre
+        ]
+      },
+
+      // --- FACTEURS ENVIRONNEMENTAUX ---
+      {
+        question: "Comment les plantes calcicoles (adaptées au calcaire) gèrent-elles l'excès de calcium ?",
+        answers: [
+          "Elles compartimentent le calcium excédentaire dans la vacuole, souvent sous forme de cristaux d'oxalate, et maintiennent le fer soluble par acidification.",
+          "Elles excrètent activement le calcium par des glandes à sel situées sur l'épiderme des feuilles.", // Leurre (Halophytes)
+          "Elles empêchent totalement l'entrée du calcium au niveau de l'endoderme grâce à une bande de Caspary très épaisse.", // Leurre
+          "Elles utilisent le calcium à la place de l'azote pour synthétiser leurs acides aminés et protéines.", // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi les sols acides (pH < 5) sont-ils défavorables à la nutrition de nombreuses plantes ?",
+        answers: [
+          "L'acidité solubilise l'aluminium (Al3+) qui devient toxique pour les racines, et réduit la disponibilité du phosphore et du molybdène.",
+          "L'acidité détruit la paroi cellulaire des poils absorbants en hydrolysant la cellulose et les pectines.", // Leurre
+          "L'acidité empêche l'ouverture des canaux ioniques membranaires nécessaires à l'absorption du potassium.", // Leurre
+          "L'acidité favorise la prolifération de bactéries dénitrifiantes qui consomment tout l'azote du sol.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la stratégie des plantes halophytes (ex: Salicorne) pour survivre en milieu salé ?",
+        answers: [
+          "Elles accumulent des ions dans la vacuole pour abaisser leur potentiel hydrique (ajustement osmotique) tout en excluant le Na+ du cytoplasme.",
+          "Elles possèdent des racines imperméables qui filtrent l'eau pure par osmose inverse naturelle.", // Leurre
+          "Elles augmentent leur transpiration pour éliminer le sel par évaporation au niveau des stomates.", // Leurre
+          "Elles remplacent l'eau de leurs cellules par des huiles végétales qui ne dissolvent pas les sels marins.", // Leurre
+        ]
+      },
+      {
+        question: "En quoi la photorespiration est-elle liée à la nutrition azotée ?",
+        answers: [
+          "Le cycle de la photorespiration implique le recyclage de l'ammonium (NH4+) libéré lors de la conversion glycine-sérine, ce qui est énergétiquement coûteux.",
+          "Elle permet de fixer l'azote atmosphérique en utilisant l'ATP produit par les mitochondries à la lumière.", // Leurre
+          "Elle produit des squelettes carbonés (alpha-cétoglutarate) indispensables à l'assimilation primaire du nitrate.", // Leurre (C'est la respiration qui fait ça)
+          "Elle inhibe l'absorption du nitrate racinaire pour éviter une accumulation toxique de nitrites dans les feuilles.", // Leurre
+        ]
+      },
+
+      // --- SYNTHÈSE ET MÉTABOLISME ---
+      {
+        question: "Quelle est la première molécule organique stable formée après l'assimilation de l'ammonium (NH4+) ?",
+        answers: [
+          "La glutamine (via la Glutamine Synthétase), qui sert ensuite de donneur d'azote pour former le glutamate et les autres acides aminés.",
+          "L'urée, qui permet de stocker l'azote sous une forme non toxique et très soluble dans la vacuole.", // Leurre
+          "L'asparagine, qui est directement intégrée dans les protéines de structure de la paroi cellulaire.", // Leurre
+          "Le pyruvate, qui est aminé pour former de l'alanine, précurseur de la synthèse des chlorophylles.", // Leurre
+        ]
+      },
+      {
+        question: "Le soufre (S) est un macronutriment essentiel absorbé sous forme de sulfate. Quel est son rôle clé ?",
+        answers: [
+          "Il est constituant des acides aminés cystéine et méthionine, permettant les ponts disulfures (structure des protéines) et des coenzymes.",
+          "Il est l'atome central de la molécule de chlorophylle, indispensable à la capture des photons.", // Leurre (C'est le magnésium)
+          "Il régule l'ouverture des stomates en agissant comme un second messager dans la signalisation calcique.", // Leurre
+          "Il renforce la rigidité des parois cellulaires en formant des liaisons esters avec les hémicelluloses.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que la remobilisation des nutriments lors de la sénescence foliaire ?",
+        answers: [
+          "Le processus de dégradation des macromolécules (protéines, acides nucléiques) des vieilles feuilles pour exporter N, P, K vers les organes jeunes ou de réserve.",
+          "La chute des feuilles qui permet de restituer au sol les nutriments minéraux pour enrichir la litière.", // Leurre (C'est le recyclage externe, pas la remobilisation interne)
+          "La transformation des sucres en amidon dans les feuilles mourantes pour les rendre insolubles.", // Leurre
+          "Le transport actif des déchets toxiques vers les feuilles sénescentes avant leur chute (excrétion végétale).", // Leurre
+        ]
+      },
+      {
+        question: "Comment la plante régule-t-elle l'absorption du fer dans un sol calcaire (où le fer est insoluble Fe3+) ?",
+        answers: [
+          "Par la stratégie I : acidification locale (H+-ATPase) et sécrétion de chélateurs ou réduction du Fe3+ en Fe2+ soluble par une réductase membranaire.",
+          "Par la stratégie II : absorption directe de particules de sol contenant du fer par phagocytose des cellules épidermiques.", // Leurre
+          "Par la symbiose avec des bactéries qui produisent de l'hémoglobine pour capter le fer du sol.", // Leurre
+          "Par l'arrêt de la synthèse de chlorophylle (chlorose) pour réduire les besoins en fer jusqu'à ce que le pH du sol change.", // Leurre
+        ]
+      },
+      {
+        question: "Le potentiel de pression (turgor) est essentiel à la croissance cellulaire. Comment est-il généré ?",
+        answers: [
+          "Par l'accumulation de solutés dans la vacuole qui abaisse le potentiel osmotique, entraînant une entrée d'eau qui met la paroi sous tension.",
+          "Par la contraction active du cytosquelette qui comprime le cytoplasme contre la paroi cellulaire rigide.", // Leurre
+          "Par la synthèse rapide de paroi cellulaire qui pousse sur le cytoplasme vers l'intérieur de la cellule.", // Leurre
+          "Par l'absorption d'eau atmosphérique directement par la cuticule en conditions de forte humidité.", // Leurre
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ (Code robuste) ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! Vous maîtrisez l'interface sol-plante.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bon travail. Revoyez les mécanismes membranaires.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Continuez l'effort. La nutrition minérale est complexe.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
