@@ -53,15 +53,19 @@
     }
     .answer-btn {
       width: 100%;
-      min-height: 70px; 
+      /* On laisse la hauteur s'adapter au texte, mais avec un min pour la cohérence */
+      min-height: 80px; 
       padding: 15px 20px;
       background: white;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
-      font-size: 15px; /* Police légèrement réduite pour les phrases longues */
+      font-size: 15px;
+      line-height: 1.4;
       color: #333;
       cursor: pointer;
       transition: all 0.2s ease;
+      
+      /* Flexbox centré */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -152,296 +156,297 @@
 
   <script>
     // ============================================================
-    // DONNÉES DU QUIZ - THÈME 1.2
-    // Rappel : La 1ère réponse est la bonne (mélangée ensuite)
+    // DONNÉES DU QUIZ - THÈME 1.2 (EMBRYOPHYTES)
+    // NOTE : La 1ère réponse est la bonne (mélangée ensuite).
+    // Les leurres ont été rallongés pour éviter le biais de taille.
     // ============================================================
     
     const quizData = [
       // --- CIRCULATION & POTENTIELS ---
       {
-        question: "Quel mécanisme explique principalement l'ascension de la sève brute chez les arbres de plus de 100 mètres ?",
+        question: "Quel mécanisme explique principalement l'ascension de la sève brute chez les arbres de très grande taille ?",
         answers: [
-          "La théorie de la tension-cohésion : la transpiration crée une tension négative transmise par les liaisons hydrogène.",
-          "La pression racinaire : le pompage actif des ions dans le xylème pousse l'eau vers le haut.",
-          "L'action capillaire : l'adhésion de l'eau aux parois des vaisseaux fins suffit à vaincre la gravité.",
-          "Le transport actif : les cellules du xylème consomment de l'ATP pour pomper l'eau vers le sommet."
+          "La théorie de la tension-cohésion : la transpiration foliaire génère une tension négative transmise par les liaisons hydrogène de l'eau.",
+          "La pression racinaire active : l'accumulation d'ions dans le cylindre central crée une pression osmotique positive suffisante pour pousser l'eau jusqu'au sommet.",
+          "L'action capillaire pariétale : l'adhésion de l'eau aux parois lignifiées des vaisseaux permet de vaincre la gravité sans intervention biologique.",
+          "Le pompage péristaltique du xylème : les cellules du xylème possèdent des protéines contractiles qui propulsent activement l'eau vers le haut."
         ]
       },
       {
-        question: "Concernant le transport dans le phloème, quel est le mécanisme du chargement des sucres ?",
+        question: "Concernant le transport des assimilats dans le phloème, quel est le mécanisme précis du chargement ?",
         answers: [
-          "Un symport H+/Saccharose couplé à une pompe à protons créant un gradient électrochimique.",
-          "Une diffusion facilitée passive à travers des canaux protéiques spécifiques.",
-          "Une osmose inverse provoquée par la turgescence des cellules du mésophylle.",
-          "Un transport vésiculaire via l'appareil de Golgi vers les tubes criblés."
+          "Un cotransport actif secondaire H+/Saccharose couplé à une pompe à protons (H+-ATPase) créant un gradient électrochimique.",
+          "Une diffusion facilitée par des canaux voltage-dépendants qui s'ouvrent en réponse à l'accumulation de calcium cytosolique.",
+          "Une transcytose vésiculaire médiée par le Golgi qui emballe les sucres pour les injecter directement dans le tube criblé.",
+          "Un transport passif suivant le gradient de concentration créé par la conversion rapide du saccharose en amidon dans les cellules compagnes."
         ]
       },
       {
-        question: "Qu'est-ce que l'embolie hivernale chez les angiospermes ligneuses ?",
+        question: "Qu'est-ce que l'embolie hivernale (ou cavitation) dans les vaisseaux du xylème ?",
         answers: [
-          "La formation de bulles d'air dans le xylème suite au dégel, rompant la continuité de la colonne d'eau.",
-          "L'accumulation d'amidon dans les vaisseaux qui bloque la circulation de la sève brute.",
-          "L'écrasement des tubes criblés par la formation du bois de printemps.",
-          "La cristallisation de la sève élaborée due à une concentration trop élevée en sucres."
+          "La rupture de la continuité de la colonne d'eau liquide par l'apparition d'une bulle de gaz, souvent due aux cycles de gel-dégel.",
+          "L'obstruction des vaisseaux par la formation de thylles, des excroissances cytoplasmiques des cellules de parenchyme voisin.",
+          "La cristallisation irréversible de la sève brute due à la précipitation des sels minéraux à basse température.",
+          "L'effondrement des parois des vaisseaux du xylème sous l'effet de la pression négative trop intense lors du gel."
         ]
       },
       {
-        question: "Comment l'eau traverse-t-elle l'endoderme racinaire malgré la bande de Caspary ?",
+        question: "Comment l'eau traverse-t-elle l'endoderme racinaire malgré la présence de la bande de Caspary ?",
         answers: [
-          "Elle doit obligatoirement emprunter la voie symplastique en traversant la membrane plasmique.",
-          "Elle passe librement par la voie apoplastique à travers les parois cellulosiques.",
-          "Elle est transportée activement par des aquaporines situées dans la paroi subérifiée.",
-          "Elle contourne l'endoderme en passant par les méats intercellulaires du péricycle."
+          "Elle est obligée d'emprunter la voie symplastique, traversant la membrane plasmique pour entrer dans le cytoplasme des cellules endodermiques.",
+          "Elle passe par la voie apoplastique modifiée, en diffusant à travers les ponctuations spécifiques de la paroi subérifiée.",
+          "Elle utilise des canaux aqueux transmembranaires (aquaporines) situés exclusivement sur la face externe de la bande de Caspary.",
+          "Elle contourne l'endoderme en passant par les cellules de passage situées en face des pôles ligneux du péricycle."
         ]
       },
       {
         question: "Le potentiel hydrique (Ψ) de l'atmosphère, des feuilles et du sol suit généralement quel ordre (du plus élevé au plus bas) ?",
         answers: [
-          "Sol > Racines > Feuilles > Atmosphère.",
-          "Atmosphère > Feuilles > Racines > Sol.",
-          "Racines > Sol > Feuilles > Atmosphère.",
-          "Sol > Atmosphère > Racines > Feuilles."
+          "Sol (le moins négatif) > Racines > Tiges > Feuilles > Atmosphère (le plus négatif).",
+          "Atmosphère (saturée en eau) > Feuilles > Tiges > Racines > Sol (très sec).",
+          "Racines (pompage actif) > Sol > Tiges > Feuilles > Atmosphère.",
+          "Sol > Atmosphère (pression partielle faible) > Racines > Feuilles > Tiges."
         ]
       },
 
       // --- PHOTOSYNTHÈSE & MÉTABOLISME ---
       {
-        question: "Quel est l'avantage adaptatif majeur du métabolisme C4 par rapport au C3 ?",
+        question: "Quel est l'avantage adaptatif majeur du métabolisme C4 par rapport au métabolisme C3 ?",
         answers: [
-          "Il réduit la photorespiration en concentrant le CO2 autour de la Rubisco dans la gaine périvasculaire.",
-          "Il permet de réaliser la photosynthèse sans lumière grâce à l'accumulation d'acide malique.",
-          "Il augmente l'ouverture des stomates pour maximiser la transpiration et le refroidissement.",
-          "Il utilise l'oxygène comme accepteur d'électrons pour produire plus d'ATP."
+          "Il réduit considérablement la photorespiration en concentrant le CO2 autour de la Rubisco dans les cellules de la gaine périvasculaire.",
+          "Il permet de réaliser la phase claire de la photosynthèse la nuit pour éviter les pertes d'eau par transpiration diurne.",
+          "Il utilise directement l'oxygène comme accepteur final d'électrons pour produire davantage d'ATP sans consommer de NADPH.",
+          "Il permet aux plantes de fixer l'azote atmosphérique en même temps que le carbone grâce à l'enzyme PEP carboxylase."
         ]
       },
       {
-        question: "Chez les plantes CAM (Crassulacean Acid Metabolism), quelle est la chronologie des échanges gazeux ?",
+        question: "Chez les plantes CAM (Crassulacean Acid Metabolism), comment s'organisent les échanges gazeux ?",
         answers: [
-          "Ouverture des stomates la nuit pour fixer le CO2, fermeture le jour pour limiter les pertes d'eau.",
-          "Ouverture des stomates le jour pour la photosynthèse, fermeture la nuit pour la respiration.",
-          "Ouverture permanente des stomates mais fixation du CO2 uniquement la nuit.",
-          "Fermeture permanente des stomates, les échanges se faisant par la cuticule."
+          "Ouverture des stomates la nuit pour fixer le CO2 sous forme d'acide malique, et fermeture le jour pour limiter la perte d'eau.",
+          "Fermeture des stomates la nuit pour éviter le froid, et ouverture le jour synchronisée avec la lumière pour la photosynthèse.",
+          "Ouverture continue des stomates mais stockage du CO2 dans les vacuoles des cellules épidermiques pour une utilisation différée.",
+          "Fermeture permanente des stomates, l'approvisionnement en CO2 se faisant par recyclage interne de la respiration mitochondriale."
         ]
       },
       {
-        question: "Quelle est la fonction précise de la chaîne de transport d'électrons dans la phase claire ?",
+        question: "Quelle est la fonction précise de la chaîne de transport d'électrons photosynthétique ?",
         answers: [
-          "Créer un gradient de protons dans le lumen du thylakoïde pour permettre la synthèse d'ATP.",
-          "Fixer directement le CO2 atmosphérique sur le ribulose-1,5-bisphosphate.",
-          "Hydrolyser l'ATP pour fournir de l'énergie à la réduction du NADP+.",
-          "Convertir le glucose en amidon pour le stockage dans le stroma."
+          "Générer un gradient de protons (force proton-motrice) dans le lumen du thylakoïde pour alimenter l'ATP synthase.",
+          "Transférer les électrons directement du glucose vers l'oxygène pour produire de l'eau métabolique.",
+          "Hydrolyser les molécules d'ATP produites dans le stroma pour réduire le NADP+ en NADPH.",
+          "Capter le CO2 atmosphérique et le lier au ribulose-1,5-bisphosphate grâce à l'énergie lumineuse."
         ]
       },
       {
-        question: "Quel est le rôle physiologique de la photorespiration ?",
+        question: "Pourquoi la photorespiration est-elle généralement considérée comme un processus coûteux pour la plante ?",
         answers: [
-          "Elle dissipe l'excès d'énergie lumineuse et protège les photosystèmes, bien qu'elle consomme de l'énergie.",
-          "Elle produit du glucose supplémentaire lorsque la concentration en CO2 est très élevée.",
-          "Elle permet à la plante de respirer en l'absence de mitochondries fonctionnelles.",
-          "Elle génère de l'ATP sans produire de NADPH, utile pour le cycle de Calvin."
+          "Car elle consomme de l'ATP et du NADPH tout en libérant du CO2 précédemment fixé, réduisant ainsi le rendement photosynthétique.",
+          "Car elle inhibe irréversiblement les photosystèmes I et II en produisant des espèces réactives de l'oxygène.",
+          "Car elle oblige la plante à fermer ses stomates, ce qui arrête totalement l'absorption des nutriments minéraux.",
+          "Car elle convertit les sucres complexes (amidon) en sucres simples (glucose) qui sont perdus par exsudation racinaire."
         ]
       },
       {
-        question: "La Rubisco est une enzyme bifonctionnelle. Quelle réaction catalyse-t-elle en présence d'O2 ?",
+        question: "La Rubisco est une enzyme bifonctionnelle. Quelle réaction catalyse-t-elle en présence d'une forte concentration d'O2 ?",
         answers: [
-          "L'oxygénation du RuBP, produisant du phosphoglycolate (2C) et du 3-PGA (3C).",
-          "La carboxylation du PEP (Phosphoénolpyruvate) en oxaloacétate.",
-          "La réduction du 3-PGA en glycéraldéhyde-3-phosphate.",
-          "L'oxydation du NADPH pour régénérer le NADP+."
+          "L'oxygénation du RuBP, conduisant à la formation d'une molécule de 3-phosphoglycérate et d'une molécule de 2-phosphoglycolate.",
+          "La carboxylation du PEP (Phosphoénolpyruvate) pour former de l'oxaloacétate à quatre atomes de carbone.",
+          "La décarboxylation oxydative du pyruvate pour entrer dans le cycle de Krebs mitochondriale.",
+          "La réduction directe du 3-phosphoglycérate en triose-phosphate grâce à l'énergie lumineuse."
         ]
       },
 
       // --- DÉVELOPPEMENT & HORMONES ---
       {
-        question: "Quel est le mécanisme cellulaire de l'ouverture des stomates induite par la lumière ?",
+        question: "Quel est le mécanisme cellulaire précis de l'ouverture des stomates induite par la lumière bleue ?",
         answers: [
-          "Pompage actif de H+ hors de la cellule, entrée de K+, baisse du potentiel hydrique et entrée d'eau.",
-          "Sortie passive de K+ et de Cl-, augmentation du potentiel hydrique et sortie d'eau.",
-          "Hydrolyse de l'amidon en glucose, ce qui augmente la pression osmotique et ferme le stomate.",
-          "Synthèse d'acide abscissique (ABA) qui active directement les aquaporines membranaires."
+          "Activation des pompes H+-ATPases, hyperpolarisation membranaire, entrée de K+ et diminution du potentiel hydrique, entraînant une entrée d'eau.",
+          "Inhibition des canaux potassiques sortants, dépolarisation de la membrane et sortie massive d'eau vers les cellules compagnes.",
+          "Hydrolyse rapide de l'amidon vacuolaire en glucose, augmentant la pression osmotique et provoquant la fermeture de l'ostiole.",
+          "Synthèse immédiate d'acide abscissique (ABA) qui se fixe sur les récepteurs membranaires et déclenche l'afflux de calcium."
         ]
       },
       {
-        question: "Comment l'auxine induit-elle l'élongation cellulaire (hypothèse de la croissance acide) ?",
+        question: "Selon l'hypothèse de la croissance acide, comment l'auxine stimule-t-elle l'élongation cellulaire ?",
         answers: [
-          "Elle active les pompes à protons, acidifiant la paroi et activant les expansines qui relâchent la cellulose.",
-          "Elle pénètre dans le noyau et active directement la transcription des gènes de la mitose.",
-          "Elle se lie aux microtubules corticaux pour orienter le dépôt de cellulose.",
-          "Elle augmente la pression de turgescence en favorisant l'entrée massive de potassium."
+          "Elle stimule les pompes à protons membranaires, acidifiant la paroi, ce qui active les expansines et relâche le réseau de cellulose.",
+          "Elle pénètre dans le noyau pour activer la transcription des gènes codant pour les microtubules du cytosquelette.",
+          "Elle se lie aux récepteurs du réticulum endoplasmique pour libérer le calcium qui contracte les microfibrilles de cellulose.",
+          "Elle augmente la perméabilité de la membrane plasmique à l'eau, augmentant ainsi la pression de turgescence sans modifier la paroi."
         ]
       },
       {
-        question: "Quel phytochrome est responsable de la détection de la lumière rouge clair (660 nm) pour la germination ?",
+        question: "Quel est le rôle du phytochrome dans la germination des graines photosensibles ?",
         answers: [
-          "La forme Pr (inactif) qui se convertit en Pfr (actif) sous l'effet du rouge clair.",
-          "La forme Pfr (actif) qui se convertit en Pr (inactif) sous l'effet du rouge clair.",
-          "La cryptochrome bleue qui absorbe spécifiquement les longueurs d'onde rouges.",
-          "La phototropine qui déclenche la phosphorylation des protéines membranaires."
+          "Il agit comme un interrupteur biologique : la forme Pr (rouge) absorbe la lumière rouge clair et se convertit en forme Pfr (rouge lointain) active.",
+          "Il détecte la lumière bleue et active les cryptochromes qui dégradent les inhibiteurs de la germination.",
+          "Il synthétise directement les gibbérellines nécessaires à la mobilisation des réserves de l'albumen.",
+          "Il protège l'embryon contre les rayonnements UV nocifs en modifiant la pigmentation des téguments."
         ]
       },
       {
-        question: "L'éthylène est une phytohormone gazeuse connue pour déclencher :",
+        question: "L'éthylène est une phytohormone gazeuse. Lequel de ces effets physiologiques lui est spécifiquement attribué ?",
         answers: [
-          "La triple réponse des plantules et la maturation des fruits climactériques.",
-          "L'ouverture des stomates et la stimulation de la photosynthèse.",
-          "L'élongation des entre-nœuds et la levée de dormance des graines.",
-          "La différenciation du xylème et la rhizogenèse adventive."
+          "L'induction de la sénescence foliaire, l'abscission des organes et la maturation des fruits climactériques.",
+          "La stimulation de la division cellulaire dans les méristèmes apicaux et l'élongation des tiges.",
+          "Le maintien de la dormance des graines et la fermeture des stomates en cas de stress hydrique.",
+          "Le développement des racines latérales et la différenciation des tissus vasculaires du xylème."
         ]
       },
       {
-        question: "Qu'est-ce que le gravitropisme positif de la racine et comment est-il perçu ?",
+        question: "Comment une racine perçoit-elle la gravité (gravitropisme positif) pour orienter sa croissance ?",
         answers: [
-          "La croissance vers le bas, perçue par la sédimentation des statolithes dans la coiffe.",
-          "La croissance vers le haut, perçue par la pression du cytoplasme sur la paroi.",
-          "La croissance latérale, induite par la distribution asymétrique des cytokinines.",
-          "La croissance vers l'eau, détectée par les variations de potentiel hydrique."
+          "Par la sédimentation des statolithes (amyloplastes denses) dans les cellules de la columelle de la coiffe racinaire.",
+          "Par la détection de la pression hydrostatique exercée par le sol sur les poils absorbants de la zone pilifère.",
+          "Par des récepteurs membranaires sensibles à la déformation du cytosquelette dans la zone d'élongation.",
+          "Par un gradient de concentration d'auxine préétabli qui attire la racine vers le centre de la Terre."
         ]
       },
 
       // --- NUTRITION MINÉRALE & SYMBIOSE ---
       {
-        question: "Quel est le rôle principal des mycorhizes arbusculaires chez les plantes terrestres ?",
+        question: "Quel est le bénéfice primaire fourni par les champignons mycorhiziens arbusculaires à la plante hôte ?",
         answers: [
-          "Augmenter la surface d'absorption pour le phosphore et l'eau en échange de sucres.",
-          "Fixer l'azote atmosphérique pour le transférer directement à la plante hôte.",
-          "Protéger les racines contre les attaques de nématodes par sécrétion de toxines.",
-          "Dégrader la lignine du sol pour fournir du carbone organique à la plante."
+          "Une extension considérable du volume de sol exploré, facilitant l'absorption du phosphore et de l'eau peu mobiles.",
+          "La fixation directe de l'azote atmosphérique gazeux et sa transformation en ammonium assimilable.",
+          "La protection mécanique des racines contre les herbivores du sol grâce à un manchon fongique épais.",
+          "La production de sucres complexes par photosynthèse fongique, transférés ensuite à la racine."
         ]
       },
       {
-        question: "Pourquoi la carence en magnésium se manifeste-t-elle par une chlorose des feuilles âgées ?",
+        question: "Pourquoi une carence en azote se manifeste-t-elle d'abord par un jaunissement (chlorose) des vieilles feuilles ?",
         answers: [
-          "Le magnésium est mobile dans le phloème et est remobilisé vers les jeunes feuilles en croissance.",
-          "Le magnésium est immobile et reste piégé dans les feuilles sénescentes.",
-          "Le magnésium est détruit par la lumière dans les vieilles feuilles.",
-          "Le magnésium est toxique pour les jeunes feuilles et stocké dans les anciennes."
+          "L'azote est un élément mobile : la plante le dégrade dans les feuilles sénescentes pour le redistribuer vers les jeunes organes en croissance.",
+          "L'azote est toxique à haute concentration dans les vieilles feuilles, la chlorose est donc un mécanisme de détoxification.",
+          "Les vieilles feuilles perdent la capacité d'absorber l'azote atmosphérique par leurs stomates.",
+          "La carence en azote bloque la synthèse de la chlorophylle uniquement dans les tissus ayant terminé leur croissance."
         ]
       },
       {
-        question: "Lors de la fixation symbiotique de l'azote (Rhizobium), quelle molécule protège la nitrogénase de l'O2 ?",
+        question: "Dans les nodosités des Légumineuses, quel est le rôle critique de la léghémoglobine ?",
         answers: [
-          "La léghémoglobine, qui piège l'oxygène libre tout en le délivrant aux bactéries pour leur respiration.",
-          "La flavonoïde, qui agit comme un antioxydant puissant dans le nodule.",
-          "La nitrate réductase, qui consomme tout l'oxygène disponible avant qu'il n'atteigne l'enzyme.",
-          "L'auxine, qui induit l'épaississement de la paroi des cellules du nodule."
+          "Elle régule la concentration d'oxygène libre, le maintenant assez bas pour protéger la nitrogénase mais assez haut pour la respiration bactérienne.",
+          "Elle catalyse la réaction de réduction de l'azote atmosphérique en ammoniac en remplaçant la nitrogénase défectueuse.",
+          "Elle transporte les sucres produits par la plante vers le bactérioïde pour fournir l'énergie nécessaire à la fixation.",
+          "Elle agit comme un antibiotique sélectif empêchant d'autres bactéries pathogènes de coloniser le nodule."
         ]
       },
 
       // --- DIVERSITÉ & CYCLE DE VIE ---
       {
-        question: "Quelle est la particularité de la double fécondation chez les Angiospermes ?",
+        question: "Quelle est la caractéristique unique de la double fécondation chez les Angiospermes ?",
         answers: [
-          "Un spermatozoïde féconde l'oosphère (donnant le zygote) et l'autre féconde la cellule centrale (donnant l'albumen).",
-          "Deux spermatozoïdes fécondent l'oosphère pour donner un zygote triploïde vigoureux.",
-          "Un spermatozoïde féconde l'oosphère et l'autre dégénère pour nourrir l'embryon.",
-          "La fécondation nécessite obligatoirement deux grains de pollen distincts."
+          "La fusion d'un gamète mâle avec l'oosphère (zygote embryon) et de l'autre avec la cellule centrale (zygote albumen triploïde).",
+          "La nécessité de deux grains de pollen différents pour féconder une seule oosphère et assurer la diversité génétique.",
+          "La fusion simultanée de l'oosphère avec deux spermatozoïdes pour former un embryon triploïde très résistant.",
+          "La fécondation de l'oosphère par un gamète mâle suivie immédiatement de la fécondation des antipodes."
         ]
       },
       {
-        question: "Chez les Ptéridophytes (fougères), quelle est la phase dominante du cycle de vie ?",
+        question: "Dans le cycle de vie des Ptéridophytes (fougères), comment se caractérise la génération dominante ?",
         answers: [
-          "Le sporophyte diploïde, qui est vascularisé et indépendant.",
-          "Le gamétophyte haploïde, qui est la seule phase photosynthétique.",
-          "Le gamétophyte diploïde, qui porte les sporanges.",
-          "Le sporophyte haploïde, qui vit en parasite sur le gamétophyte."
+          "C'est le sporophyte (2n), une plante vascularisée indépendante, alors que le gamétophyte est réduit et éphémère.",
+          "C'est le gamétophyte (n), une structure foliacée dominante, sur laquelle vit le sporophyte parasite.",
+          "Les deux générations, sporophyte et gamétophyte, sont morphologiquement identiques et indépendantes (isomorphie).",
+          "Il n'y a pas de génération dominante, le cycle est strictement haplophasique comme chez les champignons."
         ]
       },
       {
-        question: "Quelle innovation structurelle majeure distingue les Trachéophytes des Bryophytes ?",
+        question: "Quelle innovation anatomique majeure a permis aux Trachéophytes de coloniser les milieux terrestres secs ?",
         answers: [
-          "La présence de tissus conducteurs lignifiés (xylème) permettant une taille plus importante.",
-          "La capacité à réaliser la photosynthèse oxygénique.",
-          "La présence d'une cuticule cireuse pour limiter la dessiccation.",
-          "La protection de l'embryon dans un archégone multicellulaire."
+          "L'apparition de tissus conducteurs lignifiés (xylème) permettant le transport de l'eau et le soutien mécanique vertical.",
+          "Le développement d'une reproduction exclusivement végétative par rhizomes souterrains.",
+          "La perte des pigments photosynthétiques accessoires pour se concentrer uniquement sur la chlorophylle a.",
+          "L'association symbiotique avec des algues vertes unicellulaires pour former des lichens."
         ]
       },
       {
-        question: "Quel polymère est responsable de la rigidité mécanique du bois (xylème secondaire) ?",
+        question: "Quel rôle structurel joue la lignine dans les parois cellulaires des plantes vasculaires ?",
         answers: [
-          "La lignine, un polymère phénolique hydrophobe et résistant à la compression.",
-          "La cellulose, un polymère de glucose formant des microfibrilles souples.",
-          "La pectine, un polysaccharide gélatinisant présent dans la lamelle moyenne.",
-          "La subérine, une substance cireuse imperméable présente dans le liège."
+          "Elle imprègne la paroi secondaire, la rendant hydrophobe, rigide et résistante à la compression et à la dégradation.",
+          "Elle forme un gel hydraté dans la lamelle moyenne qui permet l'adhésion flexible entre les cellules voisines.",
+          "Elle constitue le composant principal de la paroi primaire, permettant l'extension cellulaire rapide.",
+          "Elle sert de réserve d'énergie à long terme, pouvant être dégradée en glucose lors des périodes de famine."
         ]
       },
       {
-        question: "Qu'est-ce qu'une graine albuminée ?",
+        question: "Qu'est-ce qui caractérise une graine dite 'exalbuminée' à maturité ?",
         answers: [
-          "Une graine où les réserves sont stockées dans l'albumen (tissu triploïde) et non dans les cotylédons.",
-          "Une graine qui ne contient pas d'albumen à maturité, les réserves étant dans l'embryon.",
-          "Une graine riche en protéines (albumines) plutôt qu'en amidon.",
-          "Une graine capable de germer sans lumière grâce à ses réserves lipidiques."
+          "Les réserves nutritives ont été transférées de l'albumen vers les cotylédons de l'embryon au cours de la maturation.",
+          "L'embryon est avorté et la graine ne contient que de l'albumen servant de leurre pour les disséminateurs.",
+          "La graine ne contient aucune réserve, elle doit obligatoirement trouver un champignon symbiotique immédiatement pour germer.",
+          "Les réserves sont stockées sous forme d'huile dans le tégument externe et non à l'intérieur de la graine."
         ]
       },
 
       // --- ADAPTATIONS ---
       {
-        question: "Les xérophytes (plantes de milieux secs) présentent souvent des stomates enfoncés dans des cryptes. Pourquoi ?",
+        question: "Pourquoi les plantes xérophytes (adaptées à la sécheresse) possèdent-elles souvent des stomates enfoncés dans des cryptes ?",
         answers: [
-          "Pour créer une atmosphère calme et humide (couche limite) qui réduit le gradient de diffusion de l'eau.",
-          "Pour protéger les stomates contre les rayonnements UV intenses.",
-          "Pour augmenter la surface d'échange gazeux disponible pour le CO2.",
-          "Pour empêcher les insectes herbivores d'accéder aux cellules de garde."
+          "Cela maintient une couche d'air immobile et humide au-dessus du stomate, réduisant le gradient de potentiel hydrique et donc la transpiration.",
+          "Cela permet de capturer plus efficacement la rosée matinale qui s'accumule dans les creux des feuilles.",
+          "Cela protège les cellules de garde contre les rayonnements ultraviolets intenses des milieux désertiques.",
+          "Cela favorise l'entrée du dioxyde de carbone en créant des micro-turbulences au niveau de l'ostiole."
         ]
       },
       {
-        question: "Quelle est la fonction des pneumatophores chez les plantes de mangrove (ex: Avicennia) ?",
+        question: "Quelle est la fonction adaptative des pneumatophores observés chez les palétuviers (mangrove) ?",
         answers: [
-          "Permettre l'approvisionnement en oxygène des racines submergées dans la vase anoxique.",
-          "Servir de flotteurs pour maintenir la stabilité de l'arbre lors des marées hautes.",
-          "Excréter le sel excédentaire absorbé par les racines.",
-          "Capter l'azote atmosphérique grâce à des associations bactériennes de surface."
+          "Assurer l'approvisionnement en dioxygène des racines souterraines qui se développent dans un sédiment anoxique asphyxiant.",
+          "Permettre l'excrétion active du sel marin absorbé en excès par les racines filtrantes.",
+          "Servir de tuteurs mécaniques pour stabiliser l'arbre dans les sédiments mouvants lors des marées.",
+          "Capturer les insectes volants pour fournir un complément d'azote organique à la plante."
         ]
       },
       {
-        question: "Le thigmotropisme observé chez les vrilles (ex: Vigne) est dû à :",
+        question: "Le thigmotropisme (réaction au toucher) des vrilles est dû à quel processus cellulaire ?",
         answers: [
-          "Une croissance différentielle induite par le contact mécanique, souvent médiée par l'auxine.",
-          "Une perte de turgescence rapide des cellules motrices du pulvinus.",
-          "Une contraction active des protéines du cytosquelette de type actine-myosine.",
-          "Une modification irréversible de la lignification sur la face interne."
+          "Une croissance différentielle rapide : les cellules du côté opposé au contact s'allongent plus vite que celles du côté du contact.",
+          "Une perte de turgescence brutale et réversible dans les cellules motrices du pulvinus à la base de la vrille.",
+          "Une contraction musculaire médiée par des filaments d'actine et de myosine présents dans le cytoplasme.",
+          "Une lignification immédiate des tissus touchés qui fige la vrille dans sa position d'enroulement."
         ]
       },
       {
-        question: "L'abscission foliaire (chute des feuilles) en automne est déclenchée principalement par :",
+        question: "Quel événement hormonal déclenche l'abscission (chute) des feuilles en automne ?",
         answers: [
-          "Une diminution de l'auxine et une augmentation de l'éthylène dans la zone d'abscission.",
-          "Une augmentation brutale de l'acide abscissique dans le pétiole.",
-          "L'accumulation de déchets métaboliques toxiques dans la feuille.",
-          "La gélification de la sève élaborée empêchant son évacuation."
+          "Une baisse du taux d'auxine dans le limbe foliaire rendant la zone d'abscission sensible à l'action de l'éthylène.",
+          "Une augmentation brutale de la concentration en gibbérellines qui hydrolysent les parois cellulaires du pétiole.",
+          "L'arrêt total de la synthèse d'acide abscissique qui maintenait la feuille attachée à la tige.",
+          "L'accumulation de cytokinines dans le bourgeon axillaire qui repousse physiquement la feuille."
         ]
       },
       {
-        question: "Quelle structure permet aux Hépatiques (Bryophytes) de réguler sommairement les échanges gazeux ?",
+        question: "Les Bryophytes (mousses) n'ont pas de vraies racines. Comment absorbent-elles l'eau ?",
         answers: [
-          "Des pores aérifères fixes, qui ne peuvent pas se fermer activement comme les vrais stomates.",
-          "Des stomates complexes avec cellules de garde et cellules annexes.",
-          "Des lenticelles situées sur la tige principale.",
-          "Elles n'ont aucune structure, les gaz diffusent à travers toute la paroi."
+          "Essentiellement par toute leur surface aérienne (feuilles) grâce à une cuticule très fine ou absente et par les rhizoïdes.",
+          "Uniquement par les rhizoïdes qui fonctionnent exactement comme des poils absorbants racinaires.",
+          "Elles n'absorbent pas d'eau liquide, elles utilisent uniquement la vapeur d'eau atmosphérique.",
+          "Elles vivent en symbiose avec des cyanobactéries qui leur fournissent l'eau nécessaire."
         ]
       },
       {
-        question: "Quel est le rôle des bandes de Caspary subérifiées dans l'hypoderme racinaire (exoderme) ?",
+        question: "Quel est le rôle physiologique principal de l'exoderme (hypoderme subérifié) chez certaines racines ?",
         answers: [
-          "Limiter les pertes d'eau vers le sol en période de sécheresse et constituer une barrière aux pathogènes.",
-          "Assurer le transport actif des nutriments vers le cortex.",
-          "Stocker l'eau de pluie absorbée rapidement par l'épiderme.",
-          "Servir de site d'attachement pour les mycorhizes."
+          "Limiter les pertes d'eau de la racine vers le sol en cas de sécheresse (prévenir l'efflux) et protéger contre les pathogènes.",
+          "Transporter activement les ions minéraux du sol vers le cortex racinaire via des pompes spécifiques.",
+          "Stocker les réserves d'amidon pour la reprise de croissance au printemps suivant.",
+          "Faciliter l'entrée de l'eau en augmentant la surface de contact avec les particules du sol."
         ]
       },
       {
-        question: "La vernalisation est un processus physiologique qui correspond à :",
+        question: "La vernalisation est un processus indispensable pour certaines plantes. En quoi consiste-t-elle ?",
         answers: [
-          "L'acquisition de la capacité à fleurir après une exposition prolongée au froid.",
-          "La levée de dormance des bourgeons par une exposition à la chaleur.",
-          "La transformation des chloroplastes en chromoplastes lors de la maturation.",
-          "La protection des tissus contre le gel par synthèse de sucres cryoprotecteurs."
+          "L'acquisition de la compétence à fleurir induite par une exposition prolongée au froid hivernal.",
+          "La levée de dormance des graines déclenchée par une alternance rapide de températures chaudes et froides.",
+          "La transformation des bourgeons végétatifs en épines pour se protéger des herbivores en hiver.",
+          "L'accumulation de sucres cryoprotecteurs dans les cellules pour résister au gel intense."
         ]
       }
     ];
 
     // ============================================================
-    // LOGIQUE DU QUIZ (Ne pas modifier)
+    // LOGIQUE DU QUIZ
     // ============================================================
     
     let currentQuestionIndex = 0;
