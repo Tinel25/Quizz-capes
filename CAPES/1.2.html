@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz : Grandes fonctions chez les Embryophytes</title>
   <style>
-    /* --- STYLE --- */
+    /* --- STYLE GÉNÉRAL --- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -51,10 +51,12 @@
       flex-direction: column;
       gap: 15px; 
     }
+    
+    /* STYLE DES BOUTONS */
     .answer-btn {
       width: 100%;
-      /* On laisse la hauteur s'adapter au texte, mais avec un min pour la cohérence */
-      min-height: 80px; 
+      /* On met une hauteur minimale, mais le JS va écraser ça pour égaliser */
+      min-height: 60px; 
       padding: 15px 20px;
       background: white;
       border: 2px solid #e0e0e0;
@@ -65,7 +67,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       
-      /* Flexbox centré */
+      /* Flexbox pour centrer le texte parfaitement */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -86,6 +88,8 @@
       border-color: #e53e3e !important;
       color: #822727 !important;
     }
+
+    /* CONTROLES ET SCORE */
     .quiz-controls {
       margin-top: 30px;
       text-align: center;
@@ -156,9 +160,7 @@
 
   <script>
     // ============================================================
-    // DONNÉES DU QUIZ - THÈME 1.2 (EMBRYOPHYTES)
-    // NOTE : La 1ère réponse est la bonne (mélangée ensuite).
-    // Les leurres ont été rallongés pour éviter le biais de taille.
+    // DONNÉES DU QUIZ - THÈME 1.2
     // ============================================================
     
     const quizData = [
@@ -435,7 +437,7 @@
         ]
       },
       {
-        question: "La vernalisation est un processus indispensable pour certaines plantes. En quoi consiste-t-elle ?",
+        question: "La vernalisation est un processus physiologique indispensable pour certaines plantes. En quoi consiste-t-elle ?",
         answers: [
           "L'acquisition de la compétence à fleurir induite par une exposition prolongée au froid hivernal.",
           "La levée de dormance des graines déclenchée par une alternance rapide de températures chaudes et froides.",
@@ -500,6 +502,7 @@
 
       let shuffledAnswers = shuffleArray(answersToShuffle);
 
+      // Création des boutons
       shuffledAnswers.forEach(answerObj => {
         const button = document.createElement('button');
         button.innerText = answerObj.text;
@@ -507,6 +510,27 @@
         button.dataset.correct = answerObj.correct; 
         button.addEventListener('click', selectAnswer);
         answerButtonsElement.appendChild(button);
+      });
+
+      // === LA CORRECTION DU PROBLÈME VISUEL ===
+      // On force tous les boutons à avoir la hauteur du plus grand
+      requestAnimationFrame(() => {
+          const buttons = answerButtonsElement.querySelectorAll('.answer-btn');
+          let maxHeight = 0;
+          
+          // 1. On cherche le plus grand
+          buttons.forEach(btn => {
+            // On s'assure qu'il a sa taille naturelle
+            btn.style.height = 'auto';
+            if(btn.offsetHeight > maxHeight) {
+                maxHeight = btn.offsetHeight;
+            }
+          });
+          
+          // 2. On applique cette hauteur à tous
+          buttons.forEach(btn => {
+            btn.style.height = maxHeight + 'px';
+          });
       });
     }
 
@@ -518,6 +542,9 @@
     }
 
     function selectAnswer(e) {
+      // Pour éviter de cliquer sur le conteneur flex si l'utilisateur clique sur le bord
+      if(e.target.tagName !== 'BUTTON') return;
+      
       const selectedButton = e.target;
       const isCorrect = selectedButton.dataset.correct === "true";
 
