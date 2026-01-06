@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Membranes Cellulaires</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Thème 3.2 : Membranes et échanges membranaires</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 3.2 : MEMBRANES
+       - Réponses calibrées pour éviter le biais de longueur.
+       - Focus sur biophysique, transporteurs, signalisation et structure.
+    */
+    const quizData = [
+      // --- STRUCTURE MEMBRANAIRE ---
+      {
+        question: "Qu'est-ce que le 'modèle de la mosaïque fluide' décrit par Singer et Nicolson (1972) ?",
+        answers: [
+          "Une bicouche lipidique fluide dans laquelle des protéines globulaires sont insérées et peuvent se déplacer latéralement (diffusion latérale).",
+          "Une structure rigide en sandwich où une couche de lipides est prise entre deux couches continues de protéines stabilisatrices.", // Leurre (Modèle de Davson-Danielli)
+          "Un assemblage statique de lipides cristallisés formant une barrière imperméable, percée de pores protéiques fixes.", // Leurre
+          "Une monocouche lipidique hydrophobe dont les têtes polaires sont tournées vers l'intérieur pour éviter le contact avec l'eau.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est l'effet du cholestérol sur la fluidité de la membrane plasmique animale ?",
+        answers: [
+          "C'est un tampon de fluidité : il rigidifie la membrane à haute température (limite le mouvement) et empêche la cristallisation à basse température.",
+          "Il augmente systématiquement la fluidité membranaire en écartant les chaînes d'acides gras, quelle que soit la température.", // Leurre
+          "Il agit comme un canal ionique passif permettant le passage sélectif des ions sodium à travers la bicouche hydrophobe.", // Leurre
+          "Il catalyse le basculement rapide (flip-flop) des phospholipides d'un feuillet à l'autre pour homogénéiser la membrane.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'un radeau lipidique (lipid raft) ?",
+        answers: [
+          "Un micro-domaine membranaire riche en cholestérol et sphingolipides, plus épais et ordonné, concentrant certaines protéines de signalisation.",
+          "Une vésicule de transport lipidique qui se détache du réticulum endoplasmique pour fusionner avec l'appareil de Golgi.", // Leurre
+          "Une accumulation pathologique de graisses saturées dans la membrane qui perturbe le fonctionnement des canaux ioniques.", // Leurre
+          "Une structure protéique du cytosquelette qui ancre la membrane plasmique à la matrice extracellulaire.", // Leurre
+        ]
+      },
+      {
+        question: "Pourquoi l'asymétrie membranaire (répartition inégale des lipides entre les deux feuillets) est-elle fonctionnelle ?",
+        answers: [
+          "Elle permet, par exemple, d'exposer la phosphatidylsérine (normalement interne) à l'extérieur comme signal 'eat-me' lors de l'apoptose.",
+          "Elle assure que les chaînes glucidiques (glycocalyx) soient présentes sur les deux faces pour protéger le cytoplasme.", // Leurre (Glycocalyx uniquement externe)
+          "Elle crée un gradient de pH spontané entre l'intérieur et l'extérieur sans consommation d'énergie métabolique.", // Leurre
+          "Elle oblige les protéines transmembranaires à s'insérer toujours dans le même sens grâce à la répulsion électrostatique.", // Leurre
+        ]
+      },
+      {
+        question: "Les protéines périphériques de la membrane se distinguent des protéines intégrales car :",
+        answers: [
+          "Elles sont liées non-covalemment aux têtes polaires des lipides ou aux protéines intégrales et peuvent être détachées par changement de pH.",
+          "Elles traversent la bicouche lipidique de part en part grâce à des hélices alpha hydrophobes (domaine transmembranaire).", // Leurre (Protéines intégrales)
+          "Elles sont ancrées dans le feuillet interne par une liaison covalente à un acide gras (palmitoylation ou myristoylation).", // Leurre (Protéines ancrées aux lipides)
+          "Elles fonctionnent exclusivement comme des canaux ioniques permettant le passage passif des solutés.", // Leurre
+        ]
+      },
+
+      // --- TRANSPORTS PASSIFS ---
+      {
+        question: "La diffusion simple à travers la bicouche lipidique concerne uniquement :",
+        answers: [
+          "Les petites molécules hydrophobes (O2, CO2, N2) et les petites molécules polaires non chargées (éthanol, urée, eau lentement).",
+          "Les ions minéraux chargés (Na+, K+, Cl-) qui traversent facilement grâce à leur petite taille atomique.", // Leurre (Impossible sans canal)
+          "Les macromolécules comme le glucose et les acides aminés qui se dissolvent dans la phase lipidique centrale.", // Leurre
+          "Toutes les molécules dont le poids moléculaire est inférieur à 500 Da, indépendamment de leur charge électrique.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la caractéristique cinétique distinguant la diffusion facilitée (transporteur) de la diffusion simple ?",
+        answers: [
+          "La diffusion facilitée présente une cinétique de saturation (Vmax) car le nombre de transporteurs est limité, contrairement à la diffusion simple.",
+          "La diffusion facilitée nécessite l'hydrolyse d'ATP pour fonctionner, alors que la diffusion simple est purement passive.", // Leurre (Confusion avec transport actif)
+          "La diffusion facilitée est toujours plus lente que la diffusion simple car le changement de conformation du transporteur prend du temps.", // Leurre
+          "La diffusion facilitée permet le transport des molécules contre leur gradient de concentration chimique.", // Leurre (C'est le transport actif)
+        ]
+      },
+      {
+        question: "Comment fonctionnent les aquaporines ?",
+        answers: [
+          "Ce sont des canaux tétramériques qui permettent le passage sélectif et très rapide des molécules d'eau en file indienne, en excluant les protons.",
+          "Ce sont des pompes actives qui consomment de l'ATP pour expulser l'eau hors de la cellule en milieu hypotonique.", // Leurre
+          "Ce sont des transporteurs de glucose qui laissent passer l'eau accessoirement lors du changement de conformation.", // Leurre
+          "Ce sont des pores non sélectifs qui s'ouvrent uniquement lorsque la membrane est étirée par la turgescence.", // Leurre
+        ]
+      },
+      {
+        question: "Le canal ionique potassique (K+) est sélectif. Comment distingue-t-il K+ de Na+ pourtant plus petit ?",
+        answers: [
+          "Le filtre de sélectivité mimique la sphère d'hydratation du K+ avec des oxygènes carbonyles, ce qui est énergétiquement défavorable pour le Na+.",
+          "Le pore est physiquement trop étroit pour laisser passer le Na+, dont le rayon atomique hydraté est supérieur à celui du K+.", // Leurre (Na+ est plus petit, mais son hydratation change la donne, explication incomplète)
+          "Le canal possède une charge positive intense à son entrée qui repousse le sodium mais attire le potassium.", // Leurre
+          "Le canal hydrolyse de l'ATP pour forcer le potassium à entrer tout en fermant la porte au sodium.", // Leurre
+        ]
+      },
+
+      // --- TRANSPORTS ACTIFS ---
+      {
+        question: "La pompe Na+/K+ ATPase est dite 'électrogène'. Pourquoi ?",
+        answers: [
+          "Car elle expulse 3 ions Na+ pour 2 ions K+ importés à chaque cycle, créant ainsi un déficit net de charges positives intracellulaires.",
+          "Car elle hydrolyse de l'ATP, libérant des électrons qui modifient le potentiel redox du cytoplasme.", // Leurre
+          "Car elle transporte des électrons à travers la membrane pour générer un gradient de protons comme dans la mitochondrie.", // Leurre
+          "Car elle permet l'entrée massive de Na+ lors du potentiel d'action, dépolarisant ainsi la membrane.", // Leurre (C'est le canal Na+ voltage-dépendant)
+        ]
+      },
+      {
+        question: "Qu'est-ce que le transport actif secondaire (ex: SGLT, transporteur Sodium-Glucose) ?",
+        answers: [
+          "Le transport d'une molécule contre son gradient (Glucose) couplé à l'entrée favorable d'un ion (Na+) suivant son gradient électrochimique.",
+          "L'hydrolyse directe d'une seconde molécule d'ATP pour transporter le glucose une fois que le sodium est passé.", // Leurre
+          "Le transport passif du glucose facilité par l'ouverture simultanée d'un canal sodique voisin.", // Leurre
+          "L'utilisation du gradient de protons mitochondrial pour faire entrer le glucose dans le cytoplasme.", // Leurre
+        ]
+      },
+      {
+        question: "Les transporteurs ABC (ATP-Binding Cassette) sont célèbres en médecine car :",
+        answers: [
+          "Certains (ex: MDR/P-gp) expulsent activement les médicaments hydrophobes hors des cellules cancéreuses, causant la chimiorésistance.",
+          "Ils sont responsables de l'entrée rapide des antibiotiques dans les bactéries, les rendant plus sensibles aux traitements.", // Leurre
+          "Ils permettent l'importation spécifique du cholestérol dans les cellules hépatiques pour sa dégradation.", // Leurre
+          "Ils forment des canaux chlore défectueux dans la mucoviscidose, empêchant l'hydratation du mucus.", // Leurre (CFTR est un ABC mais atypique, canal Cl-)
+        ]
+      },
+      {
+        question: "Quelle est la source d'énergie des pompes de type P (ex: Ca2+ ATPase du réticulum) ?",
+        answers: [
+          "L'hydrolyse de l'ATP entraîne la phosphorylation transitoire d'un aspartate de la pompe, provoquant son changement de conformation.",
+          "Le gradient de protons transmembranaire généré par la chaîne respiratoire mitochondriale.", // Leurre
+          "La liaison simultanée de deux ions calcium qui déstabilise la structure protéique sans consommation d'énergie.", // Leurre
+          "L'oxydation du NADH en NAD+ qui fournit les électrons nécessaires au transport actif du calcium.", // Leurre
+        ]
+      },
+
+      // --- POTENTIEL DE MEMBRANE ---
+      {
+        question: "L'équation de Nernst permet de calculer :",
+        answers: [
+          "Le potentiel d'équilibre d'un ion donné, c'est-à-dire le voltage membranaire où le flux net de cet ion est nul.",
+          "La vitesse maximale de transport d'un soluté à travers la membrane en fonction de sa concentration.", // Leurre (Michaelis-Menten)
+          "Le potentiel de membrane global de la cellule en tenant compte de la perméabilité de tous les ions.", // Leurre (Goldman-Hodgkin-Katz)
+          "L'énergie libre de Gibbs nécessaire pour transporter une mole de soluté contre son gradient.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la cause principale du potentiel de repos négatif (environ -70 mV) des neurones ?",
+        answers: [
+          "La perméabilité sélective élevée de la membrane aux ions K+ (canaux de fuite) qui sortent selon leur gradient, laissant l'intérieur négatif.",
+          "L'accumulation massive d'anions organiques (protéines, phosphates) qui ne peuvent pas sortir de la cellule.", // Leurre (Contribue mais n'est pas la cause dynamique principale)
+          "L'activité de la pompe Na+/K+ qui fait entrer plus de charges positives qu'elle n'en fait sortir.", // Leurre (Faux, elle sort 3 Na+ pour 2 K+)
+          "L'entrée permanente d'ions Cl- qui hyperpolarisent la membrane pour la maintenir au repos.", // Leurre
+        ]
+      },
+
+      // --- ENDOCYTOSE & EXOCYTOSE ---
+      {
+        question: "Quel est le rôle de la clathrine dans l'endocytose médiée par récepteur ?",
+        answers: [
+          "Elle s'assemble en structure polyédrique (triskélion) sur la face cytosolique, courbant la membrane pour former le puits puis la vésicule.",
+          "Elle se lie au ligand à l'extérieur de la cellule pour l'obliger à entrer dans le récepteur membranaire.", // Leurre
+          "Elle agit comme une paire de ciseaux moléculaires (GTPase) pour détacher la vésicule de la membrane plasmique.", // Leurre (Dynamine)
+          "Elle dégrade le contenu de la vésicule une fois celle-ci détachée pour libérer les nutriments.", // Leurre
+        ]
+      },
+      {
+        question: "La dynamine est une GTPase essentielle à l'endocytose. Quelle est sa fonction ?",
+        answers: [
+          "Elle forme un anneau autour du col de la vésicule en formation et hydrolyse le GTP pour la détacher de la membrane (fission).",
+          "Elle transporte la vésicule nouvellement formée le long des microtubules vers l'endosome précoce.", // Leurre (Kinésine/Dynéine)
+          "Elle recouvre la vésicule pour empêcher sa fusion prématurée avec les lysosomes du cytoplasme.", // Leurre
+          "Elle active les pompes à protons de la vésicule pour acidifier son contenu et dissocier le récepteur du ligand.", // Leurre
+        ]
+      },
+      {
+        question: "Le complexe SNARE (v-SNARE et t-SNARE) est responsable de :",
+        answers: [
+          "La fusion spécifique des membranes : l'interaction v-SNARE (vésicule) / t-SNARE (cible) force le rapprochement et la fusion des bicouches.",
+          "L'adressage des vésicules : il agit comme un code-barres moléculaire lu par les protéines motrices du cytosquelette.", // Leurre (Rab proteins)
+          "Le recyclage des récepteurs membranaires vers la surface cellulaire après l'endocytose.", // Leurre
+          "La formation du manteau protéique qui déforme la membrane lors du bourgeonnement vésiculaire.", // Leurre (COP/Clathrine)
+        ]
+      },
+      {
+        question: "Qu'est-ce que la transcytose, observée notamment dans les cellules épithéliales intestinales (IgA) ?",
+        answers: [
+          "Le transport d'une molécule d'un pôle de la cellule à l'autre via des vésicules d'endocytose qui traversent le cytoplasme sans fusion lysosomale.",
+          "Le passage direct de molécules à travers les jonctions serrées entre deux cellules adjacentes.", // Leurre (Paracellulaire)
+          "La transformation d'une vésicule d'endocytose en vésicule d'exocytose par modification de ses lipides membranaires.", // Leurre
+          "L'échange de fragments membranaires entre deux cellules voisines via des nanotubes de communication.", // Leurre
+        ]
+      },
+
+      // --- ADHÉRENCE & JONCTIONS ---
+      {
+        question: "Les jonctions serrées (Zonula occludens) jouent un rôle crucial dans les épithéliums. Lequel ?",
+        answers: [
+          "Elles assurent l'étanchéité de l'espace paracellulaire et maintiennent la polarité cellulaire en empêchant la diffusion latérale des protéines membranaires.",
+          "Elles permettent le passage direct des ions et des petites molécules entre les cellules voisines pour synchroniser le tissu.", // Leurre (Gap junctions)
+          "Elles ancrent solidement la cellule à la lame basale grâce aux intégrines pour résister aux contraintes mécaniques.", // Leurre (Hémidesmosomes)
+          "Elles forment des canaux ouverts en permanence qui permettent la sécrétion rapide de mucus vers la lumière.", // Leurre
+        ]
+      },
+      {
+        question: "Les cadhérines sont des molécules d'adhérence cellulaire (CAM). Quelle est leur particularité fonctionnelle ?",
+        answers: [
+          "Elles assurent une adhérence homophilique (liaison à la même cadhérine sur la cellule voisine) calcium-dépendante.",
+          "Elles se lient spécifiquement aux composants de la matrice extracellulaire comme le collagène et la fibronectine.", // Leurre (Intégrines)
+          "Elles permettent l'adhérence transitoire des leucocytes à l'endothélium lors de l'inflammation (rolling).", // Leurre (Sélectines)
+          "Elles forment des pores transmembranaires permettant la communication électrique entre les cardiomyocytes.", // Leurre (Connexines)
+        ]
+      },
+      {
+        question: "Quel est le rôle des intégrines dans la signalisation cellulaire ?",
+        answers: [
+          "Elles connectent la matrice extracellulaire au cytosquelette d'actine et transmettent des signaux mécaniques et chimiques bidirectionnels.",
+          "Elles agissent comme des canaux ioniques activés par l'étirement, provoquant une dépolarisation immédiate.", // Leurre
+          "Elles dégradent la matrice extracellulaire pour permettre la migration cellulaire lors de la métastase.", // Leurre (Métalloprotéases)
+          "Elles transportent activement les acides aminés essentiels à travers la membrane basale des cellules épithéliales.", // Leurre
+        ]
+      },
+      {
+        question: "Les jonctions communicantes (Gap junctions) sont formées de :",
+        answers: [
+          "Connexons, eux-mêmes constitués de 6 sous-unités de connexine, formant un canal hydrophile continu entre deux cellules.",
+          "Claudines et occludines qui s'entrelacent pour fermer l'espace intercellulaire comme une fermeture éclair.", // Leurre (Jonctions serrées)
+          "Desmocolline et desmogléine associées aux filaments intermédiaires du cytosquelette.", // Leurre (Desmosomes)
+          "Tubuline alpha et bêta organisée en microtubules qui perforent la membrane plasmique.", // Leurre (Plasmodesmes végétaux à la limite, mais pas Gap)
+        ]
+      },
+
+      // --- SIGNALISATION MEMBRANAIRE ---
+      {
+        question: "Comment un Récepteur Couplé aux Protéines G (RCPG) transmet-il le signal après fixation du ligand ?",
+        answers: [
+          "Il change de conformation, active une protéine G hétérotrimérique (échange GDP/GTP), qui se dissocie pour activer des effecteurs (ex: adénylate cyclase).",
+          "Il se dimérise, s'autophosphoryle sur des résidus tyrosine, et recrute des protéines à domaine SH2.", // Leurre (RTK)
+          "Il s'ouvre pour laisser entrer des ions calcium qui agissent comme seconds messagers intracellulaires.", // Leurre (Canal ionique)
+          "Il est endocyté et transporté vers le noyau où il agit directement comme facteur de transcription.", // Leurre (Récepteurs nucléaires/stéroïdes)
+        ]
+      },
+      {
+        question: "Les récepteurs tyrosine kinase (RTK) activent souvent la voie des MAP kinases. Quel est le premier événement ?",
+        answers: [
+          "La dimérisation du récepteur induite par le ligand et la trans-autophosphorylation des domaines tyrosine kinase intracellulaires.",
+          "L'activation d'une phospholipase C qui clive le PIP2 en IP3 et DAG pour libérer du calcium.", // Leurre (Souvent RCPG Gq)
+          "L'ouverture d'un canal chlore qui hyperpolarise la membrane et inhibe l'activité électrique de la cellule.", // Leurre
+          "La libération d'une sous-unité alpha qui va activer l'AMP cyclique et la protéine kinase A.", // Leurre (RCPG Gs)
+        ]
+      },
+      {
+        question: "Le potentiel d'action neuronal est déclenché par l'ouverture de quels canaux ?",
+        answers: [
+          "Les canaux Na+ voltage-dépendants, qui s'ouvrent en réponse à une dépolarisation seuil, entraînant une entrée massive de sodium.",
+          "Les canaux K+ de fuite, qui se ferment brutalement pour empêcher la sortie de potassium et accumuler les charges positives.", // Leurre
+          "Les canaux Ca2+ ligand-dépendants, activés par la fixation de neurotransmetteurs excitateurs comme le glutamate.", // Leurre (C'est le potentiel postsynaptique)
+          "Les pompes Na+/K+ ATPase qui inversent leur sens de fonctionnement pour générer un courant électrique rapide.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la fonction du glycocalyx (manteau cellulaire) ?",
+        answers: [
+          "C'est une zone riche en glucides (glycoprotéines/glycolipides) qui protège la cellule, participe à la reconnaissance cellulaire et piège des facteurs de croissance.",
+          "C'est une couche de protéines contractiles sous-membranaires qui permet à la cellule de changer de forme.", // Leurre (Cortex d'actine)
+          "C'est un dépôt de cristaux minéraux qui rigidifie la membrane des cellules osseuses.", // Leurre
+          "C'est une réserve d'énergie lipidique extracellulaire utilisable en cas de jeûne prolongé.", // Leurre
+        ]
+      },
+      {
+        question: "La phagocytose est un processus actin-dépendant. Quelle étape initie la formation du phagosome ?",
+        answers: [
+          "La reconnaissance de la particule (ex: bactérie opsonisée) par des récepteurs de surface déclenche la polymérisation locale de l'actine et l'extension des pseudopodes.",
+          "L'invagination spontanée de la membrane plasmique sous l'effet de la pression hydrostatique du cytoplasme.", // Leurre
+          "La sécrétion massive d'enzymes digestives qui dissolvent la paroi de la bactérie avant son ingestion.", // Leurre
+          "L'ouverture de larges canaux membranaires qui aspirent la particule à l'intérieur de la cellule.", // Leurre
+        ]
+      },
+      {
+        question: "Le transport du glucose dans les érythrocytes se fait par GLUT1. C'est un exemple de :",
+        answers: [
+          "Uniport passif (diffusion facilitée), qui transporte le glucose dans le sens de son gradient de concentration sans énergie.",
+          "Symport actif secondaire, qui utilise l'énergie du gradient de sodium pour concentrer le glucose.", // Leurre (SGLT dans l'intestin/rein)
+          "Transport actif primaire, qui hydrolyse l'ATP pour pomper le glucose dans la cellule.", // Leurre
+          "Diffusion simple à travers la bicouche lipidique, car le glucose est une molécule petite et hydrophobe.", // Leurre (Glucose est polaire)
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ (Code standard) ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! La biologie membranaire est acquise.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bon travail. Revoyez les potentiels électrochimiques.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Courage. C'est un chapitre dense et fondamental.";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
