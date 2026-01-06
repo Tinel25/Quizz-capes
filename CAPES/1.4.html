@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz CAPES : Organismes Unicellulaires</title>
+  <style>
+    /* --- STYLE --- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
+    
+    .answer-btn {
+      width: 100%;
+      min-height: 85px; 
+      padding: 10px 20px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .answer-btn:hover:not([disabled]) {
+        background: #f8f9fa;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
+
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <a href="../index.html" class="back-link">← Retour au sommaire</a>
+    <div class="header"><h1>Grandes fonctions chez les Unicellulaires</h1></div>
+
+    <div id="quiz-box">
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
+      </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      
+      <div class="question-section">
+        <h2 id="question-text" class="question-text">Chargement...</h2>
+      </div>
+
+      <div id="answer-buttons" class="answer-section"></div>
+
+      <div class="quiz-controls">
+        <button id="next-btn" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    
+    <div id="result-box" style="display: none; text-align: center;">
+        <h2>Quiz terminé !</h2>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
+    </div>
+  </div>
+
+  <script>
+    /* QUIZ THEME 1.4 : ORGANISMES UNICELLULAIRES (Protistes & Bactéries)
+       - Réponses calibrées pour éviter le biais de longueur.
+    */
+    const quizData = [
+      // --- LOCOMOTION & CYTOSQUELETTE ---
+      {
+        question: "Quelle est la structure interne fondamentale d'un cil vibratile ou d'un flagelle chez les Eucaryotes (ex: Paramécie) ?",
+        answers: [
+          "L'axonème, constitué de 9 doublets de microtubules périphériques et d'une paire centrale (structure 9+2), reliés par de la dynéine.",
+          "Le corpuscule basal, formé d'un triplet de microtubules centraux entourés de 9 doublets périphériques sans bras de dynéine.", // Leurre
+          "Un filament protéique unique de flagelline, structure hélicoïdale creuse entraînée par un moteur rotatif membranaire à protons.", // Leurre (C'est le flagelle bactérien)
+          "Un faisceau d'actine et de myosine organisé en sarcomères contractiles permettant le battement rythmique par glissement.", // Leurre
+        ]
+      },
+      {
+        question: "Comment se déplace une amibe (mouvement amiboïde) ?",
+        answers: [
+          "Par émission de pseudopodes grâce à des transitions sol-gel du cytoplasme et à la polymérisation orientée de l'actine corticale.",
+          "Par la contraction rythmique de vacuoles pulsatiles qui expulsent de l'eau vers l'arrière, créant une propulsion par réaction.", // Leurre
+          "Par le glissement sur un tapis de mucus sécrété en permanence, entraîné par des rangées de cils ventraux microscopiques.", // Leurre
+          "Par des changements rapides de volume cellulaire dus à des flux ioniques massifs modifiant la pression osmotique locale.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la différence mécanique principale entre le flagelle d'un spermatozoïde (Eucaryote) et celui d'une bactérie ?",
+        answers: [
+          "Le flagelle eucaryote ondule grâce à un glissement de microtubules (ATP), le flagelle bactérien tourne comme une hélice (gradient H+).",
+          "Le flagelle eucaryote est une structure rigide tournant sur elle-même, le flagelle bactérien est souple et fouette le milieu.", // Leurre (Inverse)
+          "Le flagelle eucaryote est intracellulaire sous la membrane, alors que le flagelle bactérien est une extension du cytoplasme nu.", // Leurre
+          "Le flagelle eucaryote utilise le gradient de sodium comme source d'énergie, tandis que le flagelle bactérien consomme de l'ATP.", // Leurre
+        ]
+      },
+      
+      // --- OSMORÉGULATION & EXCRÉTION ---
+      {
+        question: "Quel est le rôle de la vacuole pulsatile (ou contractile) chez les protistes d'eau douce comme la Paramécie ?",
+        answers: [
+          "Elle assure l'osmorégulation en expulsant activement l'excès d'eau qui entre en permanence par osmose dans ce milieu hypotonique.",
+          "Elle stocke les déchets azotés sous forme de cristaux avant de les expulser par exocytose lors de la division cellulaire.", // Leurre
+          "Elle permet la digestion des proies en injectant des enzymes lytiques dans les vacuoles alimentaires nouvellement formées.", // Leurre
+          "Elle sert de réservoir d'oxygène pour permettre la respiration cellulaire lorsque le milieu devient anoxique.", // Leurre
+        ]
+      },
+      {
+        question: "Par quel mécanisme les protistes marins (ex: Foraminifères) gèrent-ils leur équilibre hydrique ?",
+        answers: [
+          "Ils sont généralement isotoniques à l'eau de mer et ne nécessitent pas de vacuoles pulsatiles actives pour l'osmorégulation.",
+          "Ils pompent activement des ions sel hors de leur cytoplasme pour maintenir une pression osmotique inférieure à celle de la mer.", // Leurre
+          "Ils possèdent une paroi cellulaire épaisse et imperméable qui empêche totalement les mouvements d'eau et d'ions.", // Leurre
+          "Ils synthétisent des osmoprotecteurs organiques (glycérol) pour empêcher la sortie d'eau vers le milieu hypertonique.", // Leurre
+        ]
+      },
+      {
+        question: "Comment s'effectue l'excrétion des déchets métaboliques (ammoniac, CO2) chez les organismes unicellulaires ?",
+        answers: [
+          "Principalement par diffusion simple à travers la membrane plasmique, grâce au rapport surface/volume élevé de la cellule.",
+          "Par l'intermédiaire du cytoprocte, un pore spécialisé qui filtre activement le cytoplasme pour concentrer l'urine.", // Leurre (Le cytoprocte sert à l'exocytose des déchets digestifs solides)
+          "Par accumulation dans des vacuoles de stockage qui sont transmises à une seule des deux cellules filles lors de la mitose.", // Leurre
+          "Par transformation en cristaux insolubles d'acide urique stockés indéfiniment dans le cytoplasme pour éviter la toxicité.", // Leurre
+        ]
+      },
+
+      // --- NUTRITION & DIGESTION ---
+      {
+        question: "Qu'est-ce que la mixotrophie, observée par exemple chez les Euglènes ?",
+        answers: [
+          "La capacité de combiner la photosynthèse (autotrophie) en présence de lumière et l'hétérotrophie (absorption organique) à l'obscurité.",
+          "La capacité de se nourrir à la fois de proies vivantes par phagocytose et de matière organique morte par saprophytisme.", // Leurre
+          "La capacité d'utiliser indifféremment l'oxygène ou le nitrate comme accepteur final d'électrons dans la chaîne respiratoire.", // Leurre
+          "La symbiose obligatoire avec une algue verte qui fournit les sucres tandis que l'euglène fournit les sels minéraux.", // Leurre
+        ]
+      },
+      {
+        question: "Comment se déroule la digestion chez une Paramécie ?",
+        answers: [
+          "Les proies entrent par le cytostome, forment une vacuole digestive qui circule (cyclouse), s'acidifie (lysosomes) puis expulse les déchets au cytoprocte.",
+          "Les enzymes digestives sont sécrétées à l'extérieur de la cellule pour liquéfier les proies avant l'absorption des nutriments par diffusion.", // Leurre (Digestion extracellulaire type champignon)
+          "Les proies sont broyées mécaniquement par les cils du pharynx avant d'être hydrolysées directement dans le cytoplasme sans vacuole.", // Leurre
+          "La digestion a lieu dans le macronucleus qui synthétise des protéines spécifiques pour dégrader l'ADN des bactéries ingérées.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la particularité des Choanoflagellés en termes de nutrition et d'évolution ?",
+        answers: [
+          "Ils possèdent une collerette de microvillosités entourant un flagelle qui piège les bactéries, structure homologue aux choanocytes des Éponges.",
+          "Ils chassent en groupe en formant des pseudopodes géants capables d'engloutir des organismes pluricellulaires comme des rotifères.", // Leurre
+          "Ils sont les seuls unicellulaires capables de digérer la cellulose grâce à une symbiose interne avec des bactéries méthanogènes.", // Leurre
+          "Ils utilisent des cnidocystes (cellules urticantes) pour paralyser leurs proies, un trait hérité des ancêtres des Cnidaires.", // Leurre
+        ]
+      },
+
+      // --- REPRODUCTION & CYCLES DE VIE ---
+      {
+        question: "En quoi consiste la conjugaison chez les Ciliés (ex: Paramécie) ?",
+        answers: [
+          "C'est un processus sexué sans reproduction : deux individus échangent des micronucleus haploïdes via un pont cytoplasmique, modifiant leur génome.",
+          "C'est un mode de reproduction asexuée où la cellule se divise longitudinalement après duplication de tous ses organites.", // Leurre (Scissiparité)
+          "C'est la fusion complète de deux gamètes de tailles différentes (anisogamie) pour former un zygote de résistance (kyste).", // Leurre
+          "C'est le transfert unidirectionnel d'un plasmide de résistance d'une bactérie donatrice vers une bactérie receveuse via un pilus.", // Leurre (Conjugaison bactérienne)
+        ]
+      },
+      {
+        question: "Quel est le rôle du macronucleus (polyploïde) par rapport au micronucleus (diploïde) chez les Ciliés ?",
+        answers: [
+          "Le macronucleus gère les fonctions végétatives et l'expression des gènes quotidiens, le micronucleus assure la transmission génétique sexuelle.",
+          "Le macronucleus est une réserve de nutriments nucléiques, tandis que le micronucleus est le seul à contenir de l'ADN codant.", // Leurre
+          "Le macronucleus se divise par mitose classique, alors que le micronucleus se divise par amitose directe sans fuseau.", // Leurre (C'est l'inverse : Macronucleus = amitose)
+          "Le macronucleus n'est présent que pendant la division cellulaire, il disparaît le reste du temps pour laisser place au micronucleus.", // Leurre
+        ]
+      },
+      {
+        question: "Dans le cycle de Plasmodium falciparum (agent du paludisme), quel rôle joue le moustique Anophèle ?",
+        answers: [
+          "C'est l'hôte définitif où a lieu la reproduction sexuée (fécondation des gamétocytes) et la formation des sporozoïtes infectants.",
+          "C'est l'hôte intermédiaire où le parasite se multiplie de manière asexuée dans les glandes salivaires avant d'infecter l'homme.", // Leurre (Faux sens bio)
+          "C'est un simple vecteur mécanique qui transporte les parasites d'un homme à l'autre sans qu'il n'y ait de cycle biologique chez l'insecte.", // Leurre
+          "C'est l'hôte paraténique où le parasite s'enkyste dans l'attente d'être ingéré par un prédateur vertébré.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'une auxospore chez les Diatomées ?",
+        answers: [
+          "Une cellule spécialisée qui restaure la taille initiale maximale de l'espèce après plusieurs cycles de division ayant réduit le diamètre du frustule.",
+          "Une spore de résistance à paroi épaisse capable de survivre des années dans les sédiments anoxiques avant de germer.", // Leurre
+          "Une structure reproductrice mobile flagellée qui permet la colonisation de nouveaux milieux aquatiques éloignés.", // Leurre
+          "Un kyste formé par la fusion de plusieurs individus pour résister à la pression de broutage du zooplancton.", // Leurre
+        ]
+      },
+      {
+        question: "La sporulation chez les bactéries (ex: Bacillus) est une réponse adaptative qui permet :",
+        answers: [
+          "La survie en conditions extrêmes (chaleur, dessiccation) grâce à la formation d'une endospore métaboliquement dormante et ultra-résistante.",
+          "La multiplication rapide de la population lorsque les nutriments deviennent abondants après une période de famine.", // Leurre
+          "La dispersion géographique grâce à l'éjection violente des spores hors de la colonie mère par pression osmotique.", // Leurre
+          "L'échange de matériel génétique avec d'autres espèces bactériennes pour acquérir de nouvelles résistances aux antibiotiques.", // Leurre
+        ]
+      },
+
+      // --- DIVERSITÉ & STRUCTURES SPÉCIALISÉES ---
+      {
+        question: "À quoi servent les trichocystes situés sous la membrane de la Paramécie ?",
+        answers: [
+          "Ce sont des organites extrusifs défensifs qui, sous l'effet d'un stimulus, déchargent de longs filaments pour repousser un prédateur.",
+          "Ce sont des cils sensoriels modifiés qui détectent les variations chimiques du milieu pour orienter la nage.", // Leurre
+          "Ce sont des réserves de calcium utilisées pour réguler la contraction musculaire du cortex cellulaire.", // Leurre
+          "Ce sont des structures d'ancrage qui permettent à la paramécie de se fixer temporairement au substrat pour se nourrir.", // Leurre
+        ]
+      },
+      {
+        question: "Quel est le constituant principal du frustule (coque) des Diatomées ?",
+        answers: [
+          "La silice amorphe hydratée, formant une structure rigide et ornementée composée de deux thèques s'emboîtant comme une boîte.",
+          "Le carbonate de calcium, cristallisé sous forme de calcite ou d'aragonite, très sensible à l'acidification des océans.", // Leurre (Foraminifères/Coccolithophoridés)
+          "La cellulose organisée en plaques rigides (thèques) situées dans des vésicules sous la membrane plasmique.", // Leurre (Dinoflagellés)
+          "La chitine, un polymère azoté résistant qui protège la cellule contre la digestion par les prédateurs herbivores.", // Leurre
+        ]
+      },
+      {
+        question: "Quelle est la fonction du stigma (tache oculaire) chez les Euglènes ou Chlamydomonas ?",
+        answers: [
+          "C'est un écran pigmenté qui occulte la lumière sous certains angles, permettant au photorécepteur de détecter la direction de la source lumineuse.",
+          "C'est le photorécepteur lui-même, contenant des pigments de type rhodopsine capables de convertir la lumière en influx nerveux.", // Leurre (Nuance: stigma = écran)
+          "C'est un organite photosynthétique accessoire qui concentre l'énergie lumineuse vers les chloroplastes en condition de faible éclairement.", // Leurre
+          "C'est une réserve de caroténoïdes antioxydants protégeant l'ADN nucléaire contre les rayonnements UV nocifs.", // Leurre
+        ]
+      },
+      {
+        question: "Les Foraminifères sont des protistes marins caractérisés par :",
+        answers: [
+          "Un test (coquille) généralement calcaire percé de pores par lesquels sortent des pseudopodes réticulés (reticulopodes) pour la capture de proies.",
+          "Un squelette interne siliceux complexe formant des spicules rayonnants et des axopodes rigides pour la flottaison.", // Leurre (Radiolaires)
+          "Une thèque organique souple qui leur permet de changer de forme rapidement pour se glisser entre les grains de sable.", // Leurre
+          "L'absence totale de structure squelettique, ce sont des amibes nues géantes vivant exclusivement dans les grands fonds.", // Leurre
+        ]
+      },
+      {
+        question: "Quel organite unique caractérise les Trypanosomes (agents de la maladie du sommeil) ?",
+        answers: [
+          "Le kinétoplaste, une masse dense d'ADN circulaire située dans l'unique mitochondrie géante, à la base du flagelle.",
+          "L'apicoplaste, un plaste vestigial non photosynthétique indispensable à la synthèse des acides gras et des isoprénoïdes.", // Leurre (Plasmodium)
+          "Le micronème, une structure sécrétrice apicale permettant l'adhésion et l'invasion des globules rouges de l'hôte.", // Leurre
+          "Le corps parabasal, un appareil de Golgi modifié associé au flagelle pour soutenir la membrane ondulante.", // Leurre
+        ]
+      },
+
+      // --- BACTÉRIES & ARCHÉES (FONCTIONS) ---
+      {
+        question: "Quelle est la différence structurelle majeure entre la paroi des bactéries Gram+ et Gram- ?",
+        answers: [
+          "Les Gram+ ont une couche épaisse de peptidoglycane externe ; les Gram- ont une couche fine de peptidoglycane recouverte d'une membrane externe.",
+          "Les Gram+ possèdent une membrane externe riche en lipopolysaccharides (LPS), tandis que les Gram- n'ont qu'une simple membrane plasmique.", // Leurre (Inverse)
+          "Les Gram+ ont une paroi cellulosique similaire aux plantes, tandis que les Gram- ont une paroi chitineuse comme les champignons.", // Leurre
+          "Les Gram+ n'ont pas de paroi rigide (mycoplasmes), alors que les Gram- possèdent une capsule polysaccharidique épaisse.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce que le quorum sensing chez les bactéries ?",
+        answers: [
+          "Un mécanisme de communication chimique qui permet aux bactéries d'évaluer leur densité de population et de coordonner l'expression de gènes (ex: biofilm).",
+          "La capacité de détecter les nutriments dans l'environnement par chimiotactisme et de migrer collectivement vers la source.", // Leurre
+          "Un système de transfert d'ADN qui ne s'active que lorsque deux bactéries compatibles entrent en contact physique direct.", // Leurre
+          "La régulation de la division cellulaire qui assure que la population ne dépasse pas la capacité de charge du milieu.", // Leurre
+        ]
+      },
+      {
+        question: "La transformation bactérienne est un mécanisme de transfert horizontal de gènes défini par :",
+        answers: [
+          "L'intégration d'ADN libre présent dans l'environnement (issu de bactéries mortes) par une bactérie compétente.",
+          "Le transfert de plasmides d'une bactérie à une autre via un pont cytoplasmique (pilus sexuel).", // Leurre (Conjugaison)
+          "Le transfert d'ADN bactérien d'une cellule à l'autre par l'intermédiaire d'un virus bactériophage vecteur.", // Leurre (Transduction)
+          "La mutation spontanée du génome sous l'effet d'agents mutagènes physiques ou chimiques environnementaux.", // Leurre
+        ]
+      },
+      
+      // --- ÉCOLOGIE & SYMBIOSES UNICELLULAIRES ---
+      {
+        question: "Les Zooxanthelles (Symbiodinium) sont des Dinoflagellés symbiotiques essentiels pour :",
+        answers: [
+          "Les coraux hermatypiques (récifaux), leur fournissant jusqu'à 90% de leur énergie via la photosynthèse en échange d'un abri et de CO2.",
+          "Les lichens marins, formant une croûte protectrice sur les rochers intertidaux résistante à la dessiccation.", // Leurre
+          "Les grands herbivores marins comme les dugongs, facilitant la digestion de la cellulose des herbiers dans leur cæcum.", // Leurre
+          "Le phytoplancton bioluminescent, produisant de la lumière la nuit pour attirer les prédateurs de leurs propres prédateurs.", // Leurre
+        ]
+      },
+      {
+        question: "Qu'est-ce qu'un biofilm ?",
+        answers: [
+          "Une communauté de microorganismes (bactéries, protistes) adhérant à une surface et sécrétant une matrice protectrice de polymères extracellulaires.",
+          "Une fine couche de lipides à la surface de l'eau créée par la lyse massive de cellules phytoplanctoniques.", // Leurre
+          "Un tissu biologique formé par la fusion de cellules unicellulaires devenant pluricellulaires pour résister au courant.", // Leurre
+          "Un filtre naturel composé de squelettes de diatomées utilisé par les éponges pour piéger les particules alimentaires.", // Leurre
+        ]
+      },
+      {
+        question: "L'apicoplaste des Apicomplexes (ex: Toxoplasma, Plasmodium) est une cible thérapeutique car :",
+        answers: [
+          "C'est un organite d'origine végétale (endosymbiose d'algue rouge) possédant des voies métaboliques absentes chez l'hôte animal.",
+          "Il est responsable de la résistance aux médicaments en pompant activement les toxines hors du parasite.", // Leurre
+          "Il synthétise les protéines de surface qui permettent au parasite d'échapper au système immunitaire de l'hôte.", // Leurre
+          "C'est le seul organite capable de produire de l'ATP en conditions anaérobies strictes dans le sang.", // Leurre
+        ]
+      },
+      
+      // --- DIVERS & COMPARATIF ---
+      {
+        question: "Quelle différence majeure distingue la scissiparité (fission binaire) d'une mitose eucaryote ?",
+        answers: [
+          "La scissiparité ne comporte pas de fuseau mitotique ni de condensation chromosomique visible, l'ADN circulaire se répliquant et ségrégeant en membrane.",
+          "La scissiparité produit quatre cellules filles haploïdes à partir d'une cellule mère diploïde, contrairement à la mitose.", // Leurre (Méiose)
+          "La scissiparité implique la dissolution de l'enveloppe nucléaire, alors que la mitose des protistes est toujours fermée (intranucléaire).", // Leurre
+          "La scissiparité est un processus sexué nécessitant deux individus, alors que la mitose est un clonage asexué strict.", // Leurre
+        ]
+      },
+      {
+        question: "Les Radiolaires possèdent des axopodes. Quelle est leur structure et fonction ?",
+        answers: [
+          "Ce sont des expansions cytoplasmiques rigides soutenues par des microtubules, servant à augmenter la flottabilité et à capturer des proies.",
+          "Ce sont des flagelles modifiés battant à l'unisson pour propulser l'organisme à grande vitesse vers la lumière.", // Leurre
+          "Ce sont des spicules calcaires purement défensifs qui empêchent l'ingestion par les petits crustacés planctoniques.", // Leurre
+          "Ce sont des tubes creux permettant d'injecter des enzymes digestives directement dans le corps des proies au contact.", // Leurre
+        ]
+      },
+      {
+        question: "Comment les bactéries thermophiles (ex: Thermus aquaticus) maintiennent-elles leurs protéines fonctionnelles à 80°C ?",
+        answers: [
+          "Leurs protéines possèdent un cœur hydrophobe dense et de nombreux ponts disulfures/ioniques qui augmentent leur thermostabilité.",
+          "Elles synthétisent en permanence des protéines chaperonnes qui renaturent les enzymes déformées par la chaleur.", // Leurre (Vrai en stress, mais structure intrinsèque clé)
+          "Elles utilisent de l'ADN à la place des protéines pour catalyser les réactions enzymatiques (ribozymes thermorésistants).", // Leurre
+          "Elles refroidissent activement leur cytoplasme grâce à des pompes à chaleur membranaires consommant beaucoup d'ATP.", // Leurre
+        ]
+      },
+      {
+        question: "Quel groupe de protistes est à l'origine des marées rouges toxiques (blooms) ?",
+        answers: [
+          "Les Dinoflagellés, dont certaines espèces prolifèrent massivement et sécrètent des neurotoxines (saxitoxine, brévétoxine).",
+          "Les Diatomées, qui libèrent des aiguilles de silice irritantes pour les branchies des poissons lors de leur lyse.", // Leurre (Dommage mécanique, pas marée rouge toxique classique)
+          "Les Euglènes, qui consomment tout l'oxygène de l'eau la nuit et provoquent l'asphyxie de la faune locale.", // Leurre
+          "Les Amibes, qui s'agrègent pour former des tapis visqueux étouffant les organismes benthiques fixés.", // Leurre
+        ]
+      },
+      {
+        question: "La conjugaison bactérienne diffère de la reproduction sexuée eucaryote car :",
+        answers: [
+          "C'est un transfert partiel et unidirectionnel d'ADN (plasmide) sans fusion de gamètes ni formation de zygote vrai.",
+          "Elle est obligatoire avant chaque division cellulaire pour restaurer la taille du génome bactérien.", // Leurre
+          "Elle ne permet pas de brassage génétique, les bactéries filles étant des clones parfaits de la bactérie donatrice.", // Leurre (Si, il y a brassage/nouveaux gènes)
+          "Elle nécessite l'intervention d'un virus vecteur pour transporter l'ADN d'une bactérie à l'autre.", // Leurre (Transduction)
+        ]
+      }
+    ];
+
+    // --- MOTEUR DU QUIZ ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
+    const questionTextElement = document.getElementById('question-text');
+    const answerButtonsElement = document.getElementById('answer-buttons');
+    const nextButton = document.getElementById('next-btn');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+    const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
+
+    totalQSpan.innerText = quizData.length;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.style.display = "none";
+      quizBox.style.display = "block";
+      resultBox.style.display = "none";
+      showQuestion();
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = quizData[currentQuestionIndex];
+      currentQSpan.innerText = currentQuestionIndex + 1;
+      
+      let progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      questionTextElement.innerText = currentQuestion.question;
+
+      let answersToShuffle = [];
+      currentQuestion.answers.forEach((answer, index) => {
+          answersToShuffle.push({ text: answer, correct: index === 0 });
+      });
+
+      let shuffledAnswers = shuffleArray(answersToShuffle);
+
+      shuffledAnswers.forEach(answerObj => {
+        const button = document.createElement('button');
+        button.innerText = answerObj.text;
+        button.classList.add('answer-btn');
+        if (answerObj.correct) button.dataset.correct = "true";
+        button.addEventListener('click', selectAnswer);
+        answerButtonsElement.appendChild(button);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      if (e.target.disabled) return;
+      const selectedButton = e.target;
+      const isCorrect = selectedButton.dataset.correct === "true";
+
+      if (isCorrect) {
+        selectedButton.classList.add('correct');
+        score++;
+      } else {
+        selectedButton.classList.add('incorrect');
+      }
+
+      Array.from(answerButtonsElement.children).forEach(button => {
+        button.disabled = true;
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+      });
+      nextButton.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+        quizBox.style.display = "none";
+        resultBox.style.display = "block";
+        progressFill.style.width = "100%";
+        
+        finalScoreSpan.innerText = score;
+        totalScoreSpan.innerText = quizData.length;
+        
+        const percentage = (score / quizData.length) * 100;
+        if(percentage >= 80) {
+            feedbackMsg.innerText = "Excellent ! Le monde microbien est votre domaine.";
+            feedbackMsg.style.color = "#38a169";
+        } else if (percentage >= 50) {
+            feedbackMsg.innerText = "Bon travail. Attention aux nuances métaboliques.";
+            feedbackMsg.style.color = "#d69e2e";
+        } else {
+            feedbackMsg.innerText = "Continuez. Les unicellulaires sont la base de la vie, courage !";
+            feedbackMsg.style.color = "#e53e3e";
+        }
+    }
+
+    startQuiz();
+  </script>
+</body>
+</html>
