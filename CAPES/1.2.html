@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quiz : Grandes fonctions chez les Embryophytes</title>
+  <title>Quiz CAPES : Embryophytes</title>
   <style>
-    /* --- STYLE GÉNÉRAL --- */
+    /* --- STYLE --- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,48 +26,24 @@
       max-width: 900px;
       padding: 30px;
     }
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #764ba2;
-    }
-    .header h1 { font-size: 24px; margin-bottom: 10px; }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 20px;
-      color: #667eea;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .question-section { margin-bottom: 25px; }
-    .question-text {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      line-height: 1.4;
-    }
-    .answer-section {
-      display: flex;
-      flex-direction: column;
-      gap: 15px; 
-    }
+    .header { text-align: center; margin-bottom: 30px; color: #764ba2; }
+    .back-link { display: inline-block; margin-bottom: 20px; color: #667eea; text-decoration: none; font-weight: bold; }
+    .question-text { font-size: 20px; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
+    .answer-section { display: flex; flex-direction: column; gap: 15px; }
     
-    /* STYLE DES BOUTONS */
     .answer-btn {
       width: 100%;
-      /* On met une hauteur minimale, mais le JS va écraser ça pour égaliser */
-      min-height: 60px; 
-      padding: 15px 20px;
+      /* Hauteur minimale augmentée pour uniformiser visuellement les blocs de 2-3 lignes */
+      min-height: 85px; 
+      padding: 10px 20px;
       background: white;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
       font-size: 15px;
-      line-height: 1.4;
+      line-height: 1.5; /* Meilleure lisibilité */
       color: #333;
       cursor: pointer;
       transition: all 0.2s ease;
-      
-      /* Flexbox pour centrer le texte parfaitement */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -78,65 +54,26 @@
         border-color: #667eea;
         transform: translateY(-2px);
     }
-    .answer-btn.correct {
-      background: #c6f6d5 !important;
-      border-color: #38a169 !important;
-      color: #22543d !important;
-    }
-    .answer-btn.incorrect {
-      background: #fed7d7 !important;
-      border-color: #e53e3e !important;
-      color: #822727 !important;
-    }
+    .answer-btn.correct { background: #c6f6d5 !important; border-color: #38a169 !important; color: #22543d !important; }
+    .answer-btn.incorrect { background: #fed7d7 !important; border-color: #e53e3e !important; color: #822727 !important; }
 
-    /* CONTROLES ET SCORE */
-    .quiz-controls {
-      margin-top: 30px;
-      text-align: center;
-      border-top: 1px solid #eee;
-      padding-top: 20px;
-    }
-    #next-btn {
-      background: #764ba2;
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 8px;
-      font-size: 18px;
-      cursor: pointer;
-      display: none;
-    }
-    .score-board { font-weight: bold; color: #764ba2; margin-bottom: 10px;}
-    .progress-bar {
-      width: 100%;
-      height: 10px;
-      background-color: #eee;
-      border-radius: 5px;
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background-color: #667eea;
-      width: 0%;
-      transition: width 0.3s ease;
-    }
+    .quiz-controls { margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #eee; }
+    #next-btn { background: #764ba2; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 18px; cursor: pointer; display: none; }
+    .progress-bar { width: 100%; height: 10px; background-color: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+    .progress-fill { height: 100%; background-color: #667eea; width: 0%; transition: width 0.3s ease; }
   </style>
 </head>
 <body>
 
   <div class="quiz-container">
     <a href="../index.html" class="back-link">← Retour au sommaire</a>
-    
-    <div class="header">
-      <h1>Grandes fonctions chez quelques Embryophytes</h1>
-    </div>
+    <div class="header"><h1>Grandes fonctions chez les Embryophytes</h1></div>
 
     <div id="quiz-box">
-      <div class="score-board">Question <span id="current-q">1</span> / <span id="total-q">30</span></div>
-      <div class="progress-bar">
-        <div id="progress-fill" class="progress-fill"></div>
+      <div style="font-weight: bold; color: #764ba2; margin-bottom: 10px;">
+        Question <span id="current-q">1</span> / <span id="total-q">30</span>
       </div>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
       
       <div class="question-section">
         <h2 id="question-text" class="question-text">Chargement...</h2>
@@ -151,317 +88,305 @@
     
     <div id="result-box" style="display: none; text-align: center;">
         <h2>Quiz terminé !</h2>
-        <p style="font-size: 24px; margin: 20px 0;">Votre score : <span id="final-score"></span> / <span id="total-score"></span></p>
-        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic; color: #555;"></div>
-        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto; background: #764ba2; color: white;">Recommencer</button>
+        <p style="font-size: 24px; margin: 20px 0;">Score : <span id="final-score"></span> / <span id="total-score"></span></p>
+        <div id="feedback-message" style="margin-bottom: 20px; font-style: italic;"></div>
+        <button onclick="location.reload()" class="answer-btn" style="max-width: 200px; margin: 0 auto;">Recommencer</button>
     </div>
-
   </div>
 
   <script>
-    // ============================================================
-    // DONNÉES DU QUIZ - THÈME 1.2
-    // ============================================================
-    
+    /* CALIBRAGE DES RÉPONSES :
+       Chaque réponse a été réécrite pour faire environ 130-160 caractères.
+       Les mauvaises réponses (leurres) utilisent un vocabulaire dense pour prendre de la place.
+    */
     const quizData = [
-      // --- CIRCULATION & POTENTIELS ---
       {
-        question: "Quel mécanisme explique principalement l'ascension de la sève brute chez les arbres de très grande taille ?",
+        question: "Quel mécanisme assure la montée de la sève brute chez les arbres de grande taille ?",
         answers: [
-          "La théorie de la tension-cohésion : la transpiration foliaire génère une tension négative transmise par les liaisons hydrogène de l'eau.",
-          "La pression racinaire active : l'accumulation d'ions dans le cylindre central crée une pression osmotique positive suffisante pour pousser l'eau jusqu'au sommet.",
-          "L'action capillaire pariétale : l'adhésion de l'eau aux parois lignifiées des vaisseaux permet de vaincre la gravité sans intervention biologique.",
-          "Le pompage péristaltique du xylème : les cellules du xylème possèdent des protéines contractiles qui propulsent activement l'eau vers le haut."
+          "La théorie de la tension-cohésion : la transpiration foliaire crée une tension négative (succion) qui tire la colonne d'eau continue grâce aux liaisons hydrogène.",
+          "La pression racinaire active : les cellules du cylindre central pompent activement les ions, créant une pression osmotique positive suffisante pour pousser l'eau jusqu'au sommet.", // Leurre long
+          "Le mécanisme de capillarité pariétale : la tension superficielle de l'eau contre les parois lignifiées des vaisseaux permet de vaincre la gravité sans énergie.",
+          "Le transport actif via les pompes contractiles du xylème qui propulsent l'eau de manière séquentielle le long du tronc grâce à l'hydrolyse de l'ATP."
         ]
       },
       {
-        question: "Concernant le transport des assimilats dans le phloème, quel est le mécanisme précis du chargement ?",
+        question: "Comment se déroule le chargement du phloème au niveau des organes sources ?",
         answers: [
-          "Un cotransport actif secondaire H+/Saccharose couplé à une pompe à protons (H+-ATPase) créant un gradient électrochimique.",
-          "Une diffusion facilitée par des canaux voltage-dépendants qui s'ouvrent en réponse à l'accumulation de calcium cytosolique.",
-          "Une transcytose vésiculaire médiée par le Golgi qui emballe les sucres pour les injecter directement dans le tube criblé.",
-          "Un transport passif suivant le gradient de concentration créé par la conversion rapide du saccharose en amidon dans les cellules compagnes."
+          "C'est un transport actif secondaire : un symport H+/Saccharose utilise le gradient de protons généré par une ATPase membranaire pour concentrer les sucres.",
+          "C'est une diffusion facilitée passive via des canaux protéiques spécifiques qui s'ouvrent en réponse à la forte concentration de glucose cytoplasmique.",
+          "C'est un processus d'endocytose massive où les vésicules golgiennes emballent les sucres pour les déverser directement dans la lumière des tubes criblés.", // Leurre long
+          "C'est un transport dépendant du sodium (Na+) qui utilise le potentiel électrochimique créé par la pompe Na+/K+ pour faire entrer le saccharose."
         ]
       },
       {
-        question: "Qu'est-ce que l'embolie hivernale (ou cavitation) dans les vaisseaux du xylème ?",
+        question: "Quelle est la conséquence immédiate de l'embolie (cavitation) dans le xylème ?",
         answers: [
-          "La rupture de la continuité de la colonne d'eau liquide par l'apparition d'une bulle de gaz, souvent due aux cycles de gel-dégel.",
-          "L'obstruction des vaisseaux par la formation de thylles, des excroissances cytoplasmiques des cellules de parenchyme voisin.",
-          "La cristallisation irréversible de la sève brute due à la précipitation des sels minéraux à basse température.",
-          "L'effondrement des parois des vaisseaux du xylème sous l'effet de la pression négative trop intense lors du gel."
+          "La rupture de la colonne d'eau liquide par l'apparition d'une bulle de gaz, ce qui interrompt totalement le flux hydrique dans le vaisseau concerné.",
+          "L'accumulation de callose et de thylles qui viennent boucher physiquement le vaisseau pour empêcher la propagation de pathogènes fongiques.",
+          "La cristallisation des solutés minéraux à l'intérieur du vaisseau due à la baisse de température, provoquant un arrêt de la circulation de sève.", // Leurre long
+          "L'effondrement mécanique des parois du vaisseau sous l'effet de la tension, transformant le tube conducteur en un tissu de soutien non fonctionnel."
         ]
       },
       {
-        question: "Comment l'eau traverse-t-elle l'endoderme racinaire malgré la présence de la bande de Caspary ?",
+        question: "Quel est le rôle physiologique de la bande de Caspary dans l'endoderme ?",
         answers: [
-          "Elle est obligée d'emprunter la voie symplastique, traversant la membrane plasmique pour entrer dans le cytoplasme des cellules endodermiques.",
-          "Elle passe par la voie apoplastique modifiée, en diffusant à travers les ponctuations spécifiques de la paroi subérifiée.",
-          "Elle utilise des canaux aqueux transmembranaires (aquaporines) situés exclusivement sur la face externe de la bande de Caspary.",
-          "Elle contourne l'endoderme en passant par les cellules de passage situées en face des pôles ligneux du péricycle."
+          "Elle bloque la voie apoplastique, forçant ainsi l'eau et les minéraux à traverser la membrane plasmique pour un contrôle sélectif avant le cylindre central.",
+          "Elle permet le stockage temporaire de l'amidon sous forme de statolithes, jouant un rôle crucial dans la perception de la gravité par la racine.",
+          "Elle constitue une barrière thermique isolante qui protège les tissus vasculaires fragiles contre les variations brutales de température du sol.", // Leurre long
+          "Elle facilite le passage rapide de l'eau par capillarité en créant un canal hydrophile continu entre le cortex et les vaisseaux du xylème."
         ]
       },
       {
-        question: "Le potentiel hydrique (Ψ) de l'atmosphère, des feuilles et du sol suit généralement quel ordre (du plus élevé au plus bas) ?",
+        question: "Comment varie le potentiel hydrique (Ψ) lors du transport de l'eau dans la plante ?",
         answers: [
-          "Sol (le moins négatif) > Racines > Tiges > Feuilles > Atmosphère (le plus négatif).",
-          "Atmosphère (saturée en eau) > Feuilles > Tiges > Racines > Sol (très sec).",
-          "Racines (pompage actif) > Sol > Tiges > Feuilles > Atmosphère.",
-          "Sol > Atmosphère (pression partielle faible) > Racines > Feuilles > Tiges."
-        ]
-      },
-
-      // --- PHOTOSYNTHÈSE & MÉTABOLISME ---
-      {
-        question: "Quel est l'avantage adaptatif majeur du métabolisme C4 par rapport au métabolisme C3 ?",
-        answers: [
-          "Il réduit considérablement la photorespiration en concentrant le CO2 autour de la Rubisco dans les cellules de la gaine périvasculaire.",
-          "Il permet de réaliser la phase claire de la photosynthèse la nuit pour éviter les pertes d'eau par transpiration diurne.",
-          "Il utilise directement l'oxygène comme accepteur final d'électrons pour produire davantage d'ATP sans consommer de NADPH.",
-          "Il permet aux plantes de fixer l'azote atmosphérique en même temps que le carbone grâce à l'enzyme PEP carboxylase."
+          "Il décroît constamment du sol (le plus élevé) vers l'atmosphère (le plus bas), en passant par les racines, la tige et les feuilles.",
+          "Il augmente progressivement des racines vers les feuilles car l'évaporation au niveau des stomates concentre les solutés dans les tissus foliaires.", // Leurre complexe
+          "Il reste constant dans toute la plante tant que les stomates sont ouverts, assurant un équilibre hydrostatique parfait entre le sol et l'air.",
+          "Il est plus bas dans le sol que dans les racines, ce qui oblige la plante à dépenser de l'énergie métabolique pour absorber l'eau contre le gradient."
         ]
       },
       {
-        question: "Chez les plantes CAM (Crassulacean Acid Metabolism), comment s'organisent les échanges gazeux ?",
+        question: "Quel est l'avantage principal du métabolisme photosynthétique en C4 ?",
         answers: [
-          "Ouverture des stomates la nuit pour fixer le CO2 sous forme d'acide malique, et fermeture le jour pour limiter la perte d'eau.",
-          "Fermeture des stomates la nuit pour éviter le froid, et ouverture le jour synchronisée avec la lumière pour la photosynthèse.",
-          "Ouverture continue des stomates mais stockage du CO2 dans les vacuoles des cellules épidermiques pour une utilisation différée.",
-          "Fermeture permanente des stomates, l'approvisionnement en CO2 se faisant par recyclage interne de la respiration mitochondriale."
+          "Il minimise la photorespiration en concentrant le CO2 autour de la Rubisco dans les cellules de la gaine périvasculaire, optimisant le rendement.",
+          "Il permet à la plante de réaliser la photosynthèse entièrement durant la nuit en stockant l'énergie lumineuse sous forme de composés phosphatés.",
+          "Il utilise l'oxygène comme accepteur final d'électrons à la place du NADP+, ce qui génère deux fois plus d'ATP que le métabolisme C3 classique.", // Leurre long
+          "Il permet l'ouverture des stomates uniquement lorsque l'humidité relative est supérieure à 90%, limitant ainsi drastiquement les pertes d'eau."
         ]
       },
       {
-        question: "Quelle est la fonction précise de la chaîne de transport d'électrons photosynthétique ?",
+        question: "Quelle est la stratégie hydrique des plantes à métabolisme CAM (Crassulacées) ?",
         answers: [
-          "Générer un gradient de protons (force proton-motrice) dans le lumen du thylakoïde pour alimenter l'ATP synthase.",
-          "Transférer les électrons directement du glucose vers l'oxygène pour produire de l'eau métabolique.",
-          "Hydrolyser les molécules d'ATP produites dans le stroma pour réduire le NADP+ en NADPH.",
-          "Capter le CO2 atmosphérique et le lier au ribulose-1,5-bisphosphate grâce à l'énergie lumineuse."
+          "Elles ouvrent leurs stomates la nuit pour fixer le CO2 sous forme d'acide malique, et les ferment le jour pour limiter la transpiration.",
+          "Elles maintiennent leurs stomates ouverts en permanence mais possèdent une cuticule extrêmement épaisse qui empêche toute sortie de vapeur d'eau.",
+          "Elles n'utilisent pas de stomates pour les échanges gazeux mais absorbent le CO2 directement par leurs racines en même temps que l'eau.", // Leurre absurde mais long
+          "Elles réalisent la photosynthèse sans lumière visible en utilisant le rayonnement infrarouge thermique accumulé dans leurs tissus charnus."
         ]
       },
       {
-        question: "Pourquoi la photorespiration est-elle généralement considérée comme un processus coûteux pour la plante ?",
+        question: "À quoi sert le gradient de protons généré dans le thylakoïde lors de la phase claire ?",
         answers: [
-          "Car elle consomme de l'ATP et du NADPH tout en libérant du CO2 précédemment fixé, réduisant ainsi le rendement photosynthétique.",
-          "Car elle inhibe irréversiblement les photosystèmes I et II en produisant des espèces réactives de l'oxygène.",
-          "Car elle oblige la plante à fermer ses stomates, ce qui arrête totalement l'absorption des nutriments minéraux.",
-          "Car elle convertit les sucres complexes (amidon) en sucres simples (glucose) qui sont perdus par exsudation racinaire."
+          "Il constitue une force proton-motrice qui active l'ATP-synthase, permettant la production d'ATP nécessaire au cycle de Calvin.",
+          "Il sert à acidifier le stroma du chloroplaste pour activer les enzymes de la Rubisco qui ne fonctionnent qu'à pH très acide.",
+          "Il permet de réduire directement le NADP+ en NADPH sans intervention de la chaîne de transport d'électrons photosynthétique.", // Leurre technique
+          "Il provoque l'ouverture des canaux calciques membranaires, déclenchant ainsi la photolyse de l'eau au niveau du photosystème II."
         ]
       },
       {
-        question: "La Rubisco est une enzyme bifonctionnelle. Quelle réaction catalyse-t-elle en présence d'une forte concentration d'O2 ?",
+        question: "Pourquoi la photorespiration est-elle coûteuse pour la plante ?",
         answers: [
-          "L'oxygénation du RuBP, conduisant à la formation d'une molécule de 3-phosphoglycérate et d'une molécule de 2-phosphoglycolate.",
-          "La carboxylation du PEP (Phosphoénolpyruvate) pour former de l'oxaloacétate à quatre atomes de carbone.",
-          "La décarboxylation oxydative du pyruvate pour entrer dans le cycle de Krebs mitochondriale.",
-          "La réduction directe du 3-phosphoglycérate en triose-phosphate grâce à l'énergie lumineuse."
-        ]
-      },
-
-      // --- DÉVELOPPEMENT & HORMONES ---
-      {
-        question: "Quel est le mécanisme cellulaire précis de l'ouverture des stomates induite par la lumière bleue ?",
-        answers: [
-          "Activation des pompes H+-ATPases, hyperpolarisation membranaire, entrée de K+ et diminution du potentiel hydrique, entraînant une entrée d'eau.",
-          "Inhibition des canaux potassiques sortants, dépolarisation de la membrane et sortie massive d'eau vers les cellules compagnes.",
-          "Hydrolyse rapide de l'amidon vacuolaire en glucose, augmentant la pression osmotique et provoquant la fermeture de l'ostiole.",
-          "Synthèse immédiate d'acide abscissique (ABA) qui se fixe sur les récepteurs membranaires et déclenche l'afflux de calcium."
+          "Elle consomme de l'ATP et du pouvoir réducteur (NADPH) tout en libérant du CO2 précédemment fixé, réduisant le rendement net de carbone.",
+          "Elle provoque la fermeture irréversible des stomates en plein jour, ce qui entraîne une surchauffe létale des tissus foliaires.",
+          "Elle produit des radicaux libres toxiques qui détruisent les pigments chlorophylliens et désactivent définitivement les photosystèmes.", // Leurre alarmiste
+          "Elle oblige la plante à dégrader ses réserves d'amidon racinaire pour compenser l'arrêt total de la production de sucres foliaires."
         ]
       },
       {
-        question: "Selon l'hypothèse de la croissance acide, comment l'auxine stimule-t-elle l'élongation cellulaire ?",
+        question: "Quel est le mécanisme osmotique de l'ouverture des stomates à la lumière ?",
         answers: [
-          "Elle stimule les pompes à protons membranaires, acidifiant la paroi, ce qui active les expansines et relâche le réseau de cellulose.",
-          "Elle pénètre dans le noyau pour activer la transcription des gènes codant pour les microtubules du cytosquelette.",
-          "Elle se lie aux récepteurs du réticulum endoplasmique pour libérer le calcium qui contracte les microfibrilles de cellulose.",
-          "Elle augmente la perméabilité de la membrane plasmique à l'eau, augmentant ainsi la pression de turgescence sans modifier la paroi."
+          "L'accumulation active de potassium (K+) et d'anions dans les cellules de garde baisse leur potentiel hydrique, entraînant une entrée d'eau et la turgescence.",
+          "L'hydrolyse massive de l'amidon en glucose augmente la pression osmotique, ce qui force l'eau à sortir des cellules de garde vers les cellules épidermiques.", // Leurre inversé
+          "La contraction des microfibrilles de cellulose de la paroi sous l'effet de la lumière bleue provoque mécaniquement l'écartement de l'ostiole.",
+          "La synthèse rapide de lipides membranaires augmente la fluidité et permet l'entrée passive d'eau sans modification du potentiel osmotique."
+        ]
+      },
+      {
+        question: "Quelle est l'action de l'auxine selon l'hypothèse de la croissance acide ?",
+        answers: [
+          "Elle active les pompes à protons membranaires, acidifiant la paroi, ce qui active les expansines et permet le relâchement du réseau de cellulose.",
+          "Elle pénètre dans le noyau pour se fixer sur l'ADN et stimuler directement la transcription des gènes codant pour les protéines du cytosquelette.",
+          "Elle se lie aux ribosomes pour accélérer la traduction des enzymes de synthèse de la paroi, augmentant ainsi l'épaisseur de la membrane.", // Leurre complexe
+          "Elle inhibe les canaux potassiques, provoquant une augmentation de la pression de turgescence qui étire mécaniquement la cellule."
         ]
       },
       {
         question: "Quel est le rôle du phytochrome dans la germination des graines photosensibles ?",
         answers: [
-          "Il agit comme un interrupteur biologique : la forme Pr (rouge) absorbe la lumière rouge clair et se convertit en forme Pfr (rouge lointain) active.",
-          "Il détecte la lumière bleue et active les cryptochromes qui dégradent les inhibiteurs de la germination.",
-          "Il synthétise directement les gibbérellines nécessaires à la mobilisation des réserves de l'albumen.",
-          "Il protège l'embryon contre les rayonnements UV nocifs en modifiant la pigmentation des téguments."
+          "C'est un photorécepteur qui, sous lumière rouge clair, passe sous sa forme active (Pfr) et lève la dormance en activant la synthèse de gibbérellines.",
+          "C'est un pigment photosynthétique accessoire qui fournit l'énergie chimique nécessaire aux premières divisions cellulaires de l'embryon.", // Leurre métabolique
+          "C'est une enzyme qui dégrade les inhibiteurs de germination (comme l'acide abscissique) lorsque la température du sol atteint un seuil critique.",
+          "C'est une protéine structurale qui renforce les téguments de la graine pour empêcher la germination tant que la luminosité est trop forte."
         ]
       },
       {
-        question: "L'éthylène est une phytohormone gazeuse. Lequel de ces effets physiologiques lui est spécifiquement attribué ?",
+        question: "Lequel de ces effets est spécifiquement déclenché par l'éthylène ?",
         answers: [
-          "L'induction de la sénescence foliaire, l'abscission des organes et la maturation des fruits climactériques.",
-          "La stimulation de la division cellulaire dans les méristèmes apicaux et l'élongation des tiges.",
-          "Le maintien de la dormance des graines et la fermeture des stomates en cas de stress hydrique.",
-          "Le développement des racines latérales et la différenciation des tissus vasculaires du xylème."
+          "La maturation des fruits climactériques (changement de couleur, ramollissement) ainsi que l'abscission des feuilles et des fleurs.",
+          "L'allongement spectaculaire des entre-nœuds de la tige et la levée de dormance des bourgeons au printemps.",
+          "La stimulation de la division cellulaire dans les méristèmes racinaires pour favoriser l'ancrage de la plante dans le sol.",
+          "L'ouverture des stomates en condition de stress hydrique pour permettre le refroidissement de la feuille par évapotranspiration."
         ]
       },
       {
-        question: "Comment une racine perçoit-elle la gravité (gravitropisme positif) pour orienter sa croissance ?",
+        question: "Comment les racines perçoivent-elles la gravité (gravitropisme) ?",
         answers: [
-          "Par la sédimentation des statolithes (amyloplastes denses) dans les cellules de la columelle de la coiffe racinaire.",
-          "Par la détection de la pression hydrostatique exercée par le sol sur les poils absorbants de la zone pilifère.",
-          "Par des récepteurs membranaires sensibles à la déformation du cytosquelette dans la zone d'élongation.",
-          "Par un gradient de concentration d'auxine préétabli qui attire la racine vers le centre de la Terre."
-        ]
-      },
-
-      // --- NUTRITION MINÉRALE & SYMBIOSE ---
-      {
-        question: "Quel est le bénéfice primaire fourni par les champignons mycorhiziens arbusculaires à la plante hôte ?",
-        answers: [
-          "Une extension considérable du volume de sol exploré, facilitant l'absorption du phosphore et de l'eau peu mobiles.",
-          "La fixation directe de l'azote atmosphérique gazeux et sa transformation en ammonium assimilable.",
-          "La protection mécanique des racines contre les herbivores du sol grâce à un manchon fongique épais.",
-          "La production de sucres complexes par photosynthèse fongique, transférés ensuite à la racine."
+          "Grâce à la sédimentation de statolithes (amyloplastes denses) dans les cellules de la columelle de la coiffe, qui modifie la distribution de l'auxine.",
+          "Grâce à des mécanorécepteurs membranaires situés sur les poils absorbants qui détectent la pression exercée par les particules du sol.",
+          "Grâce à un gradient de calcium intracellulaire induit par la différence de potentiel électrique entre le haut et le bas de la racine.", // Leurre biophysique
+          "Grâce à la déformation du cytosquelette d'actine dans la zone d'élongation qui s'aligne automatiquement avec le vecteur gravité."
         ]
       },
       {
-        question: "Pourquoi une carence en azote se manifeste-t-elle d'abord par un jaunissement (chlorose) des vieilles feuilles ?",
+        question: "Quel bénéfice nutritionnel la plante tire-t-elle des mycorhizes ?",
         answers: [
-          "L'azote est un élément mobile : la plante le dégrade dans les feuilles sénescentes pour le redistribuer vers les jeunes organes en croissance.",
-          "L'azote est toxique à haute concentration dans les vieilles feuilles, la chlorose est donc un mécanisme de détoxification.",
-          "Les vieilles feuilles perdent la capacité d'absorber l'azote atmosphérique par leurs stomates.",
-          "La carence en azote bloque la synthèse de la chlorophylle uniquement dans les tissus ayant terminé leur croissance."
+          "Le champignon explore un volume de sol très important, facilitant l'absorption de l'eau et des minéraux peu mobiles comme le phosphate.",
+          "Le champignon réalise la photosynthèse hétérotrophe et transfère directement des sucres complexes aux racines de la plante hôte.",
+          "Le champignon dégrade la lignine des racines mortes pour recycler le carbone et le réinjecter dans le système vasculaire de la plante.",
+          "Le champignon forme une barrière imperméable autour de la racine qui empêche la perte de nutriments par lessivage lors des fortes pluies."
         ]
       },
       {
-        question: "Dans les nodosités des Légumineuses, quel est le rôle critique de la léghémoglobine ?",
+        question: "Pourquoi la chlorose ferrique affecte-t-elle d'abord les jeunes feuilles ?",
         answers: [
-          "Elle régule la concentration d'oxygène libre, le maintenant assez bas pour protéger la nitrogénase mais assez haut pour la respiration bactérienne.",
-          "Elle catalyse la réaction de réduction de l'azote atmosphérique en ammoniac en remplaçant la nitrogénase défectueuse.",
-          "Elle transporte les sucres produits par la plante vers le bactérioïde pour fournir l'énergie nécessaire à la fixation.",
-          "Elle agit comme un antibiotique sélectif empêchant d'autres bactéries pathogènes de coloniser le nodule."
-        ]
-      },
-
-      // --- DIVERSITÉ & CYCLE DE VIE ---
-      {
-        question: "Quelle est la caractéristique unique de la double fécondation chez les Angiospermes ?",
-        answers: [
-          "La fusion d'un gamète mâle avec l'oosphère (zygote embryon) et de l'autre avec la cellule centrale (zygote albumen triploïde).",
-          "La nécessité de deux grains de pollen différents pour féconder une seule oosphère et assurer la diversité génétique.",
-          "La fusion simultanée de l'oosphère avec deux spermatozoïdes pour former un embryon triploïde très résistant.",
-          "La fécondation de l'oosphère par un gamète mâle suivie immédiatement de la fécondation des antipodes."
+          "Car le fer est un élément immobile dans la plante : il ne peut pas être remobilisé depuis les vieilles feuilles vers les nouveaux organes.",
+          "Car les jeunes feuilles ont une cuticule plus fine qui laisse s'échapper le fer par lessivage lors des pluies acides.",
+          "Car le fer est toxique pour les tissus méristématiques et la plante le séquestre volontairement dans les racines pour protéger l'apex.",
+          "Car les jeunes feuilles ne possèdent pas encore les transporteurs membranaires nécessaires à l'assimilation du fer présent dans la sève."
         ]
       },
       {
-        question: "Dans le cycle de vie des Ptéridophytes (fougères), comment se caractérise la génération dominante ?",
+        question: "Quel est le rôle de la léghémoglobine dans la symbiose fixatrice d'azote ?",
         answers: [
-          "C'est le sporophyte (2n), une plante vascularisée indépendante, alors que le gamétophyte est réduit et éphémère.",
-          "C'est le gamétophyte (n), une structure foliacée dominante, sur laquelle vit le sporophyte parasite.",
-          "Les deux générations, sporophyte et gamétophyte, sont morphologiquement identiques et indépendantes (isomorphie).",
-          "Il n'y a pas de génération dominante, le cycle est strictement haplophasique comme chez les champignons."
+          "Elle tamponne la concentration d'oxygène libre, protégeant la nitrogénase tout en assurant la respiration des bactéries symbiotiques.",
+          "Elle catalyse l'oxydation de l'ammonium en nitrates, rendant l'azote assimilable par les cellules de la plante hôte.",
+          "Elle transporte les électrons de la photosynthèse vers le nodule racinaire pour fournir l'énergie nécessaire à la rupture du lien N≡N.", // Leurre bioénergétique
+          "Elle agit comme un antibiotique naturel qui élimine les souches bactériennes parasites essayant d'infiltrer les nodosités."
         ]
       },
       {
-        question: "Quelle innovation anatomique majeure a permis aux Trachéophytes de coloniser les milieux terrestres secs ?",
+        question: "Quelle est la particularité de la double fécondation chez les Angiospermes ?",
         answers: [
-          "L'apparition de tissus conducteurs lignifiés (xylème) permettant le transport de l'eau et le soutien mécanique vertical.",
-          "Le développement d'une reproduction exclusivement végétative par rhizomes souterrains.",
-          "La perte des pigments photosynthétiques accessoires pour se concentrer uniquement sur la chlorophylle a.",
-          "L'association symbiotique avec des algues vertes unicellulaires pour former des lichens."
+          "Un gamète mâle féconde l'oosphère (donnant l'embryon) tandis que l'autre féconde la cellule centrale (donnant l'albumen triploïde).",
+          "Deux grains de pollen différents doivent germer simultanément pour féconder une seule oosphère et assurer la diversité génétique.",
+          "L'oosphère est fécondée par un gamète mâle, puis se divise immédiatement pour être fécondée une seconde fois par le tube pollinique.",
+          "La fécondation de l'oosphère est suivie par la fusion de deux autres gamètes mâles qui formeront les téguments protecteurs de la graine."
         ]
       },
       {
-        question: "Quel rôle structurel joue la lignine dans les parois cellulaires des plantes vasculaires ?",
+        question: "Quelle différence majeure distingue le cycle des Ptéridophytes de celui des Mousses ?",
         answers: [
-          "Elle imprègne la paroi secondaire, la rendant hydrophobe, rigide et résistante à la compression et à la dégradation.",
-          "Elle forme un gel hydraté dans la lamelle moyenne qui permet l'adhésion flexible entre les cellules voisines.",
-          "Elle constitue le composant principal de la paroi primaire, permettant l'extension cellulaire rapide.",
-          "Elle sert de réserve d'énergie à long terme, pouvant être dégradée en glucose lors des périodes de famine."
+          "Chez les Ptéridophytes, le sporophyte est la phase dominante, vascularisée et pérenne, alors que le gamétophyte est réduit et éphémère.",
+          "Chez les Ptéridophytes, il n'y a plus de fécondation aquatique : les gamètes mâles sont transportés par le vent jusqu'aux archégones.",
+          "Chez les Ptéridophytes, le gamétophyte est la plante feuillée visible, tandis que le sporophyte vit en parasite complet sur celui-ci.", // Leurre inversé
+          "Chez les Ptéridophytes, la méiose se produit immédiatement après la fécondation, ne laissant aucune phase diploïde dans le cycle de vie."
         ]
       },
       {
-        question: "Qu'est-ce qui caractérise une graine dite 'exalbuminée' à maturité ?",
+        question: "Quel est le rôle structural principal de la lignine chez les plantes vasculaires ?",
         answers: [
-          "Les réserves nutritives ont été transférées de l'albumen vers les cotylédons de l'embryon au cours de la maturation.",
-          "L'embryon est avorté et la graine ne contient que de l'albumen servant de leurre pour les disséminateurs.",
-          "La graine ne contient aucune réserve, elle doit obligatoirement trouver un champignon symbiotique immédiatement pour germer.",
-          "Les réserves sont stockées sous forme d'huile dans le tégument externe et non à l'intérieur de la graine."
-        ]
-      },
-
-      // --- ADAPTATIONS ---
-      {
-        question: "Pourquoi les plantes xérophytes (adaptées à la sécheresse) possèdent-elles souvent des stomates enfoncés dans des cryptes ?",
-        answers: [
-          "Cela maintient une couche d'air immobile et humide au-dessus du stomate, réduisant le gradient de potentiel hydrique et donc la transpiration.",
-          "Cela permet de capturer plus efficacement la rosée matinale qui s'accumule dans les creux des feuilles.",
-          "Cela protège les cellules de garde contre les rayonnements ultraviolets intenses des milieux désertiques.",
-          "Cela favorise l'entrée du dioxyde de carbone en créant des micro-turbulences au niveau de l'ostiole."
+          "Elle imprègne les parois secondaires, conférant imperméabilité, rigidité et résistance à la compression (indispensable au port dressé).",
+          "Elle forme un gel souple dans la lamelle moyenne qui permet aux cellules de glisser les unes sur les autres lors de la croissance.",
+          "Elle constitue une réserve d'énergie à long terme, stockée dans le bois de cœur et mobilisable en cas de stress sévère.",
+          "Elle protège l'épiderme des feuilles contre les rayonnements ultraviolets en absorbant l'énergie lumineuse excédentaire."
         ]
       },
       {
-        question: "Quelle est la fonction adaptative des pneumatophores observés chez les palétuviers (mangrove) ?",
+        question: "Qu'est-ce qu'une graine exalbuminée ?",
         answers: [
-          "Assurer l'approvisionnement en dioxygène des racines souterraines qui se développent dans un sédiment anoxique asphyxiant.",
-          "Permettre l'excrétion active du sel marin absorbé en excès par les racines filtrantes.",
-          "Servir de tuteurs mécaniques pour stabiliser l'arbre dans les sédiments mouvants lors des marées.",
-          "Capturer les insectes volants pour fournir un complément d'azote organique à la plante."
+          "Une graine où les réserves nutritives ont été transférées de l'albumen vers les cotylédons de l'embryon avant la maturation.",
+          "Une graine dépourvue de toute réserve nutritive, qui doit obligatoirement établir une symbiose immédiate pour germer.",
+          "Une graine dont l'albumen est toxique pour les prédateurs, contenant des alcaloïdes concentrés pour la défense.",
+          "Une graine qui a perdu son embryon par avortement mais qui conserve un albumen riche pour attirer les animaux disséminateurs."
         ]
       },
       {
-        question: "Le thigmotropisme (réaction au toucher) des vrilles est dû à quel processus cellulaire ?",
+        question: "Pourquoi les plantes xérophytes ont-elles souvent des stomates dans des cryptes ?",
         answers: [
-          "Une croissance différentielle rapide : les cellules du côté opposé au contact s'allongent plus vite que celles du côté du contact.",
-          "Une perte de turgescence brutale et réversible dans les cellules motrices du pulvinus à la base de la vrille.",
-          "Une contraction musculaire médiée par des filaments d'actine et de myosine présents dans le cytoplasme.",
-          "Une lignification immédiate des tissus touchés qui fige la vrille dans sa position d'enroulement."
+          "Pour piéger une couche d'air calme et humide au-dessus de l'ostiole, réduisant le gradient de vapeur d'eau et donc la transpiration.",
+          "Pour augmenter la surface d'échange disponible pour la capture du CO2 lorsque la concentration atmosphérique est faible.",
+          "Pour protéger les cellules de garde contre l'abrasion par le sable et la poussière transportés par les vents violents.",
+          "Pour créer un microclimat chaud qui favorise l'activité enzymatique de la photosynthèse même lorsque la température extérieure chute."
         ]
       },
       {
-        question: "Quel événement hormonal déclenche l'abscission (chute) des feuilles en automne ?",
+        question: "Quelle est la fonction des pneumatophores des palétuviers ?",
         answers: [
-          "Une baisse du taux d'auxine dans le limbe foliaire rendant la zone d'abscission sensible à l'action de l'éthylène.",
-          "Une augmentation brutale de la concentration en gibbérellines qui hydrolysent les parois cellulaires du pétiole.",
-          "L'arrêt total de la synthèse d'acide abscissique qui maintenait la feuille attachée à la tige.",
-          "L'accumulation de cytokinines dans le bourgeon axillaire qui repousse physiquement la feuille."
+          "Ils permettent l'approvisionnement en oxygène atmosphérique des racines immergées dans un sédiment vaseux anoxique.",
+          "Ils servent de structures de flottaison pour maintenir la stabilité de l'arbre lorsque le niveau de la marée monte.",
+          "Ils excrètent activement le sel marin absorbé par les racines pour éviter l'intoxication des tissus foliaires.",
+          "Ils captent l'azote atmosphérique grâce à des colonies bactériennes fixées sur leur écorce spongieuse."
         ]
       },
       {
-        question: "Les Bryophytes (mousses) n'ont pas de vraies racines. Comment absorbent-elles l'eau ?",
+        question: "Le thigmotropisme des vrilles (vigne, pois) est dû à :",
         answers: [
-          "Essentiellement par toute leur surface aérienne (feuilles) grâce à une cuticule très fine ou absente et par les rhizoïdes.",
-          "Uniquement par les rhizoïdes qui fonctionnent exactement comme des poils absorbants racinaires.",
-          "Elles n'absorbent pas d'eau liquide, elles utilisent uniquement la vapeur d'eau atmosphérique.",
-          "Elles vivent en symbiose avec des cyanobactéries qui leur fournissent l'eau nécessaire."
+          "Une croissance différentielle : les cellules du côté opposé au contact s'allongent plus vite que celles du côté touché.",
+          "Une contraction rapide et réversible des cellules motrices situées à la base de la vrille, vidant leur vacuole d'eau.",
+          "Une lignification immédiate des tissus au point de contact, figeant la vrille dans sa position enroulée.",
+          "Une synthèse locale d'éthylène qui provoque la courbure de la tige vers l'objet touché par un mécanisme de sénescence programmée."
         ]
       },
       {
-        question: "Quel est le rôle physiologique principal de l'exoderme (hypoderme subérifié) chez certaines racines ?",
+        question: "Quel mécanisme hormonal déclenche la chute des feuilles (abscission) ?",
         answers: [
-          "Limiter les pertes d'eau de la racine vers le sol en cas de sécheresse (prévenir l'efflux) et protéger contre les pathogènes.",
-          "Transporter activement les ions minéraux du sol vers le cortex racinaire via des pompes spécifiques.",
-          "Stocker les réserves d'amidon pour la reprise de croissance au printemps suivant.",
-          "Faciliter l'entrée de l'eau en augmentant la surface de contact avec les particules du sol."
+          "La baisse du flux d'auxine foliaire sensibilise la zone d'abscission à l'éthylène, qui active des enzymes dégradant la paroi cellulaire.",
+          "L'augmentation brutale de l'acide abscissique dans le pétiole provoque la mort programmée des cellules de la zone de rupture.",
+          "L'accumulation de cytokinines dans le bourgeon axillaire pousse physiquement la feuille vers l'extérieur jusqu'à la rupture.",
+          "La gélification de la sève élaborée dans les nervures bloque le transport, provoquant le dessèchement et la chute mécanique."
         ]
       },
       {
-        question: "La vernalisation est un processus physiologique indispensable pour certaines plantes. En quoi consiste-t-elle ?",
+        question: "Comment les Bryophytes (mousses) gèrent-elles leur hydratation ?",
         answers: [
-          "L'acquisition de la compétence à fleurir induite par une exposition prolongée au froid hivernal.",
-          "La levée de dormance des graines déclenchée par une alternance rapide de températures chaudes et froides.",
-          "La transformation des bourgeons végétatifs en épines pour se protéger des herbivores en hiver.",
-          "L'accumulation de sucres cryoprotecteurs dans les cellules pour résister au gel intense."
+          "Elles sont poïkilohydres : elles ne contrôlent pas leurs pertes d'eau et peuvent se déshydrater presque totalement (reviviscence).",
+          "Elles possèdent un système racinaire profond capable d'aller chercher l'eau dans la nappe phréatique pour maintenir leur turgescence.",
+          "Elles sécrètent une cuticule cireuse plus épaisse que celle des plantes à fleurs pour imperméabiliser totalement leur surface.",
+          "Elles stockent l'eau dans des vésicules spécialisées situées à la base de la tige, leur permettant de survivre des mois sans pluie."
+        ]
+      },
+      {
+        question: "Quel est le rôle de l'exoderme racinaire ?",
+        answers: [
+          "C'est une assise subérifiée qui limite les pertes d'eau vers le sol sec et constitue une barrière contre les pathogènes.",
+          "C'est un tissu méristématique secondaire qui produit le liège vers l'extérieur pour épaissir la racine âgée.",
+          "C'est une couche de cellules spécialisées dans l'absorption active des nitrates, riche en transporteurs membranaires.",
+          "C'est un tissu de réserve qui accumule l'amidon produit par la photosynthèse pour nourrir les bactéries symbiotiques."
+        ]
+      },
+      {
+        question: "En quoi consiste la vernalisation ?",
+        answers: [
+          "C'est l'acquisition de la compétence à fleurir induite par une exposition prolongée au froid (nécessaire pour les plantes bisannuelles).",
+          "C'est la levée de dormance des graines déclenchée par une alternance rapide de cycles gel/dégel à la fin de l'hiver.",
+          "C'est la transformation des chloroplastes en chromoplastes dans les pétales, donnant aux fleurs leurs couleurs vives.",
+          "C'est la synthèse de protéines antigel dans les bourgeons pour les protéger contre les gelées tardives du printemps."
+        ]
+      },
+      {
+        question: "Quelle est la principale source d'azote pour les plantes carnivores ?",
+        answers: [
+          "Les protéines des proies animales digérées, qui compensent la pauvreté en azote minéral de leurs sols (tourbières).",
+          "L'azote atmosphérique qu'elles fixent directement grâce à des enzymes digestives spécialisées présentes dans leurs pièges.",
+          "Les excréments des insectes qui tombent sur le sol et sont absorbés par les racines superficielles de la plante.",
+          "Les bactéries symbiotiques vivant dans leur tube digestif végétal qui transforment l'urée en nitrates assimilables."
+        ]
+      },
+      {
+        question: "Quel pigment est responsable de la détection de la durée du jour (photopériodisme) ?",
+        answers: [
+          "Le phytochrome, qui bascule entre deux formes (Pr et Pfr) selon le ratio rouge clair / rouge lointain reçu.",
+          "La chlorophylle a, dont l'activité photosynthétique détermine directement la quantité de sucres disponibles pour la floraison.",
+          "Les caroténoïdes, qui protègent l'appareil reproducteur contre l'excès de lumière en changeant de couleur.",
+          "La cryptochrome, qui mesure l'intensité de la lumière bleue pour synchroniser l'ouverture des pétales avec le lever du soleil."
         ]
       }
     ];
 
-    // ============================================================
-    // LOGIQUE DU QUIZ
-    // ============================================================
-    
+    // --- LOGIQUE DU QUIZ (inchangée mais robuste) ---
     let currentQuestionIndex = 0;
     let score = 0;
 
+    const quizBox = document.getElementById('quiz-box');
+    const resultBox = document.getElementById('result-box');
     const questionTextElement = document.getElementById('question-text');
     const answerButtonsElement = document.getElementById('answer-buttons');
     const nextButton = document.getElementById('next-btn');
     const currentQSpan = document.getElementById('current-q');
     const totalQSpan = document.getElementById('total-q');
-    const quizBox = document.getElementById('quiz-box');
-    const resultBox = document.getElementById('result-box');
     const progressFill = document.getElementById('progress-fill');
+    const finalScoreSpan = document.getElementById('final-score');
+    const totalScoreSpan = document.getElementById('total-score');
+    const feedbackMsg = document.getElementById('feedback-message');
 
     totalQSpan.innerText = quizData.length;
 
@@ -474,6 +399,7 @@
       showQuestion();
     }
 
+    // Mélange de Fisher-Yates
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -492,45 +418,23 @@
 
       questionTextElement.innerText = currentQuestion.question;
 
+      // Préparer les réponses (la 1ère est toujours la bonne dans le tableau quizData)
       let answersToShuffle = [];
       currentQuestion.answers.forEach((answer, index) => {
-          answersToShuffle.push({
-              text: answer,
-              correct: index === 0 
-          });
+          answersToShuffle.push({ text: answer, correct: index === 0 });
       });
 
+      // Mélanger
       let shuffledAnswers = shuffleArray(answersToShuffle);
 
-      // Création des boutons
+      // Afficher
       shuffledAnswers.forEach(answerObj => {
         const button = document.createElement('button');
         button.innerText = answerObj.text;
         button.classList.add('answer-btn');
-        button.dataset.correct = answerObj.correct; 
+        if (answerObj.correct) button.dataset.correct = "true";
         button.addEventListener('click', selectAnswer);
         answerButtonsElement.appendChild(button);
-      });
-
-      // === LA CORRECTION DU PROBLÈME VISUEL ===
-      // On force tous les boutons à avoir la hauteur du plus grand
-      requestAnimationFrame(() => {
-          const buttons = answerButtonsElement.querySelectorAll('.answer-btn');
-          let maxHeight = 0;
-          
-          // 1. On cherche le plus grand
-          buttons.forEach(btn => {
-            // On s'assure qu'il a sa taille naturelle
-            btn.style.height = 'auto';
-            if(btn.offsetHeight > maxHeight) {
-                maxHeight = btn.offsetHeight;
-            }
-          });
-          
-          // 2. On applique cette hauteur à tous
-          buttons.forEach(btn => {
-            btn.style.height = maxHeight + 'px';
-          });
       });
     }
 
@@ -542,9 +446,9 @@
     }
 
     function selectAnswer(e) {
-      // Pour éviter de cliquer sur le conteneur flex si l'utilisateur clique sur le bord
-      if(e.target.tagName !== 'BUTTON') return;
-      
+      // Ignorer les clics si on a déjà répondu (boutons désactivés)
+      if (e.target.disabled) return;
+
       const selectedButton = e.target;
       const isCorrect = selectedButton.dataset.correct === "true";
 
@@ -555,13 +459,13 @@
         selectedButton.classList.add('incorrect');
       }
 
+      // Révéler la bonne réponse et bloquer le reste
       Array.from(answerButtonsElement.children).forEach(button => {
         button.disabled = true;
         if (button.dataset.correct === "true") {
             button.classList.add('correct');
         }
       });
-
       nextButton.style.display = "inline-block";
     }
 
@@ -579,25 +483,23 @@
         resultBox.style.display = "block";
         progressFill.style.width = "100%";
         
-        const finalScoreSpan = document.getElementById('final-score');
         finalScoreSpan.innerText = score;
-        document.getElementById('total-score').innerText = quizData.length;
+        totalScoreSpan.innerText = quizData.length;
         
-        const feedback = document.getElementById('feedback-message');
         const percentage = (score / quizData.length) * 100;
-        
         if(percentage >= 80) {
-            feedback.innerText = "Excellent ! Vos connaissances sont solides et précises.";
-            finalScoreSpan.style.color = "#38a169";
+            feedbackMsg.innerText = "Excellent ! Vos connaissances sont solides.";
+            feedbackMsg.style.color = "#38a169";
         } else if (percentage >= 50) {
-            feedback.innerText = "Bon niveau global. Attention aux détails des mécanismes physiologiques.";
-            finalScoreSpan.style.color = "#d69e2e";
+            feedbackMsg.innerText = "Bon travail, mais attention aux pièges.";
+            feedbackMsg.style.color = "#d69e2e";
         } else {
-            feedback.innerText = "Continuez. Revoyez les cycles biologiques et la physiologie des transports.";
-            finalScoreSpan.style.color = "#e53e3e";
+            feedbackMsg.innerText = "Continuez à réviser, le niveau est exigeant.";
+            feedbackMsg.style.color = "#e53e3e";
         }
     }
 
+    // Lancer le quiz
     startQuiz();
   </script>
 </body>
